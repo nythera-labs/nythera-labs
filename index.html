@@ -1,1505 +1,539 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aether Lab: Limitless OS</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <style>
-    /* * ==========================================
-     * AETHER LAB: GLOBAL STYLES & GLASSMORPHISM
-     * ==========================================
-     */
-    :root {
-      --primary-glow: 0 0 20px rgba(6, 182, 212, 0.4);
-      --danger-glow: 0 0 20px rgba(239, 68, 68, 0.4);
-      --bg-dark: #050505;
-      --glass-bg: rgba(20, 20, 25, 0.4);
-      --glass-border: rgba(255, 255, 255, 0.08);
-    }
-
-    body { 
-      margin: 0; 
-      overflow: hidden; 
-      background-color: var(--bg-dark);
-      color: #e2e8f0; 
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      user-select: none;
-    }
-
-    #webgl-container { 
-      position: absolute; 
-      top: 0; left: 0; 
-      width: 100vw; height: 100vh; 
-      z-index: -10; 
-      pointer-events: none;
-    }
-
-    .glass-panel { 
-      background: var(--glass-bg); 
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border); 
-      border-radius: 1.25rem; 
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    }
-
-    .glass-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.2s ease-in-out;
-    }
-
-    .glass-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-      box-shadow: var(--primary-glow);
-    }
-
-    .glass-input {
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      transition: border-color 0.2s ease;
-    }
-
-    .glass-input:focus {
-      outline: none;
-      border-color: #06b6d4;
-      box-shadow: inset 0 0 10px rgba(6, 182, 212, 0.2);
-    }
-
-    /* Custom Scrollbars for intense data feeds */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
-
-    /* Utility Animations */
-    @keyframes pulse-glow {
-      0% { box-shadow: 0 0 10px rgba(6, 182, 212, 0.2); }
-      50% { box-shadow: 0 0 25px rgba(6, 182, 212, 0.6); }
-      100% { box-shadow: 0 0 10px rgba(6, 182, 212, 0.2); }
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aether OS // Core Kernel [Part 1]</title>
+    <!-- Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
-    .animate-pulse-glow {
-      animation: pulse-glow 2s infinite;
-    }
+    <style>
+        /* 
+         * ============================================================================
+         * AETHER OS // GLOBAL STYLESHEET & CSS VARIABLES
+         * ============================================================================
+         */
+        :root {
+            /* Core Palettes */
+            --aether-bg: #030305;
+            --aether-surface: rgba(15, 15, 20, 0.6);
+            --aether-glass: rgba(255, 255, 255, 0.03);
+            --aether-glass-hover: rgba(255, 255, 255, 0.08);
+            --aether-border: rgba(255, 255, 255, 0.05);
+            --aether-border-highlight: rgba(6, 182, 212, 0.3);
+            
+            /* Accent Colors */
+            --accent-cyan: #06b6d4;
+            --accent-purple: #a855f7;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            
+            /* Typography */
+            --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+            --font-sans: system-ui, -apple-system, sans-serif;
+            
+            /* UI Metrics */
+            --taskbar-height: 48px;
+            --window-border-radius: 12px;
+            --glass-blur: blur(20px);
+        }
 
-    @keyframes scanline {
-      0% { transform: translateY(-100%); opacity: 0; }
-      50% { opacity: 1; }
-      100% { transform: translateY(100vh); opacity: 0; }
-    }
+        /* Base Reset & Typography */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--aether-bg);
+            color: #e2e8f0;
+            font-family: var(--font-sans);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            user-select: none;
+            -webkit-font-smoothing: antialiased;
+        }
 
-    .scanner-line {
-      position: absolute;
-      width: 100%;
-      height: 2px;
-      background: rgba(6, 182, 212, 0.5);
-      box-shadow: 0 0 10px rgba(6, 182, 212, 1);
-      animation: scanline 4s linear infinite;
-      pointer-events: none;
-      z-index: 50;
-    }
+        /* ============================================================================
+         * ANIMATIONS & KEYFRAMES
+         * ============================================================================ */
+        @keyframes bootSequence {
+            0% { opacity: 0; filter: brightness(0) contrast(1.5); }
+            50% { opacity: 0.5; filter: brightness(1.2) contrast(1.2); }
+            100% { opacity: 1; filter: brightness(1) contrast(1); }
+        }
 
-    /* Syntax Highlighting Base */
-    .text-keyword { color: #c678dd; }
-    .text-string { color: #98c379; }
-    .text-func { color: #61afef; }
-    .text-comment { color: #5c6370; font-style: italic; }
-  </style>
+        @keyframes windowOpen {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* ============================================================================
+         * COMPONENT CLASSES
+         * ============================================================================ */
+        
+        /* The WebGL Background Container */
+        #os-matrix-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Global Scanline Overlay */
+        .os-scanline {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.25) 51%);
+            background-size: 100% 4px;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        .os-booting { animation: bootSequence 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Window Manager Styles */
+        .os-window {
+            position: absolute;
+            background: var(--aether-surface);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--aether-border);
+            border-radius: var(--window-border-radius);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: windowOpen 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            min-width: 350px;
+            min-height: 250px;
+            z-index: 10;
+        }
+
+        .os-window.active {
+            border-color: var(--aether-border-highlight);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.1), 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            z-index: 100;
+        }
+
+        .os-window-header {
+            height: 40px;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid var(--aether-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            cursor: grab;
+            flex-shrink: 0;
+        }
+
+        .os-window-header:active { cursor: grabbing; }
+
+        .os-window-controls { display: flex; gap: 8px; }
+        .control-dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; transition: opacity 0.2s; }
+        .control-dot:hover { opacity: 0.8; }
+        .dot-close { background-color: #ef4444; }
+        .dot-min { background-color: #eab308; }
+        .dot-max { background-color: #22c55e; }
+
+        .os-window-title {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        .os-window-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Taskbar Styles */
+        .os-taskbar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--taskbar-height);
+            background: rgba(5, 5, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--aether-border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 1000;
+        }
+
+        .taskbar-start {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+            transition: all 0.2s;
+        }
+
+        .taskbar-start:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+        }
+
+        .taskbar-items {
+            display: flex;
+            gap: 8px;
+            margin-left: 24px;
+            flex: 1;
+        }
+
+        .taskbar-item {
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: var(--aether-glass);
+            border: 1px solid transparent;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .taskbar-item:hover { background: var(--aether-glass-hover); border-color: var(--aether-border); }
+        .taskbar-item.active { background: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.3); color: var(--accent-cyan); }
+
+        .taskbar-tray {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+    </style>
 </head>
-<body class="flex flex-col h-screen relative">
+<body class="os-booting">
 
-  <div id="webgl-container"></div>
-  <div class="scanner-line hidden" id="global-scanner"></div>
+    <!-- WebGL Background Mount -->
+    <div id="os-matrix-bg"></div>
+    <div class="os-scanline"></div>
 
-  <header class="p-6 flex justify-between items-center z-10">
-    <div class="flex items-center gap-4">
-      <div class="w-10 h-10 rounded-full bg-black border border-cyan-500/50 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.5)]">
-        <span class="text-cyan-400 font-bold text-xl">A</span>
-      </div>
-      <div>
-        <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 tracking-widest uppercase">Aether Lab</h1>
-        <p class="text-xs text-white/40 font-mono tracking-widest">OS.v3 // LIMITLESS_PARADIGM</p>
-      </div>
+    <!-- Window Manager Mount Point -->
+    <div id="os-desktop" class="absolute inset-0 bottom-[48px] overflow-hidden">
+        <!-- Windows are dynamically injected here by the JS Kernel -->
     </div>
 
-    <div id="auth-container" class="glass-panel px-4 py-2 flex items-center">
-      <button id="login-btn" class="text-sm font-medium hover:text-cyan-400 transition flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
-        Authenticate Identity
-      </button>
-      <div id="user-info" class="hidden flex items-center gap-3">
-        <div class="relative">
-          <img id="user-avatar" class="w-8 h-8 rounded-full border border-cyan-500/50" src="" alt="Avatar">
-          <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border border-black"></div>
+    <!-- Taskbar -->
+    <div class="os-taskbar">
+        <div class="taskbar-start" id="start-menu-btn">
+            <span class="text-white font-bold text-xs">A</span>
         </div>
-        <span id="user-name" class="font-mono text-sm text-cyan-100"></span>
-        <button id="logout-btn" class="text-xs text-red-400 ml-3 hover:text-red-300 transition uppercase tracking-wider font-bold">Terminate</button>
-      </div>
+        
+        <div class="taskbar-items" id="taskbar-item-container">
+            <!-- App icons injected here -->
+        </div>
+
+        <div class="taskbar-tray">
+            <span id="tray-network" class="text-green-400">NET: OK</span>
+            <span id="tray-memory">MEM: --</span>
+            <span id="tray-clock">00:00:00</span>
+        </div>
     </div>
-  </header>
 
-  <main class="flex-1 flex gap-6 p-6 pt-0 z-10 overflow-hidden h-full">
-    
-    <aside class="glass-panel w-64 flex flex-col p-4 gap-2 h-full overflow-y-auto">
-      <h3 class="text-xs text-white/30 font-mono uppercase tracking-widest mb-2 px-2">Core Modules</h3>
-      
-      <button onclick="openTool('chat')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group">
-        <span class="text-blue-400 group-hover:scale-110 transition">🤖</span> AI Logic
-      </button>
-      <button onclick="openTool('image')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group">
-        <span class="text-purple-400 group-hover:scale-110 transition">🖼️</span> Dream Weaver
-      </button>
-      <button onclick="openTool('voice')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group">
-        <span class="text-cyan-400 group-hover:scale-110 transition">🗣️</span> Vocal Link
-      </button>
-      <button onclick="openTool('audio')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group">
-        <span class="text-emerald-400 group-hover:scale-110 transition">🎙️</span> Void Resonance
-      </button>
-
-      <div class="h-px w-full bg-white/10 my-2"></div>
-      <h3 class="text-xs text-white/30 font-mono uppercase tracking-widest mb-2 px-2">Crypto & Data</h3>
-
-      <button onclick="openTool('cipher')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group">
-        <span class="text-yellow-400 group-hover:scale-110 transition">🔐</span> Cipher Core
-      </button>
-      <button onclick="openTool('stego')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group">
-        <span class="text-pink-400 group-hover:scale-110 transition">🎭</span> Ghost Canvas
-      </button>
-      <button onclick="openTool('chroma')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group">
-        <span class="text-orange-400 group-hover:scale-110 transition">🎨</span> Chroma Node
-      </button>
-
-      <div class="h-px w-full bg-white/10 my-2"></div>
-      <h3 class="text-xs text-white/30 font-mono uppercase tracking-widest mb-2 px-2">System & Net</h3>
-
-      <button onclick="openTool('peer')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group border border-red-500/30 bg-red-500/5">
-        <span class="text-red-400 group-hover:scale-110 transition">🌐</span> Peer Link (WebRTC)
-      </button>
-      <button onclick="openTool('sysscan')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group">
-        <span class="text-green-400 group-hover:scale-110 transition">📟</span> Sys-Scan
-      </button>
-      <button onclick="openTool('vault')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group">
-        <span class="text-indigo-400 group-hover:scale-110 transition">💾</span> Data Vault
-      </button>
-      <button onclick="openTool('qrcode')" class="glass-btn w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 group">
-        <span class="text-teal-400 group-hover:scale-110 transition">🛠️</span> QR Forge
-      </button>
-    </aside>
-
-    <section class="glass-panel flex-1 flex flex-col relative overflow-hidden h-full" id="tool-window">
-      
-      <div id="default-view" class="flex-1 flex flex-col items-center justify-center text-center p-8">
-        <div class="relative w-32 h-32 mb-8">
-          <div class="absolute inset-0 border-4 border-cyan-500/20 rounded-full animate-spin" style="animation-duration: 4s;"></div>
-          <div class="absolute inset-2 border-4 border-purple-500/30 rounded-full animate-spin border-t-transparent" style="animation-direction: reverse; animation-duration: 2s;"></div>
-          <div class="absolute inset-0 flex items-center justify-center text-4xl">🌌</div>
-        </div>
-        <h2 class="text-3xl font-bold text-white mb-4 tracking-wider">SYSTEMS INITIALIZED</h2>
-        <p class="text-cyan-400/80 font-mono max-w-lg leading-relaxed">
-          The Limitless Paradigm is active. 11 core utilities are ready for execution directly within the client-side matrix. Select a module from the sidebar to begin processing.
-        </p>
-      </div>
-
-      <div id="tool-chat" class="hidden flex-1 flex flex-col h-full p-6">
-        <header class="flex justify-between items-center mb-4 border-b border-white/10 pb-4">
-          <div>
-            <h2 class="text-2xl font-bold text-blue-400">AI Logic Core</h2>
-            <p class="text-xs font-mono text-white/50">text.pollinations.ai integration</p>
-          </div>
-          <button onclick="document.getElementById('chat-output').innerHTML=''" class="text-xs px-3 py-1 border border-white/20 rounded hover:bg-white/10 transition font-mono">Clear Buffer</button>
-        </header>
-        <div id="chat-output" class="flex-1 glass-input rounded-xl p-6 mb-4 overflow-y-auto font-mono text-sm space-y-6 shadow-inner">
-          <div class="flex items-start gap-4">
-            <div class="w-8 h-8 rounded bg-blue-600/30 border border-blue-500/50 flex items-center justify-center text-blue-300">AI</div>
-            <div class="flex-1 bg-black/40 border border-blue-500/20 px-5 py-3 rounded-xl rounded-tl-none text-blue-100">
-              Terminal ready. Awaiting natural language instructions.
-            </div>
-          </div>
-        </div>
-        <div class="flex gap-3">
-          <input type="text" id="chat-input" class="flex-1 glass-input rounded-xl p-4 text-white" placeholder="Input sequence...">
-          <button onclick="sendChatMessage()" class="bg-blue-600 hover:bg-blue-500 px-8 py-4 rounded-xl font-bold shadow-lg transition">Transmit</button>
-        </div>
-      </div>
-
-      <div id="tool-image" class="hidden flex-1 flex flex-col h-full p-6">
-        <header class="mb-4 border-b border-white/10 pb-4">
-          <h2 class="text-2xl font-bold text-purple-400">Dream Weaver</h2>
-          <p class="text-xs font-mono text-white/50">image.pollinations.ai programmatic rendering</p>
-        </header>
-        <div class="flex gap-3 mb-6">
-          <input type="text" id="image-input" class="flex-1 glass-input rounded-xl p-4 text-white" placeholder="Describe visual parameters (e.g., 'cyberpunk city in synthwave colors')...">
-          <button onclick="generateImage()" class="bg-purple-600 hover:bg-purple-500 px-8 py-4 rounded-xl font-bold shadow-lg transition flex items-center gap-2">
-            Render
-          </button>
-        </div>
-        <div class="flex-1 glass-input rounded-xl flex items-center justify-center overflow-hidden relative shadow-inner p-2 group">
-          <div id="image-placeholder" class="text-center">
-            <div class="text-4xl mb-2 opacity-50">🖼️</div>
-            <p class="text-white/40 font-mono">Awaiting prompt injection</p>
-          </div>
-          <div id="image-loader" class="hidden absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-10">
-            <div class="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p class="text-purple-400 font-mono animate-pulse">Synthesizing pixels...</p>
-          </div>
-          <img id="result-image" src="" class="hidden w-full h-full object-contain rounded-lg transition-transform duration-700 group-hover:scale-105">
-        </div>
-      </div>
-
-      <div id="tool-voice" class="hidden flex-1 flex flex-col h-full p-6 items-center justify-center relative">
-        <h2 class="absolute top-6 left-6 text-2xl font-bold text-cyan-400">Vocal Link</h2>
-        <p class="absolute top-14 left-6 text-xs font-mono text-white/50">Web Speech API (SpeechRecognition & SpeechSynthesis)</p>
+    <!-- 
+      =========================================================================
+      AETHER KERNEL (JAVASCRIPT)
+      =========================================================================
+    -->
+    <script>
+        /**
+         * AETHER OS // KERNEL & THREAD MANAGER
+         * Architecture: Single-file distributed multi-threading using Blob URIs.
+         */
         
-        <div class="w-full max-w-2xl flex flex-col items-center">
-          <button id="voice-btn" onclick="toggleVoice()" class="relative w-40 h-40 rounded-full bg-cyan-900/30 border border-cyan-500/50 flex items-center justify-center group mb-8 transition-all duration-300">
-            <div class="absolute inset-0 rounded-full bg-cyan-500/20 group-hover:animate-ping opacity-50"></div>
-            <span class="text-6xl z-10 filter drop-shadow-[0_0_10px_cyan]">🎙️</span>
-          </button>
-          
-          <div id="voice-status" class="text-cyan-400 font-mono text-sm mb-6 bg-cyan-900/20 px-6 py-2 rounded-full border border-cyan-500/30 uppercase tracking-widest">
-            Awaiting Initialization
-          </div>
-          
-          <div class="w-full glass-input rounded-xl p-6 min-h-[200px] flex flex-col gap-4 overflow-y-auto" id="voice-transcript-box">
-            <div class="text-center text-white/30 font-mono italic mt-8">Transcriptions and LLM responses will render here via acoustic telemetry.</div>
-          </div>
-        </div>
-      </div>
-
-      <div id="tool-audio" class="hidden flex-1 flex flex-col h-full p-6">
-        <header class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
-          <div>
-            <h2 class="text-2xl font-bold text-emerald-400">Void Resonance</h2>
-            <p class="text-xs font-mono text-white/50">MediaDevices & AudioContext AnalyserNode</p>
-          </div>
-          <div class="flex gap-2">
-             <button onclick="setAudioMode('bar')" class="text-xs px-3 py-1 border border-emerald-500/50 text-emerald-300 rounded hover:bg-emerald-500/20 font-mono">Frequency Bar</button>
-             <button onclick="setAudioMode('wave')" class="text-xs px-3 py-1 border border-emerald-500/50 text-emerald-300 rounded hover:bg-emerald-500/20 font-mono">Oscilloscope</button>
-          </div>
-        </header>
-
-        <div class="w-full flex-1 relative glass-input bg-black/80 rounded-2xl overflow-hidden flex items-center justify-center group">
-          <button id="start-audio-btn" onclick="initAudio()" class="absolute z-20 bg-emerald-600 hover:bg-emerald-500 px-8 py-4 rounded-full font-bold shadow-[0_0_20px_rgba(16,185,129,0.4)] transition uppercase tracking-widest">
-            Patch Microphone
-          </button>
-          <canvas id="audio-canvas" class="absolute top-0 left-0 w-full h-full z-10"></canvas>
-          <div id="audio-grid" class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CgkJPHBhdGggZD0iTTAgMGwyMCAwaDB2MjBoLTB6IiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMTYsMTg1LDEyOSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+Cjwvc3ZnPg==')] z-0 opacity-50"></div>
-        </div>
-      </div>
-
-      <div id="tool-cipher" class="hidden flex-1 flex flex-col h-full p-6">
-        <header class="mb-6 border-b border-white/10 pb-4">
-          <h2 class="text-2xl font-bold text-yellow-400">Cipher Core</h2>
-          <p class="text-xs font-mono text-white/50">SubtleCrypto: SHA-256, AES-GCM, Base64 operations</p>
-        </header>
-
-        <div class="grid grid-cols-2 gap-6 flex-1">
-          <div class="flex flex-col gap-4">
-            <h3 class="text-yellow-500 font-mono text-sm uppercase">Input Payload / Plaintext</h3>
-            <textarea id="cipher-input" class="w-full flex-1 glass-input rounded-xl p-4 text-white font-mono text-sm" placeholder="Paste data matrix here..."></textarea>
+        const AetherOS = {
+            version: '3.0.LIMITLESS',
+            windows: new Map(),
+            activeWindowId: null,
+            zIndexCounter: 100,
             
-            <div class="flex flex-wrap gap-2">
-              <button onclick="runCipher('b64-enc')" class="flex-1 bg-yellow-900/50 border border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-black py-2 rounded font-bold transition text-xs uppercase">B64 Enc</button>
-              <button onclick="runCipher('b64-dec')" class="flex-1 bg-yellow-900/50 border border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-black py-2 rounded font-bold transition text-xs uppercase">B64 Dec</button>
-              <button onclick="runCipher('sha256')" class="flex-1 bg-red-900/50 border border-red-600 text-red-400 hover:bg-red-600 hover:text-black py-2 rounded font-bold transition text-xs uppercase">SHA-256</button>
-            </div>
-            <div class="flex gap-2">
-              <input type="password" id="aes-key" class="glass-input px-3 py-2 rounded text-sm w-1/2 font-mono" placeholder="AES Secret Key...">
-              <button onclick="runCipher('aes-enc')" class="flex-1 bg-orange-900/50 border border-orange-600 text-orange-400 hover:bg-orange-600 hover:text-black py-2 rounded font-bold transition text-xs uppercase">AES-GCM Encrypt</button>
-              <button onclick="runCipher('aes-dec')" class="flex-1 bg-orange-900/50 border border-orange-600 text-orange-400 hover:bg-orange-600 hover:text-black py-2 rounded font-bold transition text-xs uppercase">AES-GCM Decrypt</button>
-            </div>
-          </div>
-          
-          <div class="flex flex-col gap-4">
-            <h3 class="text-yellow-500 font-mono text-sm uppercase">Output Hash / Ciphertext</h3>
-            <textarea id="cipher-output" class="w-full flex-1 glass-input bg-black/80 rounded-xl p-4 text-yellow-400 font-mono text-sm break-all" placeholder="Cryptographic result will render here..." readonly></textarea>
-            <button onclick="copyToClipboard('cipher-output')" class="w-full border border-white/20 text-white/50 hover:text-white hover:bg-white/10 py-2 rounded font-mono text-xs uppercase transition">Copy Output</button>
-          </div>
-        </div>
-      </div>
+            // Core Initialization
+            boot() {
+                this.initClock();
+                this.initTelemetry();
+                this.spawnBackgroundWorkers();
+                this.initWebGLMatrix();
+                
+                // Spawn Initial System Diagnostics Window
+                this.createWindow('sys-diag', 'System Diagnostics', this.templates.diagnostics(), 600, 400);
+                
+                console.log(`[AETHER KERNEL] Boot sequence complete. v${this.version}`);
+            },
 
-      <div id="tool-stego" class="hidden flex-1 flex flex-col h-full p-6">
-        <header class="mb-4 border-b border-white/10 pb-4">
-          <h2 class="text-2xl font-bold text-pink-400">Ghost Canvas</h2>
-          <p class="text-xs font-mono text-white/50">Pixel-level LSB data insertion over HTML5 Canvas</p>
-        </header>
+            // ==========================================
+            // BLOB INJECTORS (Workers & Service Workers)
+            // ==========================================
+            spawnBackgroundWorkers() {
+                // 1. Service Worker for PWA Offline Caching (Created on the fly)
+                const swCode = `
+                    const CACHE_NAME = 'aether-os-v1';
+                    self.addEventListener('install', e => self.skipWaiting());
+                    self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+                    self.addEventListener('fetch', e => {
+                        // Advanced dynamic caching logic allows the single file to survive offline
+                        e.respondWith(fetch(e.request).catch(() => new Response('Offline Kernel Active.')));
+                    });
+                `;
+                const swBlob = new Blob([swCode], { type: 'text/javascript' });
+                const swUrl = URL.createObjectURL(swBlob);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register(swUrl).then(() => console.log('[KERNEL] Blob Service Worker registered.'));
+                }
 
-        <div class="flex gap-6 h-full">
-          <div class="w-1/3 flex flex-col gap-4">
-            <label class="block w-full border-2 border-dashed border-pink-500/30 rounded-xl p-6 text-center cursor-pointer hover:border-pink-500 transition hover:bg-pink-500/5">
-              <span class="text-pink-400 text-sm font-mono block mb-2">1. Upload Carrier Image (PNG)</span>
-              <input type="file" id="stego-upload" accept="image/png, image/jpeg" class="hidden">
-            </label>
-            
-            <textarea id="stego-secret" class="w-full flex-1 glass-input rounded-xl p-4 text-pink-100 font-mono text-sm" placeholder="2. Enter secret text payload to embed..."></textarea>
-            
-            <div class="grid grid-cols-2 gap-2">
-              <button onclick="encodeStego()" class="bg-pink-600 hover:bg-pink-500 py-3 rounded-lg font-bold transition text-xs uppercase tracking-wider">Embed LSB</button>
-              <button onclick="decodeStego()" class="bg-purple-700 hover:bg-purple-600 py-3 rounded-lg font-bold transition text-xs uppercase tracking-wider">Extract LSB</button>
-            </div>
-            <button onclick="downloadStegoImage()" class="w-full border border-pink-500/50 text-pink-400 hover:bg-pink-500/20 py-2 rounded-lg font-mono text-xs transition uppercase">Download Forged Image</button>
-          </div>
-          
-          <div class="w-2/3 glass-input bg-black/60 rounded-xl flex items-center justify-center p-4 relative overflow-hidden group">
-             <canvas id="stego-canvas" class="max-w-full max-h-full object-contain hidden shadow-[0_0_20px_rgba(236,72,153,0.2)]"></canvas>
-             <div id="stego-placeholder" class="text-center">
-               <div class="text-4xl mb-2 opacity-30">🎭</div>
-               <span class="text-pink-500/40 font-mono text-sm">Visual noise renders here</span>
-             </div>
-             
-             <div id="stego-loupe" class="hidden absolute top-4 right-4 bg-black/80 border border-pink-500 p-2 rounded text-[10px] font-mono text-pink-300">
-               Canvas Context: Active<br>
-               R: <span id="stego-r">0</span> G: <span id="stego-g">0</span> B: <span id="stego-b">0</span> A: <span id="stego-a">0</span>
-             </div>
-          </div>
-        </div>
-      </div>
+                // 2. Cryptographic Web Worker (Offloads heavy CPU tasks from UI thread)
+                const cryptoWorkerCode = `
+                    self.onmessage = async function(e) {
+                        const { action, payload, id } = e.data;
+                        if(action === 'SHA-256') {
+                            const buffer = new TextEncoder().encode(payload);
+                            const hash = await crypto.subtle.digest('SHA-256', buffer);
+                            const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+                            self.postMessage({ id, result: hex });
+                        }
+                    };
+                `;
+                const cwBlob = new Blob([cryptoWorkerCode], { type: 'text/javascript' });
+                this.cryptoWorker = new Worker(URL.createObjectURL(cwBlob));
+                this.cryptoWorker.onmessage = (e) => {
+                    console.log(`[WORKER RESP] Task ${e.data.id} completed:`, e.data.result);
+                };
+            },
 
-      <div id="tool-chroma" class="hidden flex-1 flex flex-col h-full p-6">
-        <header class="mb-4 border-b border-white/10 pb-4">
-          <h2 class="text-2xl font-bold text-orange-400">Chroma Node</h2>
-          <p class="text-xs font-mono text-white/50">Mathematical color quantization via recursive median subdivision</p>
-        </header>
+            // ==========================================
+            // WINDOW MANAGEMENT SYSTEM
+            // ==========================================
+            createWindow(id, title, htmlContent, width = 400, height = 300) {
+                if (this.windows.has(id)) {
+                    this.focusWindow(id);
+                    return;
+                }
 
-        <div class="flex flex-col gap-6 h-full">
-          <input type="file" id="chroma-upload" accept="image/*" class="block w-full text-sm text-orange-300 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-orange-500/20 file:text-orange-400 hover:file:bg-orange-500/30 transition glass-input rounded-xl p-2 cursor-pointer">
-          
-          <div class="flex flex-1 gap-6">
-            <div class="w-1/2 glass-input bg-black/40 rounded-xl flex items-center justify-center relative overflow-hidden p-2">
-               <canvas id="chroma-canvas" class="max-w-full max-h-full object-contain"></canvas>
-               <div id="chroma-placeholder" class="absolute text-orange-500/30 font-mono text-sm">Upload image for array extraction</div>
-             </div>
-             
-             <div class="w-1/2 flex flex-col gap-2">
-                <h3 class="text-orange-500/80 font-mono text-xs uppercase tracking-widest mb-1 border-b border-orange-500/20 pb-1">Extracted Cluster Centroids</h3>
-                <div id="palette-output" class="grid grid-cols-2 gap-3 flex-1">
-                  <div class="col-span-2 text-center text-orange-500/30 font-mono text-sm mt-10">Awaiting geometric space cluster data...</div>
-                </div>
-             </div>
-          </div>
-        </div>
-      </div>
+                const desktop = document.getElementById('os-desktop');
+                const winEl = document.createElement('div');
+                winEl.className = 'os-window';
+                winEl.id = `window-${id}`;
+                winEl.style.width = `${width}px`;
+                winEl.style.height = `${height}px`;
+                
+                // Center window with slight offset
+                const startX = Math.max(10, (window.innerWidth - width) / 2 + (Math.random() * 40 - 20));
+                const startY = Math.max(10, (window.innerHeight - height - 48) / 2 + (Math.random() * 40 - 20));
+                winEl.style.left = `${startX}px`;
+                winEl.style.top = `${startY}px`;
 
-      <div id="tool-peer" class="hidden flex-1 flex flex-col h-full p-6 relative">
-        <header class="mb-4 border-b border-red-500/30 pb-4">
-          <div class="flex justify-between items-center">
-            <div>
-              <h2 class="text-2xl font-bold text-red-400">Peer Link Protocol</h2>
-              <p class="text-xs font-mono text-white/50">SCTP Data Channels over WebRTC mesh network</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse" id="rtc-status-indicator"></span>
-              <span class="text-xs font-mono text-red-400" id="rtc-status-text">DISCONNECTED</span>
-            </div>
-          </div>
-        </header>
+                winEl.innerHTML = `
+                    <div class="os-window-header" id="header-${id}">
+                        <div class="os-window-controls">
+                            <div class="control-dot dot-close" onclick="AetherOS.closeWindow('${id}')"></div>
+                            <div class="control-dot dot-min" onclick="AetherOS.minimizeWindow('${id}')"></div>
+                            <div class="control-dot dot-max" onclick="AetherOS.maximizeWindow('${id}')"></div>
+                        </div>
+                        <div class="os-window-title">${title}</div>
+                        <div class="w-4"></div> <!-- Balancer -->
+                    </div>
+                    <div class="os-window-content">
+                        ${htmlContent}
+                    </div>
+                `;
 
-        <div class="flex gap-6 h-full">
-          <div class="w-1/3 flex flex-col gap-4 border-r border-white/10 pr-6">
-            <h3 class="text-white/50 font-mono text-xs uppercase tracking-widest">Signaling Relay (Manual/Firebase)</h3>
-            
-            <button onclick="createRTCDataOffer()" class="w-full bg-red-900/40 border border-red-500/50 text-red-300 hover:bg-red-800/60 py-3 rounded font-mono text-sm transition">1. Generate P2P Offer</button>
-            <textarea id="rtc-local-sdp" class="w-full h-24 glass-input rounded p-2 text-red-200 font-mono text-[10px] break-all" placeholder="Base64 SDP Offer will render here..." readonly></textarea>
-            
-            <div class="h-px bg-white/10 w-full my-2"></div>
-            
-            <textarea id="rtc-remote-sdp" class="w-full h-24 glass-input rounded p-2 text-blue-200 font-mono text-[10px] break-all" placeholder="Paste Remote Base64 SDP Answer here..."></textarea>
-            <button onclick="acceptRTCDataAnswer()" class="w-full bg-blue-900/40 border border-blue-500/50 text-blue-300 hover:bg-blue-800/60 py-3 rounded font-mono text-sm transition">2. Accept P2P Answer</button>
-          </div>
+                desktop.appendChild(winEl);
+                this.windows.set(id, { el: winEl, title, state: 'normal' });
+                
+                this.makeDraggable(winEl, document.getElementById(`header-${id}`));
+                this.addToTaskbar(id, title);
+                
+                winEl.addEventListener('mousedown', () => this.focusWindow(id));
+                this.focusWindow(id);
+            },
 
-          <div class="w-2/3 flex flex-col gap-4">
-            <h3 class="text-white/50 font-mono text-xs uppercase tracking-widest">SCTP Data Channel Socket</h3>
-            
-            <div class="flex-1 glass-input bg-black/60 rounded-xl p-4 flex flex-col justify-end font-mono text-sm overflow-hidden relative">
-               <div id="rtc-log" class="absolute inset-4 overflow-y-auto space-y-2 pb-12 flex flex-col justify-end">
-                 <div class="text-white/30">> Socket initialized. Awaiting connection state change.</div>
-               </div>
-            </div>
-            
-            <div class="flex gap-2 mt-auto">
-              <input type="text" id="rtc-msg-input" class="flex-1 glass-input rounded p-3 text-white font-mono text-sm" placeholder="Transmit unmetered string data..." disabled>
-              <button id="rtc-send-btn" onclick="sendRTCMsg()" class="bg-white/10 text-white/50 border border-white/20 px-6 py-2 rounded font-bold transition uppercase" disabled>Send</button>
-            </div>
-          </div>
-        </div>
-      </div>
+            closeWindow(id) {
+                const win = this.windows.get(id);
+                if (!win) return;
+                win.el.remove();
+                this.windows.delete(id);
+                document.getElementById(`taskbar-${id}`).remove();
+            },
 
-      <div id="tool-sysscan" class="hidden flex-1 flex flex-col h-full p-6">
-        <header class="flex justify-between items-center mb-6 border-b border-green-500/30 pb-4">
-          <div>
-            <h2 class="text-2xl font-bold text-green-400">Sys-Scan Telemetry</h2>
-            <p class="text-xs font-mono text-green-500/50">navigator / WebGL / WebRTC hardware extraction</p>
-          </div>
-          <button onclick="runSysScan()" class="text-xs border border-green-500/50 px-4 py-2 rounded text-green-300 hover:bg-green-500/20 transition uppercase font-bold tracking-wider">Execute Sweep</button>
-        </header>
-        
-        <div class="w-full flex-1 bg-black/80 rounded-xl border border-green-500/30 p-6 overflow-y-auto font-mono text-green-400 shadow-[inset_0_0_30px_rgba(34,197,94,0.05)] relative group">
-          <div class="absolute top-0 left-0 w-full h-[2px] bg-green-400/50 shadow-[0_0_10px_#4ade80] animate-[scanline_3s_linear_infinite] group-hover:opacity-100 opacity-0 transition duration-500"></div>
-          
-          <div id="sys-scan-output" class="space-y-1">
-            <p class="animate-pulse">> System standing by. Click Execute Sweep.</p>
-          </div>
-        </div>
-      </div>
+            focusWindow(id) {
+                const win = this.windows.get(id);
+                if (!win) return;
+                this.zIndexCounter++;
+                win.el.style.zIndex = this.zIndexCounter;
+                
+                document.querySelectorAll('.os-window').forEach(w => w.classList.remove('active'));
+                document.querySelectorAll('.taskbar-item').forEach(t => t.classList.remove('active'));
+                
+                win.el.classList.add('active');
+                document.getElementById(`taskbar-${id}`).classList.add('active');
+                this.activeWindowId = id;
+            },
 
-      <div id="tool-vault" class="hidden flex-1 flex flex-col h-full p-6">
-        <header class="flex justify-between items-center mb-4 border-b border-indigo-500/30 pb-4">
-          <div>
-            <h2 class="text-2xl font-bold text-indigo-400">Data Vault</h2>
-            <p class="text-xs font-mono text-indigo-400/50">Zero-server persistent local object storage</p>
-          </div>
-          <div class="flex items-center gap-4">
-            <span class="text-xs text-indigo-400/80 font-mono" id="vault-status">Auto-saved</span>
-            <button onclick="clearVault()" class="text-xs border border-red-500/50 text-red-400 px-3 py-1 rounded hover:bg-red-500/20 font-mono transition">Purge DB</button>
-          </div>
-        </header>
-        <textarea id="vault-input" oninput="saveVault()" class="w-full flex-1 glass-input bg-black/60 rounded-xl p-6 text-indigo-100 focus:outline-none focus:border-indigo-400 transition font-mono leading-relaxed" spellcheck="false" placeholder="// Local Storage Scratchpad&#10;// Data persists across browser sessions entirely client-side.&#10;&#10;const secret = 'Inject data here';"></textarea>
-      </div>
+            addToTaskbar(id, title) {
+                const container = document.getElementById('taskbar-item-container');
+                const item = document.createElement('div');
+                item.className = 'taskbar-item';
+                item.id = `taskbar-${id}`;
+                item.innerHTML = `<span class="w-2 h-2 rounded-full bg-cyan-400"></span> ${title}`;
+                item.onclick = () => this.focusWindow(id);
+                container.appendChild(item);
+            },
 
-      <div id="tool-qrcode" class="hidden flex-1 flex flex-col h-full p-6 items-center">
-        <header class="w-full mb-8 border-b border-teal-500/30 pb-4 text-center">
-          <h2 class="text-2xl font-bold text-teal-400">QR Forge</h2>
-          <p class="text-xs font-mono text-teal-400/50">Visual matrix generation</p>
-        </header>
-        
-        <div class="w-full max-w-xl flex gap-3 mb-10">
-          <input type="text" id="qr-input" class="flex-1 glass-input rounded-xl p-4 text-white font-mono" placeholder="URI or string payload...">
-          <button onclick="generateQR()" class="bg-teal-700 hover:bg-teal-600 px-8 py-4 rounded-xl font-bold transition shadow-[0_0_15px_rgba(20,184,166,0.3)] uppercase tracking-wider">Forge Matrix</button>
-        </div>
-        
-        <div class="glass-panel p-10 bg-white/5 rounded-3xl shadow-2xl flex items-center justify-center border border-white/10 relative group overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-tr from-teal-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
-          <img id="qr-output" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=AetherLab&color=ffffff&bgcolor=000000" alt="QR Code" class="w-64 h-64 rounded-xl shadow-lg mix-blend-screen transition transform group-hover:scale-105 duration-500">
-        </div>
-      </div>
+            makeDraggable(element, handle) {
+                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                handle.onmousedown = dragMouseDown;
 
-    </section>
-  </main>
+                function dragMouseDown(e) {
+                    e.preventDefault();
+                    pos3 = e.clientX; pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
 
-  <footer class="glass-panel mx-6 mb-6 p-3 z-10 h-32 flex flex-col shadow-lg border-t-0 rounded-t-none">
-    <div class="flex justify-between items-center border-b border-white/10 pb-1 mb-2 px-2">
-      <h3 class="text-xs text-cyan-400 font-bold uppercase tracking-widest">Global Activity Matrix / Network Feed</h3>
-      <span class="text-[10px] text-white/30 font-mono">Realtime Database Sync: ACTIVE</span>
-    </div>
-    <ul id="activity-feed" class="text-xs text-white/60 space-y-1 overflow-y-auto flex-1 font-mono px-2">
-      <li class="text-green-400">> System kernel loaded. Zero-server architecture enforced.</li>
-    </ul>
-  </footer>
+                function elementDrag(e) {
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX; pos4 = e.clientY;
+                    element.style.top = (element.offsetTop - pos2) + "px";
+                    element.style.left = (element.offsetLeft - pos1) + "px";
+                }
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
+            },
 
-    // Standardized Firebase Config Object
-    const firebaseConfig = {
-      apiKey: "AIzaSyAk_rARkhkZGriWHMWkD6vRGhd82Ko32wM",
-      authDomain: "aether-lab.firebaseapp.com",
-      databaseURL: "https://aether-lab-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "aether-lab",
-      storageBucket: "aether-lab.firebasestorage.app",
-      messagingSenderId: "1044048980464",
-      appId: "1:1044048980464:web:f44f00902acf6c4ccc5535"
-    };
+            // ==========================================
+            // SYSTEM TELEMETRY & BACKGROUND LOGIC
+            // ==========================================
+            initClock() {
+                setInterval(() => {
+                    const now = new Date();
+                    document.getElementById('tray-clock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
+                }, 1000);
+            },
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
+            initTelemetry() {
+                setInterval(() => {
+                    if(navigator.deviceMemory) {
+                        document.getElementById('tray-memory').innerText = `MEM: ${navigator.deviceMemory}GB+`;
+                    } else {
+                        document.getElementById('tray-memory').innerText = `CORES: ${navigator.hardwareConcurrency || '--'}`;
+                    }
+                    
+                    const net = document.getElementById('tray-network');
+                    if(navigator.onLine) {
+                        net.innerText = 'NET: OK';
+                        net.className = 'text-green-400';
+                    } else {
+                        net.innerText = 'NET: ERR';
+                        net.className = 'text-red-500 animate-pulse';
+                    }
+                }, 5000);
+            },
 
-    // Auth DOM Elements
-    const loginBtn = document.getElementById('login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    const userInfo = document.getElementById('user-info');
-    const userName = document.getElementById('user-name');
-    const userAvatar = document.getElementById('user-avatar');
-    
-    // Auth Logic
-    const provider = new GoogleAuthProvider();
-    loginBtn.onclick = () => signInWithPopup(auth, provider).catch(err => window.globalLogActivity(`Auth Error: ${err.message}`, 'error'));
-    logoutBtn.onclick = () => signOut(auth);
+            // ==========================================
+            // WEBGL BACKGROUND KERNEL (THREE.JS)
+            // ==========================================
+            initWebGLMatrix() {
+                const container = document.getElementById('os-matrix-bg');
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
+                
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                container.appendChild(renderer.domElement);
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loginBtn.classList.add('hidden'); userInfo.classList.remove('hidden'); userInfo.classList.add('flex');
-        userName.textContent = user.displayName; 
-        userAvatar.src = user.photoURL;
-        window.globalLogActivity(`Identity authenticated: ${user.displayName}. Access granted.`);
-      } else {
-        loginBtn.classList.remove('hidden'); userInfo.classList.add('hidden'); userInfo.classList.remove('flex');
-        window.globalLogActivity(`Identity terminated. Falling back to anonymous guest session.`);
-      }
-    });
+                // Create a massive data-grid wireframe
+                const gridGeo = new THREE.PlaneGeometry(200, 200, 40, 40);
+                const gridMat = new THREE.MeshBasicMaterial({ 
+                    color: 0x06b6d4, 
+                    wireframe: true, 
+                    transparent: true, 
+                    opacity: 0.08 
+                });
+                const grid = new THREE.Mesh(gridGeo, gridMat);
+                grid.rotation.x = -Math.PI / 2;
+                grid.position.y = -10;
+                scene.add(grid);
 
-    // Real-time Database Feed Logic
-    const activityFeed = document.getElementById('activity-feed');
-    const feedRef = ref(db, 'activity');
-    
-    // Expose logger to window for global access
-    window.globalLogActivity = function(message, type = 'info') { 
-      try { push(feedRef, { text: message, type: type, timestamp: serverTimestamp() }); } catch(e) { console.warn("DB write failed", e); }
-    };
+                camera.position.z = 20;
+                camera.position.y = 5;
 
-    onChildAdded(feedRef, (data) => {
-      const payload = data.val();
-      const li = document.createElement('li');
-      let colorClass = 'text-white/60';
-      if(payload.type === 'error') colorClass = 'text-red-400';
-      if(payload.type === 'success') colorClass = 'text-green-400';
-      
-      const time = new Date().toLocaleTimeString([], {hour12: false});
-      li.className = colorClass;
-      li.innerHTML = `<span class="text-white/30">[${time}]</span> > ${payload.text}`;
-      activityFeed.prepend(li);
-      
-      // Keep DOM lean
-      if(activityFeed.children.length > 100) activityFeed.removeChild(activityFeed.lastChild);
-    });
-  </script>
+                let time = 0;
+                function animate() {
+                    requestAnimationFrame(animate);
+                    time += 0.005;
+                    
+                    // Wavy terrain effect simulating data flow
+                    const positions = grid.geometry.attributes.position;
+                    for (let i = 0; i < positions.count; i++) {
+                        const x = positions.getX(i);
+                        const y = positions.getY(i);
+                        positions.setZ(i, Math.sin(x * 0.1 + time) * 2 + Math.cos(y * 0.1 + time) * 2);
+                    }
+                    positions.needsUpdate = true;
+                    
+                    renderer.render(scene, camera);
+                }
+                animate();
 
-  <script>
-    /**
-     * Safely logs activity globally to Firebase if available, else console.
-     * @param {string} msg 
-     * @param {string} type 'info', 'success', 'error'
-     */
-    function tryLog(msg, type = 'info') { 
-      if(window.globalLogActivity) { window.globalLogActivity(msg, type); } 
-      else { console.log(`[AETHER ${type.toUpperCase()}] ${msg}`); }
-    }
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            },
 
-    /**
-     * UI Router logic for single-file application structure.
-     */
-    const allTools = ['chat', 'image', 'voice', 'audio', 'cipher', 'stego', 'chroma', 'peer', 'sysscan', 'vault', 'qrcode'];
-    
-    function openTool(toolName) {
-      document.getElementById('default-view').classList.add('hidden');
-      
-      allTools.forEach(t => {
-        const el = document.getElementById('tool-' + t);
-        if(el) { el.classList.add('hidden'); el.classList.remove('flex'); }
-      });
-      
-      const activeEl = document.getElementById('tool-' + toolName);
-      if(activeEl) {
-        activeEl.classList.remove('hidden'); 
-        activeEl.classList.add('flex');
-        
-        // Trigger specific init scripts based on active view
-        if(toolName === 'audio' && window.audioCanvasSetup) window.resizeAudioCanvas();
-        if(toolName === 'sysscan') runSysScan();
-        if(toolName === 'vault') loadVault();
-        
-        tryLog(`Module switched: [${toolName.toUpperCase()}]`, 'success');
-      }
-    }
+            // ==========================================
+            // HTML TEMPLATES FOR WINDOWS
+            // ==========================================
+            templates: {
+                diagnostics: () => `
+                    <div class="font-mono text-sm space-y-4">
+                        <div class="border-b border-white/10 pb-2 mb-4 text-cyan-400 font-bold">AETHER KERNEL V3 DIAGNOSTICS</div>
+                        <div class="flex justify-between"><span class="text-white/50">User Agent:</span> <span class="truncate ml-4 text-green-300">${navigator.userAgent.substring(0, 30)}...</span></div>
+                        <div class="flex justify-between"><span class="text-white/50">Logical Cores:</span> <span class="text-green-300">${navigator.hardwareConcurrency || 'Unknown'}</span></div>
+                        <div class="flex justify-between"><span class="text-white/50">Memory Bound:</span> <span class="text-green-300">${navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Restricted'}</span></div>
+                        <div class="flex justify-between"><span class="text-white/50">Web Worker:</span> <span class="text-green-300 animate-pulse">Online & Attached</span></div>
+                        <div class="flex justify-between"><span class="text-white/50">Service Worker:</span> <span class="text-green-300">Blob Generated</span></div>
+                        
+                        <div class="mt-8 p-4 bg-black/50 border border-white/10 rounded-lg text-white/70 text-xs leading-relaxed">
+                            Base OS architecture loaded. The Floating Window Manager and WebGL matrix are operational. The single file has successfully spawned background threads.
+                        </div>
+                    </div>
+                `
+            }
+        };
 
-    // Utility: Copy to Clipboard
-    function copyToClipboard(elementId) {
-      const el = document.getElementById(elementId);
-      el.select();
-      document.execCommand('copy');
-      tryLog('Data copied to system clipboard.', 'success');
-    }
-  </script>
-
-  <script>
-    async function sendChatMessage() {
-      const inputEl = document.getElementById('chat-input');
-      const outputEl = document.getElementById('chat-output');
-      const txt = inputEl.value.trim();
-      
-      if (!txt) return;
-      
-      // Render User Input
-      outputEl.innerHTML += `
-        <div class="flex items-start gap-4 flex-row-reverse">
-          <div class="w-8 h-8 rounded bg-cyan-600/30 border border-cyan-500/50 flex items-center justify-center text-cyan-300 font-bold">U</div>
-          <div class="flex-1 bg-black/40 border border-cyan-500/20 px-5 py-3 rounded-xl rounded-tr-none text-cyan-100 text-right">
-            ${txt}
-          </div>
-        </div>`;
-      
-      inputEl.value = '';
-      const loaderId = 'load-' + Date.now();
-      
-      // Render Loader
-      outputEl.innerHTML += `
-        <div id="${loaderId}" class="flex items-start gap-4">
-          <div class="w-8 h-8 rounded bg-blue-600/30 border border-blue-500/50 flex items-center justify-center text-blue-300">AI</div>
-          <div class="bg-black/40 border border-blue-500/20 px-5 py-3 rounded-xl rounded-tl-none text-blue-100 animate-pulse">
-            Processing algorithmic response...
-          </div>
-        </div>`;
-      
-      outputEl.scrollTop = outputEl.scrollHeight;
-      
-      try {
-        const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(txt)}`);
-        const resultText = await res.text();
-        
-        document.getElementById(loaderId).remove();
-        
-        // Render Final Text
-        outputEl.innerHTML += `
-          <div class="flex items-start gap-4 mb-4">
-            <div class="w-8 h-8 rounded bg-blue-600/30 border border-blue-500/50 flex items-center justify-center text-blue-300">AI</div>
-            <div class="flex-1 bg-black/40 border border-blue-500/20 px-5 py-3 rounded-xl rounded-tl-none text-blue-100 whitespace-pre-wrap leading-relaxed shadow-lg">
-              ${resultText}
-            </div>
-          </div>`;
-          
-        tryLog(`AI sequence processed successfully.`);
-      } catch (err) { 
-        document.getElementById(loaderId).remove(); 
-        outputEl.innerHTML += `<div class="text-red-400 font-bold">Fatal Error: Connection to AI inference node lost.</div>`; 
-        tryLog(`AI fetch failed: ${err.message}`, 'error');
-      }
-      
-      outputEl.scrollTop = outputEl.scrollHeight;
-    }
-    
-    // Bind Enter key
-    document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
-  </script>
-
-  <script>
-    function generateImage() {
-      const input = document.getElementById('image-input').value.trim();
-      if (!input) return;
-      
-      const placeholder = document.getElementById('image-placeholder');
-      const loader = document.getElementById('image-loader');
-      const imgEl = document.getElementById('result-image');
-      
-      placeholder.classList.add('hidden');
-      imgEl.classList.add('hidden');
-      loader.classList.remove('hidden');
-      
-      tryLog(`Requesting synthesis for visual matrix: "${input}"`);
-      
-      // Using nologo flag to keep image clean per the limitless architecture
-      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}?seed=${Math.floor(Math.random()*100000)}&width=1024&height=1024&nologo=true`;
-      
-      const tempImg = new Image();
-      tempImg.onload = () => { 
-        imgEl.src = url; 
-        loader.classList.add('hidden'); 
-        imgEl.classList.remove('hidden');
-        tryLog(`Visual matrix synthesized and rendered.`, 'success');
-      };
-      tempImg.onerror = () => {
-        loader.classList.add('hidden');
-        placeholder.classList.remove('hidden');
-        tryLog(`Failed to fetch synthesized image.`, 'error');
-      }
-      tempImg.src = url;
-    }
-    
-    document.getElementById('image-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') generateImage(); });
-  </script>
-
-  <script>
-    /**
-     * Implements bidirectional conversational interface.
-     * Uses SpeechRecognition for input -> Pollinations for LLM -> SpeechSynthesis for output.
-     */
-    let recognition;
-    let isListening = false;
-    
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRec();
-      recognition.continuous = false; // Stop after one phrase to process
-      recognition.interimResults = false;
-      
-      recognition.onstart = () => {
-        const btn = document.getElementById('voice-btn');
-        btn.classList.replace('bg-cyan-900/30', 'bg-red-900/50');
-        btn.classList.replace('border-cyan-500/50', 'border-red-500');
-        btn.querySelector('div').classList.replace('bg-cyan-500/20', 'bg-red-500/40');
-        
-        document.getElementById('voice-status').innerText = "Recording acoustic telemetry...";
-        document.getElementById('voice-status').classList.replace('text-cyan-400', 'text-red-400');
-        tryLog('Acoustic link established. Listening...', 'info');
-      };
-      
-      recognition.onresult = async (event) => {
-        const transcript = event.results[0][0].transcript;
-        const box = document.getElementById('voice-transcript-box');
-        
-        box.innerHTML += `
-          <div class="text-cyan-100 border-l-2 border-cyan-500 pl-3 py-1 bg-cyan-900/20 rounded">
-            <span class="text-cyan-500/50 text-xs block mb-1">USER INPUT</span>
-            ${transcript}
-          </div>`;
-        box.scrollTop = box.scrollHeight;
-        
-        tryLog(`Voice recognized: "${transcript}"`);
-        
-        // Fetch AI Response for voice
-        try {
-          const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent("Give a short, conversational, 1-2 sentence response to: " + transcript)}`);
-          const reply = await res.text();
-          
-          box.innerHTML += `
-            <div class="text-purple-100 border-l-2 border-purple-500 pl-3 py-1 bg-purple-900/20 rounded ml-4 mt-2">
-              <span class="text-purple-500/50 text-xs block mb-1">SYSTEM SYNTHESIS</span>
-              ${reply}
-            </div>`;
-          box.scrollTop = box.scrollHeight;
-          
-          // Vocalize response
-          const utterance = new SpeechSynthesisUtterance(reply);
-          utterance.pitch = 0.9;
-          utterance.rate = 1.05;
-          // Look for a female/assistive voice if available
-          const voices = window.speechSynthesis.getVoices();
-          if(voices.length > 0) {
-            const preferred = voices.find(v => v.name.includes('Female') || v.name.includes('Google US'));
-            if(preferred) utterance.voice = preferred;
-          }
-          window.speechSynthesis.speak(utterance);
-          
-        } catch(e) {
-          tryLog(`Vocal Link Network Error: ${e.message}`, 'error');
-        }
-      };
-      
-      recognition.onend = () => {
-        isListening = false;
-        const btn = document.getElementById('voice-btn');
-        btn.classList.replace('bg-red-900/50', 'bg-cyan-900/30');
-        btn.classList.replace('border-red-500', 'border-cyan-500/50');
-        btn.querySelector('div').classList.replace('bg-red-500/40', 'bg-cyan-500/20');
-        
-        document.getElementById('voice-status').innerText = "Standby.";
-        document.getElementById('voice-status').classList.replace('text-red-400', 'text-cyan-400');
-      };
-      
-      // Preload voices
-      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-    }
-
-    function toggleVoice() {
-      if(!recognition) {
-        alert("Web Speech API not supported in this browser topology.");
-        tryLog('Web Speech API unsupported.', 'error');
-        return;
-      }
-      if(isListening) { 
-        recognition.stop(); 
-      } else { 
-        recognition.start(); 
-        isListening = true; 
-      }
-    }
-  </script>
-
-  <script>
-    /**
-     * Highly performant audio visualizer operating natively on the Canvas matrix.
-     */
-    let audioCtx, analyserNode, dataArray, animationId;
-    let currentAudioMode = 'bar'; // 'bar' or 'wave'
-
-    async function initAudio() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        document.getElementById('start-audio-btn').classList.add('hidden');
-        
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
-        analyserNode = audioCtx.createAnalyser();
-        
-        const source = audioCtx.createMediaStreamSource(stream);
-        source.connect(analyserNode); 
-        
-        analyserNode.fftSize = 512; 
-        dataArray = new Uint8Array(analyserNode.frequencyBinCount);
-        
-        setupAudioCanvas(); 
-        drawAudio();
-        tryLog('Hardware microphone patched into WebAudio matrix.', 'success');
-      } catch(e) {
-        tryLog(`Audio hardware access denied: ${e.message}`, 'error');
-        alert("Microphone access is required for Void Resonance.");
-      }
-    }
-
-    function setupAudioCanvas() {
-      const canvas = document.getElementById('audio-canvas'); 
-      window.audioCanvasSetup = true;
-      window.resizeAudioCanvas = () => { 
-        const parent = canvas.parentElement;
-        canvas.width = parent.clientWidth; 
-        canvas.height = parent.clientHeight; 
-      };
-      window.resizeAudioCanvas(); 
-      window.addEventListener('resize', window.resizeAudioCanvas);
-    }
-    
-    function setAudioMode(mode) {
-      currentAudioMode = mode;
-      tryLog(`Audio visualizer mode shifted to: ${mode}`);
-    }
-
-    function drawAudio() {
-      if(!audioCtx) return;
-      const canvas = document.getElementById('audio-canvas');
-      const ctx = canvas.getContext('2d'); 
-      
-      animationId = requestAnimationFrame(drawAudio); 
-      
-      // Clear with slight trailing effect
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      if(currentAudioMode === 'bar') {
-        analyserNode.getByteFrequencyData(dataArray);
-        const barWidth = (canvas.width / dataArray.length) * 2.5;
-        let x = 0;
-        
-        for(let i = 0; i < dataArray.length; i++) {
-          const barHeight = dataArray[i] * 1.5; 
-          
-          // Dynamic color based on frequency height
-          const r = barHeight + (25 * (i/dataArray.length));
-          const g = 250 * (i/dataArray.length);
-          const b = 50;
-          
-          ctx.fillStyle = `rgb(${r},${g},${b})`; 
-          ctx.shadowBlur = 10; 
-          ctx.shadowColor = `rgb(${r},${g},${b})`;
-          
-          ctx.fillRect(x, canvas.height - barHeight/2, barWidth, barHeight/2); 
-          x += barWidth + 1;
-        }
-      } 
-      else if (currentAudioMode === 'wave') {
-        analyserNode.getByteTimeDomainData(dataArray);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = '#10b981'; // Emerald
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = '#10b981';
-        ctx.beginPath();
-        
-        const sliceWidth = canvas.width * 1.0 / dataArray.length;
-        let x = 0;
-        
-        for(let i = 0; i < dataArray.length; i++) {
-          const v = dataArray[i] / 128.0;
-          const y = v * canvas.height/2;
-          if(i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-          x += sliceWidth;
-        }
-        ctx.lineTo(canvas.width, canvas.height/2);
-        ctx.stroke();
-      }
-    }
-  </script>
-
-  <script>
-    /**
-     * Executes cryptographic operations natively.
-     * Includes AES-GCM encryption which requires specific buffer conversions.
-     */
-    async function runCipher(action) {
-      const input = document.getElementById('cipher-input').value;
-      const keyInput = document.getElementById('aes-key').value;
-      const output = document.getElementById('cipher-output');
-      
-      if (!input) return;
-      
-      try {
-        if (action === 'b64-enc') {
-          output.value = btoa(unescape(encodeURIComponent(input)));
-          tryLog(`Base64 Encoding executed.`);
-        } 
-        else if (action === 'b64-dec') {
-          output.value = decodeURIComponent(escape(atob(input)));
-          tryLog(`Base64 Decoding executed.`);
-        } 
-        else if (action === 'sha256') {
-          const msgBuffer = new TextEncoder().encode(input);
-          const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-          const hashArray = Array.from(new Uint8Array(hashBuffer));
-          output.value = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-          tryLog(`SHA-256 Hashing executed.`);
-        }
-        else if (action === 'aes-enc' || action === 'aes-dec') {
-          if(!keyInput) return alert("AES-GCM requires a secret key.");
-          
-          // Derive cryptographic key from password string via SHA-256 for sizing
-          const keyMaterial = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(keyInput));
-          const cryptoKey = await crypto.subtle.importKey(
-            "raw", keyMaterial, "AES-GCM", false, ["encrypt", "decrypt"]
-          );
-          
-          // Fixed IV for demonstration (In production, IV must be random per encryption)
-          const iv = new Uint8Array([23, 45, 67, 89, 12, 34, 56, 78, 90, 12, 34, 56]);
-
-          if (action === 'aes-enc') {
-            const encoded = new TextEncoder().encode(input);
-            const cipherBuffer = await crypto.subtle.encrypt({name: "AES-GCM", iv: iv}, cryptoKey, encoded);
-            
-            // Convert ArrayBuffer to Base64 for display
-            let binary = '';
-            const bytes = new Uint8Array(cipherBuffer);
-            for (let i = 0; i < bytes.byteLength; i++) { binary += String.fromCharCode(bytes[i]); }
-            output.value = window.btoa(binary);
-            tryLog(`AES-GCM Encryption executed.`);
-          } 
-          else if (action === 'aes-dec') {
-            // Convert Base64 back to ArrayBuffer
-            const binaryString = window.atob(input);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) { bytes[i] = binaryString.charCodeAt(i); }
-            
-            const plainBuffer = await crypto.subtle.decrypt({name: "AES-GCM", iv: iv}, cryptoKey, bytes);
-            output.value = new TextDecoder().decode(plainBuffer);
-            tryLog(`AES-GCM Decryption executed.`);
-          }
-        }
-      } catch (e) {
-        output.value = `[ERROR]: Algorithmic failure. Invalid input, corrupted cipher, or incorrect key.\n\nStack: ${e.message}`;
-        tryLog(`Cipher Core error: ${e.message}`, 'error');
-      }
-    }
-  </script>
-
-  <script>
-    /**
-     * Steganography engine utilizing Least Significant Bit insertion.
-     * Operates securely within the browser's local execution environment.
-     */
-    let stegoImageInstance = new Image();
-    
-    document.getElementById('stego-upload').addEventListener('change', function(e) {
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        stegoImageInstance.onload = function() {
-          const canvas = document.getElementById('stego-canvas');
-          canvas.width = stegoImageInstance.width; 
-          canvas.height = stegoImageInstance.height;
-          
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(stegoImageInstance, 0, 0);
-          
-          canvas.classList.remove('hidden'); 
-          document.getElementById('stego-placeholder').classList.add('hidden');
-          
-          // Setup Loupe Hover Effect
-          canvas.onmousemove = function(ev) {
-            const rect = canvas.getBoundingClientRect();
-            // Calculate scale based on physical vs logical canvas size
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const x = (ev.clientX - rect.left) * scaleX;
-            const y = (ev.clientY - rect.top) * scaleY;
-            
-            const p = ctx.getImageData(x, y, 1, 1).data;
-            document.getElementById('stego-loupe').classList.remove('hidden');
-            document.getElementById('stego-r').innerText = p[0];
-            document.getElementById('stego-g').innerText = p[1];
-            document.getElementById('stego-b').innerText = p[2];
-            document.getElementById('stego-a').innerText = p[3];
-          };
-          canvas.onmouseleave = () => document.getElementById('stego-loupe').classList.add('hidden');
-          
-          tryLog(`Carrier image loaded into canvas matrix. [${canvas.width}x${canvas.height}]`);
-        }
-        stegoImageInstance.src = event.target.result;
-      }
-      reader.readAsDataURL(e.target.files[0]);
-    });
-
-    function encodeStego() {
-      const payload = document.getElementById('stego-secret').value;
-      if(!payload) return alert("Payload required.");
-      
-      const msg = payload + '\0'; // Null terminator crucial for extraction
-      const canvas = document.getElementById('stego-canvas');
-      const ctx = canvas.getContext('2d');
-      
-      if(canvas.width === 0) return alert("Carrier image missing.");
-      
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imgData.data;
-      
-      // String to Binary Array (8 bits per char)
-      let msgBits = [];
-      for(let i = 0; i < msg.length; i++) {
-        let bin = msg.charCodeAt(i).toString(2).padStart(8, '0');
-        for(let j = 0; j < bin.length; j++) msgBits.push(parseInt(bin[j]));
-      }
-      
-      // Capacity check (1 bit per pixel embedded in Red channel)
-      if(msgBits.length > data.length / 4) return alert("Payload too massive for this carrier image.");
-      
-      // Inject bits into the 0th bit of the Red channel (Indices 0, 4, 8, 12...)
-      for(let i = 0; i < msgBits.length; i++) {
-        data[i*4] = (data[i*4] & ~1) | msgBits[i];
-      }
-      
-      ctx.putImageData(imgData, 0, 0);
-      tryLog(`Steganographic payload embedded successfully via LSB manipulation.`, 'success');
-      alert("Payload injected into Canvas array.");
-    }
-
-    function decodeStego() {
-      const canvas = document.getElementById('stego-canvas');
-      const ctx = canvas.getContext('2d');
-      
-      if(canvas.width === 0) return alert("Image missing.");
-      
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imgData.data;
-      
-      let bits = [];
-      let decodedStr = "";
-      
-      for(let i = 0; i < data.length; i += 4) {
-        bits.push(data[i] & 1); // Extract lowest bit from Red channel
-        
-        if(bits.length === 8) {
-          let charCode = parseInt(bits.join(''), 2);
-          if(charCode === 0) break; // Found null terminator
-          decodedStr += String.fromCharCode(charCode);
-          bits = [];
-        }
-      }
-      
-      document.getElementById('stego-secret').value = decodedStr || "[NO VALID PAYLOAD DETECTED IN NOISE]";
-      tryLog(`Canvas array scanned for LSB payloads.`);
-    }
-    
-    function downloadStegoImage() {
-      const canvas = document.getElementById('stego-canvas');
-      if(canvas.width === 0) return;
-      const link = document.createElement('a');
-      link.download = 'aether-forged.png';
-      link.href = canvas.toDataURL("image/png"); // Must be PNG to prevent compression destroying LSB
-      link.click();
-      tryLog(`Forged image exported to local storage.`, 'success');
-    }
-  </script>
-
-  <script>
-    /**
-     * Advanced Median Cut Algorithm for Color Quantization
-     * Eliminates need for backend python processing by mapping colors locally.
-     */
-    document.getElementById('chroma-upload').addEventListener('change', function(e) {
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.getElementById('chroma-canvas');
-          // Scale down massive images to prevent freezing the JS thread
-          const MAX_DIM = 200;
-          let w = img.width, h = img.height;
-          if (w > h && w > MAX_DIM) { h *= MAX_DIM/w; w = MAX_DIM; }
-          else if (h > MAX_DIM) { w *= MAX_DIM/h; h = MAX_DIM; }
-          
-          canvas.width = Math.floor(w); 
-          canvas.height = Math.floor(h);
-          
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          document.getElementById('chroma-placeholder').classList.add('hidden');
-          
-          // Extract mathematical color data
-          extractPaletteMedianCut(ctx, canvas.width, canvas.height);
-        }
-        img.src = event.target.result;
-      }
-      reader.readAsDataURL(e.target.files[0]);
-    });
-
-    /**
-     * Core Median Cut mathematical implementation.
-     */
-    function extractPaletteMedianCut(ctx, w, h) {
-      tryLog('Initiating Median Cut algorithmic extraction...');
-      
-      const imgData = ctx.getImageData(0, 0, w, h).data;
-      let pixels = [];
-      
-      // Step 1: Map all pixel data into array of objects (geometric points)
-      // Step interval of 16 to vastly improve performance (sampling)
-      for(let i = 0; i < imgData.length; i += 16) { 
-        pixels.push({ r: imgData[i], g: imgData[i+1], b: imgData[i+2] });
-      }
-
-      // Step 2: Recursive subdivision function
-      function medianCut(pixelArr, depth) {
-        if(depth === 0 || pixelArr.length === 0) {
-          // Base case: average the bucket
-          let tr=0, tg=0, tb=0;
-          pixelArr.forEach(p => { tr+=p.r; tg+=p.g; tb+=p.b; });
-          const len = pixelArr.length || 1;
-          return [{ r: Math.round(tr/len), g: Math.round(tg/len), b: Math.round(tb/len) }];
-        }
-
-        // Find channel with biggest range
-        let rMin=255, rMax=0, gMin=255, gMax=0, bMin=255, bMax=0;
-        pixelArr.forEach(p => {
-          if(p.r < rMin) rMin = p.r; if(p.r > rMax) rMax = p.r;
-          if(p.g < gMin) gMin = p.g; if(p.g > gMax) gMax = p.g;
-          if(p.b < bMin) bMin = p.b; if(p.b > bMax) bMax = p.b;
-        });
-
-        const rRange = rMax - rMin;
-        const gRange = gMax - gMin;
-        const bRange = bMax - bMin;
-        
-        // Sort by dominant channel
-        let sortChannel = 'r';
-        if(gRange >= rRange && gRange >= bRange) sortChannel = 'g';
-        if(bRange >= rRange && bRange >= gRange) sortChannel = 'b';
-        
-        pixelArr.sort((a, b) => a[sortChannel] - b[sortChannel]);
-
-        // Split exactly in half
-        const mid = Math.floor(pixelArr.length / 2);
-        return [
-          ...medianCut(pixelArr.slice(0, mid), depth - 1),
-          ...medianCut(pixelArr.slice(mid), depth - 1)
-        ];
-      }
-
-      // Depth of 3 yields 8 distinct centroids (2^3)
-      const centroids = medianCut(pixels, 3);
-      
-      // Step 3: Render Data to DOM
-      const out = document.getElementById('palette-output');
-      out.innerHTML = '';
-      
-      centroids.forEach(c => {
-        const hex = `#${c.r.toString(16).padStart(2,'0')}${c.g.toString(16).padStart(2,'0')}${c.b.toString(16).padStart(2,'0')}`.toUpperCase();
-        
-        out.innerHTML += `
-          <div class="h-16 rounded-lg shadow-lg flex items-end p-2 font-mono text-xs mix-blend-screen cursor-pointer hover:scale-105 transition border border-white/20" 
-               style="background: rgb(${c.r},${c.g},${c.b});"
-               onclick="navigator.clipboard.writeText('${hex}'); tryLog('Centroid HEX copied: ${hex}', 'success')">
-            <span class="bg-black/80 text-white px-2 py-1 rounded w-full text-center tracking-widest">${hex}</span>
-          </div>
-        `;
-      });
-      
-      tryLog('Chroma Node extraction complete.', 'success');
-    }
-  </script>
-
-  <script>
-    /**
-     * Complete WebRTC Peer-to-Peer Implementation based on Limitless Report.
-     * Establishes DataChannel using SCTP protocol.
-     */
-    let rtcPeerConnection;
-    let dataChannel;
-    
-    // Public STUN servers for NAT traversal
-    const rtcConfig = {
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-    };
-
-    function initRTCPeer() {
-      rtcPeerConnection = new RTCPeerConnection(rtcConfig);
-      
-      // Handle ICE Candidates natively
-      rtcPeerConnection.onicecandidate = e => {
-        if(e.candidate) {
-          // In a fully automated app, this would route via Firebase.
-          // Here we serialize the full local description to the UI for manual sharing.
-          document.getElementById('rtc-local-sdp').value = btoa(JSON.stringify(rtcPeerConnection.localDescription));
-        }
-      };
-
-      // Handle connection state changes
-      rtcPeerConnection.onconnectionstatechange = () => {
-        const state = rtcPeerConnection.connectionState;
-        const ind = document.getElementById('rtc-status-indicator');
-        const txt = document.getElementById('rtc-status-text');
-        
-        txt.innerText = state.toUpperCase();
-        tryLog(`WebRTC Socket State: ${state.toUpperCase()}`);
-        
-        if(state === 'connected') {
-          ind.classList.replace('bg-red-500', 'bg-green-500');
-          txt.classList.replace('text-red-400', 'text-green-400');
-          document.getElementById('rtc-msg-input').disabled = false;
-          document.getElementById('rtc-send-btn').disabled = false;
-          document.getElementById('rtc-send-btn').classList.replace('bg-white/10', 'bg-red-600');
-          document.getElementById('rtc-send-btn').classList.replace('text-white/50', 'text-white');
-        }
-      };
-
-      // Handle incoming DataChannels (for Receiver)
-      rtcPeerConnection.ondatachannel = event => {
-        dataChannel = event.channel;
-        setupDataChannelEvents();
-      };
-    }
-
-    function setupDataChannelEvents() {
-      dataChannel.onopen = () => {
-        appendRTCLog('SCTP Data Channel Opened. Transport secure.');
-      };
-      
-      dataChannel.onmessage = event => {
-        appendRTCLog(`[REMOTE]: ${event.data}`);
-      };
-      
-      // Implement backpressure flow control as mentioned in the report
-      dataChannel.bufferedAmountLowThreshold = 65536; // 64KB threshold
-      dataChannel.onbufferedamountlow = () => {
-        // Required for chunking algorithms if we were streaming massive files
-        console.log("Buffer dropped below threshold. Ready for more chunks.");
-      };
-    }
-
-    async function createRTCDataOffer() {
-      initRTCPeer();
-      
-      // Create reliable data channel
-      dataChannel = rtcPeerConnection.createDataChannel('aether-limitless-channel', {
-        ordered: true
-      });
-      setupDataChannelEvents();
-
-      const offer = await rtcPeerConnection.createOffer();
-      await rtcPeerConnection.setLocalDescription(offer);
-      appendRTCLog('SDP Offer generated. Awaiting ICE aggregation...');
-      tryLog('WebRTC Offer synthesized.');
-    }
-
-    async function acceptRTCDataAnswer() {
-      const remoteSdpStr = document.getElementById('rtc-remote-sdp').value.trim();
-      if(!remoteSdpStr) return alert("Remote SDP required.");
-      
-      try {
-        const remoteDesc = JSON.parse(atob(remoteSdpStr));
-        
-        if(!rtcPeerConnection) {
-          // If we are answering an offer
-          initRTCPeer();
-          await rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc));
-          const answer = await rtcPeerConnection.createAnswer();
-          await rtcPeerConnection.setLocalDescription(answer);
-          document.getElementById('rtc-local-sdp').value = btoa(JSON.stringify(rtcPeerConnection.localDescription));
-          appendRTCLog('SDP Answer generated. Share back to initiator.');
-          tryLog('WebRTC Answer synthesized.');
-        } else {
-          // If we created the offer and are now setting the remote answer
-          await rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc));
-          appendRTCLog('Remote SDP ingested. Negotiating tunnel...');
-        }
-      } catch(e) {
-        alert("Invalid SDP payload format.");
-        tryLog(`SDP Parsing Error: ${e.message}`, 'error');
-      }
-    }
-
-    function sendRTCMsg() {
-      const input = document.getElementById('rtc-msg-input');
-      const val = input.value.trim();
-      if(!val || !dataChannel || dataChannel.readyState !== 'open') return;
-      
-      dataChannel.send(val);
-      appendRTCLog(`[LOCAL]: ${val}`);
-      input.value = '';
-    }
-
-    function appendRTCLog(msg) {
-      const logBox = document.getElementById('rtc-log');
-      logBox.innerHTML += `<div>> ${msg}</div>`;
-      logBox.scrollTop = logBox.scrollHeight;
-    }
-    
-    document.getElementById('rtc-msg-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendRTCMsg(); });
-  </script>
-
-  <script>
-    /**
-     * Extracts exhaustive system data using browser APIs.
-     */
-    function runSysScan() {
-      const out = document.getElementById('sys-scan-output');
-      
-      // Trigger UI Scanline animation
-      const globalScanner = document.getElementById('global-scanner');
-      globalScanner.classList.remove('hidden');
-      setTimeout(() => globalScanner.classList.add('hidden'), 4000);
-
-      let html = `<div class="mb-6 text-green-300 font-bold uppercase tracking-widest text-lg border-b border-green-500/30 pb-2">Diagnostic Data Extracted</div>`;
-      
-      // Deep WebGL capability extraction
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      let gpuVendor = "Restricted";
-      let gpuRenderer = "Restricted";
-      
-      if(gl) {
-        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-        if(debugInfo) {
-          gpuVendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-          gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-        }
-      }
-
-      const data = {
-        "Platform Architecture": navigator.platform || "Unknown",
-        "Hardware Concurrency (Cores)": navigator.hardwareConcurrency || "Unknown",
-        "Device Memory Buffer": navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Restricted",
-        "Network Link Status": navigator.onLine ? "ONLINE" : "OFFLINE",
-        "Network Transport Type": navigator.connection ? navigator.connection.effectiveType.toUpperCase() : "Unknown",
-        "Screen Matrix": `${window.screen.width} x ${window.screen.height} @ ${window.screen.colorDepth}-bit`,
-        "WebGL GPU Vendor": gpuVendor,
-        "WebGL GPU Renderer": gpuRenderer,
-        "WebRTC API Availability": (window.RTCPeerConnection) ? "SUPPORTED" : "UNSUPPORTED",
-        "Web Audio API": (window.AudioContext) ? "SUPPORTED" : "UNSUPPORTED",
-        "Timezone Node": Intl.DateTimeFormat().resolvedOptions().timeZone,
-        "User Agent Signature": navigator.userAgent,
-      };
-
-      for (const [key, value] of Object.entries(data)) {
-        html += `
-          <div class="mb-3 hover:bg-green-500/10 p-1 rounded transition">
-            <span class="text-green-500/50 text-xs uppercase tracking-widest">[${key}]</span><br>
-            <span class="text-green-200">> ${value}</span>
-          </div>`;
-      }
-      
-      html += `<div class="mt-8 text-green-300 font-bold animate-pulse text-center">END OF DIAGNOSTIC REPORT</div>`;
-      
-      out.innerHTML = html;
-      tryLog(`Sys-Scan Telemetry Sweep Completed.`, 'success');
-    }
-  </script>
-
-  <script>
-    function loadVault() {
-      const saved = localStorage.getItem('aether_vault_data');
-      if(saved) document.getElementById('vault-input').value = saved;
-    }
-    
-    function saveVault() {
-      localStorage.setItem('aether_vault_data', document.getElementById('vault-input').value);
-      const status = document.getElementById('vault-status');
-      status.innerText = "Syncing..."; 
-      status.classList.add('text-indigo-200');
-      
-      clearTimeout(window.vaultTimer);
-      window.vaultTimer = setTimeout(() => { 
-        status.innerText = "Auto-saved locally"; 
-        status.classList.remove('text-indigo-200'); 
-      }, 1000);
-    }
-    
-    function clearVault() {
-      if(confirm("Confirm destructive purge of Data Vault?")) {
-        localStorage.removeItem('aether_vault_data');
-        document.getElementById('vault-input').value = '';
-        tryLog("Data Vault purged.", "error");
-      }
-    }
-
-    function generateQR() {
-      const input = document.getElementById('qr-input').value.trim();
-      const qrOutput = document.getElementById('qr-output');
-      if (!input) return;
-      tryLog(`Forged new mathematical QR Matrix for URI.`);
-      qrOutput.src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(input)}&color=ffffff&bgcolor=000000`;
-    }
-    document.getElementById('qr-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') generateQR(); });
-  </script>
-
-  <script>
-    /**
-     * High-fidelity programmatic background.
-     * Uses Particle systems and geometry to simulate the "Limitless OS" environment.
-     */
-    const scene = new THREE.Scene(); 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" }); 
-    
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    document.getElementById('webgl-container').appendChild(renderer.domElement);
-    
-    // Core Geometry: Icosahedron Wireframe
-    const coreGeo = new THREE.IcosahedronGeometry(12, 1); 
-    const coreMat = new THREE.MeshBasicMaterial({ 
-      color: 0x06b6d4, // Cyan
-      wireframe: true, 
-      transparent: true, 
-      opacity: 0.05 
-    });
-    const coreMesh = new THREE.Mesh(coreGeo, coreMat); 
-    scene.add(coreMesh);
-    
-    // Particle System (Stars/Nodes)
-    const particleCount = 1500;
-    const particleGeo = new THREE.BufferGeometry();
-    const particlePos = new Float32Array(particleCount * 3);
-    
-    for(let i = 0; i < particleCount * 3; i++) {
-      // Spread particles across a wide volume
-      particlePos[i] = (Math.random() - 0.5) * 100;
-    }
-    
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
-    
-    // Using simple points material for performance in single-file app
-    const particleMat = new THREE.PointsMaterial({
-      color: 0xa855f7, // Purple
-      size: 0.15,
-      transparent: true,
-      opacity: 0.4
-    });
-    
-    const particleSystem = new THREE.Points(particleGeo, particleMat);
-    scene.add(particleSystem);
-    
-    camera.position.z = 25;
-    
-    // Animation Loop
-    let time = 0;
-    function animateMatrix() { 
-      requestAnimationFrame(animateMatrix); 
-      time += 0.002;
-      
-      // Slowly rotate structures
-      coreMesh.rotation.x += 0.001; 
-      coreMesh.rotation.y += 0.002; 
-      
-      particleSystem.rotation.y -= 0.0005;
-      particleSystem.rotation.x = Math.sin(time) * 0.1;
-      
-      // Floating effect for camera
-      camera.position.y = Math.sin(time * 2) * 2;
-      camera.lookAt(scene.position);
-      
-      renderer.render(scene, camera); 
-    } 
-    
-    animateMatrix();
-    
-    // Window Resize Handler
-    window.addEventListener('resize', () => { 
-      camera.aspect = window.innerWidth / window.innerHeight; 
-      camera.updateProjectionMatrix(); 
-      renderer.setSize(window.innerWidth, window.innerHeight); 
-    });
-  </script>
-
+        // Initialize OS on load
+        window.onload = () => AetherOS.boot();
+    </script>
 </body>
 </html>
