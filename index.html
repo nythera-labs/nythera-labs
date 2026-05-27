@@ -520,7 +520,7 @@
                         <div class="border-b border-white/10 pb-2 mb-4 text-cyan-400 font-bold">AETHER KERNEL V3 DIAGNOSTICS</div>
                         <div class="flex justify-between"><span class="text-white/50">User Agent:</span> <span class="truncate ml-4 text-green-300">${navigator.userAgent.substring(0, 30)}...</span></div>
                         <div class="flex justify-between"><span class="text-white/50">Logical Cores:</span> <span class="text-green-300">${navigator.hardwareConcurrency || 'Unknown'}</span></div>
-                        <div class="flex justify-between"><span class="text-white/50">Memory Bound:</span> <span class="text-green-300">${navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Restricted'}</span></div>
+                        <div class="flex justify-between"><span class="text-white/50">Memory Bound:</span> <span class="text-green-300">${navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Reserved'}</span></div>
                         <div class="flex justify-between"><span class="text-white/50">Web Worker:</span> <span class="text-green-300 animate-pulse">Online & Attached</span></div>
                         <div class="flex justify-between"><span class="text-white/50">Service Worker:</span> <span class="text-green-300">Blob Generated</span></div>
                         
@@ -534,6 +534,225 @@
 
         // Initialize OS on load
         window.onload = () => AetherOS.boot();
+    </script>
+
+    <script>
+        console.log('[AETHER KERNEL] Loading Part 2: Application Registry...');
+
+        // ==========================================
+        // 1. EXTEND OS TEMPLATES (The App UIs)
+        // ==========================================
+        Object.assign(AetherOS.templates, {
+            
+            aiLogic: () => `
+                <div class="flex flex-col h-full">
+                    <div id="ai-output" class="flex-1 bg-black/40 border border-white/10 rounded-lg p-4 mb-4 overflow-y-auto font-mono text-sm space-y-4 shadow-inner">
+                        <div class="text-blue-300">> LLM Node connected. Ready for input.</div>
+                    </div>
+                    <div class="flex gap-2 shrink-0">
+                        <input type="text" id="ai-input" class="flex-1 bg-black/60 border border-white/20 rounded p-3 text-white focus:border-cyan-400 outline-none transition font-mono text-sm" placeholder="Initialize prompt sequence..." onkeypress="if(event.key === 'Enter') AetherApps.sendChat()">
+                        <button onclick="AetherApps.sendChat()" class="bg-cyan-600/80 hover:bg-cyan-500 text-white px-6 py-2 rounded font-bold transition">EXECUTE</button>
+                    </div>
+                </div>
+            `,
+
+            cipherCore: () => `
+                <div class="flex flex-col h-full gap-4">
+                    <textarea id="cipher-input" class="w-full h-32 bg-black/40 border border-white/20 rounded p-3 text-white focus:border-yellow-400 outline-none transition font-mono text-sm resize-none" placeholder="Enter plaintext or payload..."></textarea>
+                    
+                    <div class="grid grid-cols-3 gap-2 shrink-0">
+                        <button onclick="AetherApps.runCipher('b64-enc')" class="bg-yellow-900/50 border border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-black py-2 rounded font-bold transition text-xs uppercase">B64 Encode</button>
+                        <button onclick="AetherApps.runCipher('b64-dec')" class="bg-yellow-900/50 border border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-black py-2 rounded font-bold transition text-xs uppercase">B64 Decode</button>
+                        <button onclick="AetherApps.runCipher('sha256')" class="bg-red-900/50 border border-red-600 text-red-400 hover:bg-red-600 hover:text-black py-2 rounded font-bold transition text-xs uppercase">SHA-256 Hash</button>
+                    </div>
+
+                    <div class="flex gap-2 shrink-0">
+                        <input type="password" id="cipher-key" class="w-1/2 bg-black/60 border border-white/20 rounded p-2 text-white outline-none focus:border-orange-400 font-mono text-sm" placeholder="AES Secret Key">
+                        <button onclick="AetherApps.runCipher('aes-enc')" class="flex-1 bg-orange-900/50 border border-orange-600 text-orange-400 hover:bg-orange-600 hover:text-black py-2 rounded font-bold transition text-xs uppercase">AES Encrypt</button>
+                        <button onclick="AetherApps.runCipher('aes-dec')" class="flex-1 bg-orange-900/50 border border-orange-600 text-orange-400 hover:bg-orange-600 hover:text-black py-2 rounded font-bold transition text-xs uppercase">AES Decrypt</button>
+                    </div>
+
+                    <textarea id="cipher-output" class="w-full flex-1 bg-black/80 border border-white/10 rounded p-3 text-yellow-400 font-mono text-sm break-all resize-none shadow-inner" placeholder="Cryptographic result will render here..." readonly></textarea>
+                </div>
+            `,
+
+            dataVault: () => `
+                <div class="flex flex-col h-full relative">
+                    <div class="absolute top-2 right-4 text-xs font-mono text-indigo-400/50" id="vault-status">Auto-saving...</div>
+                    <textarea id="vault-textarea" oninput="AetherApps.saveVault()" class="w-full flex-1 bg-black/40 border border-indigo-500/30 rounded-lg p-6 text-indigo-100 focus:outline-none focus:border-indigo-400 transition font-mono leading-relaxed resize-none" spellcheck="false" placeholder="Persistent LocalStorage Scratchpad..."></textarea>
+                </div>
+            `
+        });
+
+        // ==========================================
+        // 2. START MENU UI INJECTION
+        // ==========================================
+        AetherOS.initStartMenu = function() {
+            const desktop = document.getElementById('os-desktop');
+            
+            const menu = document.createElement('div');
+            menu.id = 'start-menu';
+            menu.className = 'absolute bottom-[10px] left-4 w-64 bg-black/80 backdrop-blur-xl border border-white/10 rounded-xl p-4 flex flex-col gap-2 shadow-2xl transition-all duration-200 opacity-0 pointer-events-none scale-95 origin-bottom-left z-[9999]';
+            
+            menu.innerHTML = `
+                <div class="text-xs text-white/40 font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2">Installed Modules</div>
+                <button onclick="AetherApps.launchAI()" class="w-full text-left px-4 py-2 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white"><span class="text-blue-400">🤖</span> AI Logic Core</button>
+                <button onclick="AetherApps.launchCipher()" class="w-full text-left px-4 py-2 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white"><span class="text-yellow-400">🔐</span> Cipher Core</button>
+                <button onclick="AetherApps.launchVault()" class="w-full text-left px-4 py-2 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white"><span class="text-indigo-400">💾</span> Data Vault</button>
+                <button onclick="AetherOS.createWindow('sys-diag', 'System Diagnostics', AetherOS.templates.diagnostics(), 600, 400); AetherOS.toggleStartMenu();" class="w-full text-left px-4 py-2 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white"><span class="text-green-400">📟</span> Sys Diagnostics</button>
+            `;
+            
+            desktop.appendChild(menu);
+
+            // Bind Toggle
+            document.getElementById('start-menu-btn').onclick = (e) => {
+                e.stopPropagation();
+                this.toggleStartMenu();
+            };
+
+            // Close menu if clicked outside
+            document.addEventListener('mousedown', (e) => {
+                if(menu.classList.contains('opacity-100') && !menu.contains(e.target) && e.target.id !== 'start-menu-btn') {
+                    this.toggleStartMenu(false);
+                }
+            });
+        };
+
+        AetherOS.toggleStartMenu = function(forceState = null) {
+            const menu = document.getElementById('start-menu');
+            const isOpaque = menu.classList.contains('opacity-100');
+            const shouldShow = forceState !== null ? forceState : !isOpaque;
+            
+            if (shouldShow) {
+                menu.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                menu.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+            } else {
+                menu.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                menu.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+            }
+        };
+
+        // ==========================================
+        // 3. APPLICATION LOGIC CONTROLLER
+        // ==========================================
+        window.AetherApps = {
+            
+            // --- AI Core ---
+            launchAI: () => {
+                AetherOS.createWindow('ai-core', 'AI Logic Core', AetherOS.templates.aiLogic(), 500, 600);
+                AetherOS.toggleStartMenu(false);
+            },
+            
+            sendChat: async () => {
+                const inputEl = document.getElementById('ai-input');
+                const outputEl = document.getElementById('ai-output');
+                const txt = inputEl.value.trim();
+                if (!txt) return;
+
+                // Add User message
+                outputEl.innerHTML += `<div class="text-cyan-100 text-right mb-2"><span class="bg-cyan-900/40 px-3 py-1 rounded inline-block border border-cyan-500/30">${txt}</span></div>`;
+                inputEl.value = '';
+                
+                const loaderId = 'loader-' + Date.now();
+                outputEl.innerHTML += `<div id="${loaderId}" class="text-blue-300 animate-pulse mb-2">> Fetching algorithmic synthesis...</div>`;
+                outputEl.scrollTop = outputEl.scrollHeight;
+
+                try {
+                    const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(txt)}`);
+                    const result = await res.text();
+                    document.getElementById(loaderId).remove();
+                    outputEl.innerHTML += `<div class="text-blue-100 bg-blue-900/20 p-3 rounded border border-blue-500/20 mb-4 whitespace-pre-wrap">${result}</div>`;
+                } catch(e) {
+                    document.getElementById(loaderId).remove();
+                    outputEl.innerHTML += `<div class="text-red-400 mb-4">> Connection to inference node severed.</div>`;
+                }
+                outputEl.scrollTop = outputEl.scrollHeight;
+            },
+
+            // --- Cipher Core ---
+            launchCipher: () => {
+                AetherOS.createWindow('cipher', 'Cipher Core', AetherOS.templates.cipherCore(), 600, 500);
+                AetherOS.toggleStartMenu(false);
+            },
+
+            runCipher: async (action) => {
+                const input = document.getElementById('cipher-input').value;
+                const keyInput = document.getElementById('cipher-key').value;
+                const output = document.getElementById('cipher-output');
+                if (!input) return;
+
+                try {
+                    if (action === 'b64-enc') {
+                        output.value = btoa(unescape(encodeURIComponent(input)));
+                    } else if (action === 'b64-dec') {
+                        output.value = decodeURIComponent(escape(atob(input)));
+                    } else if (action === 'sha256') {
+                        // Hand off to our Web Worker from Part 1
+                        const taskId = Date.now();
+                        output.value = "Offloading to Web Worker thread...";
+                        
+                        // Setup one-time listener for this task
+                        const workerHandler = (e) => {
+                            if(e.data.id === taskId) {
+                                output.value = e.data.result;
+                                AetherOS.cryptoWorker.removeEventListener('message', workerHandler);
+                            }
+                        };
+                        AetherOS.cryptoWorker.addEventListener('message', workerHandler);
+                        AetherOS.cryptoWorker.postMessage({ action: 'SHA-256', payload: input, id: taskId });
+                    } else if (action === 'aes-enc' || action === 'aes-dec') {
+                        if(!keyInput) return alert("AES requires a Secret Key.");
+                        const keyMaterial = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(keyInput));
+                        const cryptoKey = await crypto.subtle.importKey("raw", keyMaterial, "AES-GCM", false, ["encrypt", "decrypt"]);
+                        const iv = new Uint8Array([1,2,3,4,5,6,7,8,9,10,11,12]); // Static for demo
+
+                        if (action === 'aes-enc') {
+                            const encoded = new TextEncoder().encode(input);
+                            const cipherBuffer = await crypto.subtle.encrypt({name: "AES-GCM", iv: iv}, cryptoKey, encoded);
+                            let binary = '';
+                            const bytes = new Uint8Array(cipherBuffer);
+                            for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+                            output.value = window.btoa(binary);
+                        } else {
+                            const binaryString = window.atob(input);
+                            const bytes = new Uint8Array(binaryString.length);
+                            for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+                            const plainBuffer = await crypto.subtle.decrypt({name: "AES-GCM", iv: iv}, cryptoKey, bytes);
+                            output.value = new TextDecoder().decode(plainBuffer);
+                        }
+                    }
+                } catch(e) {
+                    output.value = `[ERROR]: Algorithmic failure.\nStack: ${e.message}`;
+                }
+            },
+
+            // --- Data Vault ---
+            launchVault: () => {
+                AetherOS.createWindow('vault', 'Data Vault', AetherOS.templates.dataVault(), 450, 400);
+                AetherOS.toggleStartMenu(false);
+                const saved = localStorage.getItem('aether_os_vault');
+                if(saved) document.getElementById('vault-textarea').value = saved;
+            },
+
+            saveVault: () => {
+                const val = document.getElementById('vault-textarea').value;
+                localStorage.setItem('aether_os_vault', val);
+                
+                const status = document.getElementById('vault-status');
+                status.innerText = "Syncing...";
+                status.classList.replace('text-indigo-400/50', 'text-indigo-300');
+                
+                clearTimeout(window.vaultTimeout);
+                window.vaultTimeout = setTimeout(() => {
+                    status.innerText = "Auto-saved";
+                    status.classList.replace('text-indigo-300', 'text-indigo-400/50');
+                }, 800);
+            }
+        };
+
+        // Initialize Start Menu on load
+        setTimeout(() => AetherOS.initStartMenu(), 500);
+        console.log('[AETHER KERNEL] Part 2 Initialized successfully.');
     </script>
 </body>
 </html>
