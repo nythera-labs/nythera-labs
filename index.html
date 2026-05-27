@@ -754,5 +754,332 @@
         setTimeout(() => AetherOS.initStartMenu(), 500);
         console.log('[AETHER KERNEL] Part 2 Initialized successfully.');
     </script>
+
+    <script>
+        console.log('[AETHER KERNEL] Loading Part 3: Advanced Graphics & WebRTC...');
+
+        // ==========================================
+        // 1. EXTEND OS TEMPLATES
+        // ==========================================
+        Object.assign(AetherOS.templates, {
+            
+            ghostCanvas: () => `
+                <div class="flex flex-col h-full gap-4">
+                    <div class="flex gap-4 shrink-0">
+                        <label class="flex-1 border border-dashed border-pink-500/40 rounded bg-pink-900/10 hover:bg-pink-900/30 transition cursor-pointer p-4 text-center text-pink-300 font-mono text-xs flex flex-col items-center justify-center">
+                            <span>1. Upload Carrier (PNG)</span>
+                            <input type="file" id="stego-file" accept="image/png, image/jpeg" class="hidden" onchange="AetherApps.loadStegoImage(event)">
+                        </label>
+                        <div class="flex flex-col gap-2 flex-1">
+                            <button onclick="AetherApps.encodeStego()" class="flex-1 bg-pink-700/80 hover:bg-pink-600 rounded text-white font-bold text-xs uppercase tracking-widest transition">Embed LSB Payload</button>
+                            <button onclick="AetherApps.decodeStego()" class="flex-1 bg-purple-700/80 hover:bg-purple-600 rounded text-white font-bold text-xs uppercase tracking-widest transition">Extract LSB Payload</button>
+                        </div>
+                    </div>
+                    <textarea id="stego-secret" class="w-full h-24 shrink-0 bg-black/60 border border-white/20 rounded p-3 text-pink-100 focus:border-pink-500 outline-none transition font-mono text-sm resize-none" placeholder="2. Enter secret payload here..."></textarea>
+                    
+                    <div class="flex-1 bg-black/80 border border-white/10 rounded flex items-center justify-center overflow-hidden relative shadow-inner p-2 group">
+                        <canvas id="stego-canvas" class="max-w-full max-h-full object-contain hidden"></canvas>
+                        <span id="stego-placeholder" class="text-pink-500/40 font-mono text-sm">Visual noise renders here</span>
+                    </div>
+                </div>
+            `,
+
+            voidResonance: () => `
+                <div class="flex flex-col h-full gap-4 relative">
+                    <div class="absolute top-2 left-2 z-10 flex gap-2">
+                        <button onclick="AetherApps.initAudio()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1 rounded text-xs font-bold transition shadow-[0_0_10px_rgba(16,185,129,0.4)]">ACTIVATE MIC</button>
+                        <button onclick="AetherApps.audioMode = 'bar'" class="border border-emerald-500/50 text-emerald-300 px-2 py-1 rounded text-[10px] font-mono hover:bg-emerald-500/20">BAR</button>
+                        <button onclick="AetherApps.audioMode = 'wave'" class="border border-emerald-500/50 text-emerald-300 px-2 py-1 rounded text-[10px] font-mono hover:bg-emerald-500/20">WAVE</button>
+                    </div>
+                    <div class="flex-1 bg-black/90 rounded-lg overflow-hidden relative border border-emerald-500/20 shadow-inner group">
+                        <canvas id="audio-canvas" class="absolute inset-0 w-full h-full"></canvas>
+                        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CgkJPHBhdGggZD0iTTAgMGwyMCAwaDB2MjBoLTB6IiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMTYsMTg1LDEyOSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+Cjwvc3ZnPg==')] opacity-30 pointer-events-none"></div>
+                    </div>
+                </div>
+            `,
+
+            peerLink: () => `
+                <div class="flex flex-col h-full gap-4">
+                    <div class="flex justify-between items-center border-b border-red-500/30 pb-2">
+                        <span class="text-xs font-mono text-red-400">SCTP DATA CHANNEL (WebRTC)</span>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse" id="rtc-indicator"></span>
+                            <span class="text-[10px] font-mono text-red-400" id="rtc-status">DISCONNECTED</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 shrink-0">
+                        <div class="flex-1 flex flex-col gap-2">
+                            <button onclick="AetherApps.createOffer()" class="bg-red-900/40 border border-red-500/50 text-red-300 hover:bg-red-800/60 py-2 rounded font-mono text-xs transition">1. Gen Offer</button>
+                            <textarea id="rtc-local" class="h-16 bg-black/60 border border-white/10 rounded p-2 text-red-200 font-mono text-[9px] break-all resize-none" placeholder="Local SDP (Copy and send to peer)" readonly></textarea>
+                        </div>
+                        <div class="flex-1 flex flex-col gap-2">
+                            <button onclick="AetherApps.acceptAnswer()" class="bg-blue-900/40 border border-blue-500/50 text-blue-300 hover:bg-blue-800/60 py-2 rounded font-mono text-xs transition">2. Accept Answer/Offer</button>
+                            <textarea id="rtc-remote" class="h-16 bg-black/60 border border-white/10 rounded p-2 text-blue-200 font-mono text-[9px] break-all resize-none" placeholder="Paste Remote SDP here"></textarea>
+                        </div>
+                    </div>
+                    <div id="rtc-log" class="flex-1 bg-black/80 border border-white/10 rounded p-3 text-white/70 font-mono text-xs overflow-y-auto space-y-1 shadow-inner">
+                        <div class="text-white/30">> Awaiting socket initialization...</div>
+                    </div>
+                    <div class="flex gap-2 shrink-0">
+                        <input type="text" id="rtc-input" class="flex-1 bg-black/60 border border-white/20 rounded p-2 text-white outline-none focus:border-red-400 font-mono text-sm" placeholder="Message..." disabled onkeypress="if(event.key === 'Enter') AetherApps.sendRTC()">
+                        <button id="rtc-send" onclick="AetherApps.sendRTC()" class="bg-white/10 text-white/30 px-6 py-2 rounded font-bold transition" disabled>SEND</button>
+                    </div>
+                </div>
+            `,
+            
+            qrForge: () => `
+                <div class="flex flex-col h-full items-center justify-center p-4">
+                    <div class="w-full flex gap-2 mb-8">
+                        <input type="text" id="qr-input" class="flex-1 bg-black/60 border border-teal-500/30 rounded p-3 text-white outline-none focus:border-teal-400 font-mono text-sm" placeholder="Enter URI or Payload..." onkeypress="if(event.key === 'Enter') AetherApps.genQR()">
+                        <button onclick="AetherApps.genQR()" class="bg-teal-700/80 hover:bg-teal-600 text-white px-6 py-2 rounded font-bold transition text-xs uppercase tracking-widest">Forge</button>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10 shadow-2xl relative group overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-teal-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                        <img id="qr-output" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=AetherOS&color=ffffff&bgcolor=000000" class="w-48 h-48 rounded shadow-lg mix-blend-screen transform group-hover:scale-105 transition duration-500">
+                    </div>
+                </div>
+            `
+        });
+
+        // ==========================================
+        // 2. EXTEND APP LOGIC
+        // ==========================================
+        Object.assign(AetherApps, {
+            
+            // --- Ghost Canvas (Steganography) ---
+            launchGhost: () => {
+                AetherOS.createWindow('ghost', 'Ghost Canvas (LSB)', AetherOS.templates.ghostCanvas(), 600, 500);
+            },
+            
+            stegoImage: new Image(),
+            
+            loadStegoImage: (e) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    AetherApps.stegoImage.onload = () => {
+                        const canvas = document.getElementById('stego-canvas');
+                        canvas.width = AetherApps.stegoImage.width; 
+                        canvas.height = AetherApps.stegoImage.height;
+                        canvas.getContext('2d').drawImage(AetherApps.stegoImage, 0, 0);
+                        canvas.classList.remove('hidden');
+                        document.getElementById('stego-placeholder').classList.add('hidden');
+                    }
+                    AetherApps.stegoImage.src = event.target.result;
+                };
+                if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+            },
+
+            encodeStego: () => {
+                const payload = document.getElementById('stego-secret').value;
+                if(!payload) return alert("Payload missing.");
+                const msg = payload + '\0';
+                const canvas = document.getElementById('stego-canvas');
+                if(canvas.width === 0) return alert("Carrier image missing.");
+                
+                const ctx = canvas.getContext('2d');
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+                
+                let msgBits = [];
+                for(let i=0; i<msg.length; i++) {
+                    let bin = msg.charCodeAt(i).toString(2).padStart(8, '0');
+                    for(let j=0; j<bin.length; j++) msgBits.push(parseInt(bin[j]));
+                }
+                
+                if(msgBits.length > data.length / 4) return alert("Payload exceeds carrier capacity.");
+                
+                for(let i=0; i<msgBits.length; i++) {
+                    data[i*4] = (data[i*4] & ~1) | msgBits[i];
+                }
+                ctx.putImageData(imgData, 0, 0);
+                alert("LSB Payload Embedded. Right click image to save.");
+            },
+
+            decodeStego: () => {
+                const canvas = document.getElementById('stego-canvas');
+                if(canvas.width === 0) return alert("Carrier image missing.");
+                const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+                
+                let bits = [], decodedStr = "";
+                for(let i=0; i<data.length; i+=4) {
+                    bits.push(data[i] & 1);
+                    if(bits.length === 8) {
+                        let charCode = parseInt(bits.join(''), 2);
+                        if(charCode === 0) break;
+                        decodedStr += String.fromCharCode(charCode);
+                        bits = [];
+                    }
+                }
+                document.getElementById('stego-secret').value = decodedStr || "NO PAYLOAD DETECTED";
+            },
+
+            // --- Void Resonance (Web Audio) ---
+            audioMode: 'bar',
+            audioCtx: null,
+            analyser: null,
+            dataArray: null,
+            
+            launchVoid: () => {
+                AetherOS.createWindow('void', 'Void Resonance (WebAudio)', AetherOS.templates.voidResonance(), 500, 400);
+            },
+            
+            initAudio: async () => {
+                if(AetherApps.audioCtx) return;
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    AetherApps.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    AetherApps.analyser = AetherApps.audioCtx.createAnalyser();
+                    AetherApps.audioCtx.createMediaStreamSource(stream).connect(AetherApps.analyser);
+                    AetherApps.analyser.fftSize = 512;
+                    AetherApps.dataArray = new Uint8Array(AetherApps.analyser.frequencyBinCount);
+                    
+                    const canvas = document.getElementById('audio-canvas');
+                    canvas.width = canvas.parentElement.clientWidth;
+                    canvas.height = canvas.parentElement.clientHeight;
+                    AetherApps.drawAudio();
+                } catch(e) { alert("Mic access denied."); }
+            },
+
+            drawAudio: () => {
+                if(!document.getElementById('audio-canvas')) {
+                    AetherApps.audioCtx = null; return; // Kill loop if window closed
+                }
+                requestAnimationFrame(AetherApps.drawAudio);
+                const canvas = document.getElementById('audio-canvas');
+                const ctx = canvas.getContext('2d');
+                
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.fillRect(0,0, canvas.width, canvas.height);
+                
+                if(AetherApps.audioMode === 'bar') {
+                    AetherApps.analyser.getByteFrequencyData(AetherApps.dataArray);
+                    const bw = (canvas.width / AetherApps.dataArray.length) * 2.5;
+                    let x = 0;
+                    for(let i=0; i<AetherApps.dataArray.length; i++) {
+                        const bh = AetherApps.dataArray[i] * 1.5;
+                        ctx.fillStyle = `rgb(${bh+(25*(i/AetherApps.dataArray.length))}, ${250*(i/AetherApps.dataArray.length)}, 50)`;
+                        ctx.fillRect(x, canvas.height - bh/2, bw, bh/2);
+                        x += bw + 1;
+                    }
+                } else {
+                    AetherApps.analyser.getByteTimeDomainData(AetherApps.dataArray);
+                    ctx.lineWidth = 3; ctx.strokeStyle = '#10b981';
+                    ctx.beginPath();
+                    const slice = canvas.width * 1.0 / AetherApps.dataArray.length;
+                    let x = 0;
+                    for(let i=0; i<AetherApps.dataArray.length; i++) {
+                        const y = (AetherApps.dataArray[i]/128.0) * canvas.height/2;
+                        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+                        x += slice;
+                    }
+                    ctx.stroke();
+                }
+            },
+
+            // --- QR Forge ---
+            launchQR: () => AetherOS.createWindow('qr', 'QR Forge', AetherOS.templates.qrForge(), 400, 450),
+            genQR: () => {
+                const val = document.getElementById('qr-input').value.trim();
+                if(val) document.getElementById('qr-output').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(val)}&color=ffffff&bgcolor=000000`;
+            },
+
+            // --- Peer Link (WebRTC) ---
+            rtcConn: null,
+            dataChannel: null,
+            
+            launchPeer: () => {
+                AetherOS.createWindow('peer', 'Peer Link Protocol', AetherOS.templates.peerLink(), 650, 500);
+            },
+
+            logRTC: (msg, type='sys') => {
+                const log = document.getElementById('rtc-log');
+                if(!log) return;
+                const color = type === 'sys' ? 'text-white/50' : type === 'local' ? 'text-green-400' : 'text-cyan-400';
+                log.innerHTML += `<div class="${color}">> ${msg}</div>`;
+                log.scrollTop = log.scrollHeight;
+            },
+
+            initRTCParams: () => {
+                AetherApps.rtcConn = new RTCPeerConnection({ iceServers: [{urls: 'stun:stun.l.google.com:19302'}] });
+                AetherApps.rtcConn.onicecandidate = e => {
+                    if(e.candidate) document.getElementById('rtc-local').value = btoa(JSON.stringify(AetherApps.rtcConn.localDescription));
+                };
+                AetherApps.rtcConn.onconnectionstatechange = () => {
+                    const state = AetherApps.rtcConn.connectionState;
+                    document.getElementById('rtc-status').innerText = state.toUpperCase();
+                    if(state === 'connected') {
+                        document.getElementById('rtc-indicator').classList.replace('bg-red-500', 'bg-green-500');
+                        document.getElementById('rtc-status').classList.replace('text-red-400', 'text-green-400');
+                        document.getElementById('rtc-input').disabled = false;
+                        document.getElementById('rtc-send').disabled = false;
+                        document.getElementById('rtc-send').className = 'bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded font-bold transition';
+                        AetherApps.logRTC("SOCKET CONNECTED. SECURE TUNNEL ESTABLISHED.");
+                    }
+                };
+                AetherApps.rtcConn.ondatachannel = e => {
+                    AetherApps.dataChannel = e.channel;
+                    AetherApps.setupChannel();
+                };
+            },
+
+            setupChannel: () => {
+                AetherApps.dataChannel.onmessage = e => AetherApps.logRTC(`[PEER]: ${e.data}`, 'remote');
+            },
+
+            createOffer: async () => {
+                AetherApps.initRTCParams();
+                AetherApps.dataChannel = AetherApps.rtcConn.createDataChannel('aether-sctp');
+                AetherApps.setupChannel();
+                const offer = await AetherApps.rtcConn.createOffer();
+                await AetherApps.rtcConn.setLocalDescription(offer);
+                AetherApps.logRTC("Generated Local Offer. Awaiting ICE gathering...");
+            },
+
+            acceptAnswer: async () => {
+                const remote = document.getElementById('rtc-remote').value.trim();
+                if(!remote) return;
+                const desc = JSON.parse(atob(remote));
+                
+                if(!AetherApps.rtcConn) {
+                    AetherApps.initRTCParams();
+                    await AetherApps.rtcConn.setRemoteDescription(new RTCSessionDescription(desc));
+                    const answer = await AetherApps.rtcConn.createAnswer();
+                    await AetherApps.rtcConn.setLocalDescription(answer);
+                    document.getElementById('rtc-local').value = btoa(JSON.stringify(AetherApps.rtcConn.localDescription));
+                    AetherApps.logRTC("Generated Answer from Peer Offer.");
+                } else {
+                    await AetherApps.rtcConn.setRemoteDescription(new RTCSessionDescription(desc));
+                    AetherApps.logRTC("Accepted Remote Answer. Negotiating...");
+                }
+            },
+
+            sendRTC: () => {
+                const input = document.getElementById('rtc-input');
+                if(!input.value || !AetherApps.dataChannel) return;
+                AetherApps.dataChannel.send(input.value);
+                AetherApps.logRTC(`[LOCAL]: ${input.value}`, 'local');
+                input.value = '';
+            }
+        });
+
+        // ==========================================
+        // 3. DYNAMICALLY UPDATE START MENU
+        // ==========================================
+        setTimeout(() => {
+            const menu = document.getElementById('start-menu');
+            if(menu) {
+                const newBtns = `
+                    <div class="h-px bg-white/10 my-1 w-full"></div>
+                    <button onclick="AetherApps.launchGhost()" class="w-full text-left px-4 py-2 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white"><span class="text-pink-400">🎭</span> Ghost Canvas (LSB)</button>
+                    <button onclick="AetherApps.launchVoid()" class="w-full text-left px-4 py-2 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white"><span class="text-emerald-400">🎙️</span> Void Resonance</button>
+                    <button onclick="AetherApps.launchPeer()" class="w-full text-left px-4 py-2 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white"><span class="text-red-400">🌐</span> Peer Link Protocol</button>
+                    <button onclick="AetherApps.launchQR()" class="w-full text-left px-4 py-2 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white"><span class="text-teal-400">🛠️</span> QR Forge</button>
+                `;
+                menu.innerHTML += newBtns;
+            }
+        }, 1000);
+
+        console.log('[AETHER KERNEL] Part 3 Initialized successfully.');
+    </script>
 </body>
 </html>
