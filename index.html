@@ -1081,5 +1081,217 @@
 
         console.log('[AETHER KERNEL] Part 3 Initialized successfully.');
     </script>
+        <script>
+        console.log('[AETHER KERNEL] Loading Part 4: Chroma Node & Dream Weaver...');
+
+        // ==========================================
+        // 1. EXTEND OS TEMPLATES
+        // ==========================================
+        Object.assign(AetherOS.templates, {
+            
+            dreamWeaver: () => `
+                <div class="flex flex-col h-full gap-4">
+                    <div class="flex gap-2 shrink-0">
+                        <input type="text" id="dream-input" class="flex-1 bg-black/60 border border-purple-500/30 rounded p-3 text-white outline-none focus:border-purple-400 transition font-mono text-sm" placeholder="Prompt visual reality..." onkeypress="if(event.key === 'Enter') AetherApps.genImage()">
+                        <button onclick="AetherApps.genImage()" class="bg-purple-700/80 hover:bg-purple-600 text-white px-6 py-2 rounded font-bold transition text-xs uppercase tracking-widest shadow-[0_0_15px_rgba(168,85,247,0.3)]">Render</button>
+                    </div>
+                    
+                    <div class="flex-1 bg-black/80 border border-white/10 rounded flex items-center justify-center overflow-hidden relative shadow-inner group">
+                        <div id="dream-placeholder" class="text-center">
+                            <div class="text-4xl mb-2 opacity-30">🖼️</div>
+                            <p class="text-purple-400/40 font-mono text-sm">Awaiting neural synthesis</p>
+                        </div>
+                        <div id="dream-loader" class="hidden absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-10">
+                            <div class="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                            <p class="text-purple-400 font-mono text-xs animate-pulse">Rendering matrix...</p>
+                        </div>
+                        <img id="dream-output" src="" class="hidden w-full h-full object-contain rounded transition-transform duration-700 group-hover:scale-105">
+                    </div>
+                </div>
+            `,
+
+            chromaNode: () => `
+                <div class="flex flex-col h-full gap-4">
+                    <label class="w-full border border-dashed border-orange-500/40 rounded bg-orange-900/10 hover:bg-orange-900/30 transition cursor-pointer p-4 text-center text-orange-300 font-mono text-xs shrink-0 block">
+                        <span>Load Image Array for Quantization</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="AetherApps.loadChromaImage(event)">
+                    </label>
+                    
+                    <div class="flex gap-4 flex-1 overflow-hidden">
+                        <div class="w-1/2 bg-black/60 border border-white/10 rounded flex items-center justify-center relative overflow-hidden p-2">
+                            <canvas id="chroma-canvas" class="max-w-full max-h-full object-contain"></canvas>
+                            <span id="chroma-placeholder" class="absolute text-orange-500/30 font-mono text-[10px] text-center px-4">Image rendered here for pixel extraction</span>
+                        </div>
+                        
+                        <div class="w-1/2 flex flex-col">
+                            <div class="text-[10px] text-orange-400/50 font-mono uppercase tracking-widest border-b border-orange-500/20 pb-1 mb-2">Cluster Centroids</div>
+                            <div id="chroma-palette" class="grid grid-cols-2 gap-2 flex-1 overflow-y-auto pr-1">
+                                <div class="col-span-2 text-center text-orange-500/30 font-mono text-[10px] mt-10">Awaiting geometric space cluster data...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        });
+
+        // ==========================================
+        // 2. EXTEND APP LOGIC
+        // ==========================================
+        Object.assign(AetherApps, {
+            
+            // --- Dream Weaver (Image Gen) ---
+            launchDream: () => AetherOS.createWindow('dream', 'Dream Weaver', AetherOS.templates.dreamWeaver(), 550, 500),
+            
+            genImage: () => {
+                const input = document.getElementById('dream-input').value.trim();
+                if (!input) return;
+                
+                document.getElementById('dream-placeholder').classList.add('hidden');
+                document.getElementById('dream-output').classList.add('hidden');
+                document.getElementById('dream-loader').classList.remove('hidden');
+                
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}?seed=${Math.floor(Math.random()*100000)}&width=1024&height=1024&nologo=true`;
+                const tempImg = new Image();
+                
+                tempImg.onload = () => { 
+                    const out = document.getElementById('dream-output');
+                    out.src = url; 
+                    document.getElementById('dream-loader').classList.add('hidden'); 
+                    out.classList.remove('hidden');
+                };
+                tempImg.onerror = () => {
+                    document.getElementById('dream-loader').classList.add('hidden');
+                    document.getElementById('dream-placeholder').classList.remove('hidden');
+                    alert("Synthesis failed. Neural node unavailable.");
+                };
+                tempImg.src = url;
+            },
+
+            // --- Chroma Node (Quantization) ---
+            launchChroma: () => AetherOS.createWindow('chroma', 'Chroma Node', AetherOS.templates.chromaNode(), 600, 400),
+            
+            loadChromaImage: (e) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.getElementById('chroma-canvas');
+                        // Downscale for math performance
+                        let w = img.width, h = img.height, max = 150;
+                        if(w > h && w > max) { h *= max/w; w = max; }
+                        else if(h > max) { w *= max/h; h = max; }
+                        
+                        canvas.width = Math.floor(w); 
+                        canvas.height = Math.floor(h);
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        document.getElementById('chroma-placeholder').classList.add('hidden');
+                        
+                        AetherApps.extractPalette(ctx, canvas.width, canvas.height);
+                    }
+                    img.src = event.target.result;
+                }
+                if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+            },
+
+            extractPalette: (ctx, w, h) => {
+                const imgData = ctx.getImageData(0, 0, w, h).data;
+                let pixels = [];
+                // Sample every 16th sub-pixel to prevent locking the UI thread
+                for(let i=0; i<imgData.length; i+=16) { 
+                    pixels.push({ r: imgData[i], g: imgData[i+1], b: imgData[i+2] });
+                }
+
+                // Recursive Median Cut Math
+                function medianCut(arr, depth) {
+                    if(depth === 0 || arr.length === 0) {
+                        let tr=0, tg=0, tb=0, len=arr.length||1;
+                        arr.forEach(p => { tr+=p.r; tg+=p.g; tb+=p.b; });
+                        return [{ r: Math.round(tr/len), g: Math.round(tg/len), b: Math.round(tb/len) }];
+                    }
+                    let rMin=255, rMax=0, gMin=255, gMax=0, bMin=255, bMax=0;
+                    arr.forEach(p => {
+                        if(p.r < rMin) rMin=p.r; if(p.r > rMax) rMax=p.r;
+                        if(p.g < gMin) gMin=p.g; if(p.g > gMax) gMax=p.g;
+                        if(p.b < bMin) bMin=p.b; if(p.b > bMax) bMax=p.b;
+                    });
+                    const rRange = rMax-rMin, gRange = gMax-gMin, bRange = bMax-bMin;
+                    let sort = 'r';
+                    if(gRange >= rRange && gRange >= bRange) sort = 'g';
+                    if(bRange >= rRange && bRange >= gRange) sort = 'b';
+                    
+                    arr.sort((a,b) => a[sort] - b[sort]);
+                    const mid = Math.floor(arr.length / 2);
+                    return [...medianCut(arr.slice(0, mid), depth-1), ...medianCut(arr.slice(mid), depth-1)];
+                }
+
+                const centroids = medianCut(pixels, 3); // Depth 3 = 8 colors
+                
+                const out = document.getElementById('chroma-palette');
+                out.innerHTML = '';
+                centroids.forEach(c => {
+                    const hex = `#${c.r.toString(16).padStart(2,'0')}${c.g.toString(16).padStart(2,'0')}${c.b.toString(16).padStart(2,'0')}`.toUpperCase();
+                    out.innerHTML += `
+                        <div class="h-12 rounded flex items-center justify-center p-1 font-mono text-[10px] cursor-pointer hover:scale-105 transition border border-white/20 relative group" 
+                             style="background: rgb(${c.r},${c.g},${c.b});"
+                             onclick="navigator.clipboard.writeText('${hex}')">
+                            <span class="bg-black/70 text-white px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition">${hex}</span>
+                        </div>
+                    `;
+                });
+            }
+        });
+
+        // ==========================================
+        // 3. DYNAMICALLY UPDATE START MENU
+        // ==========================================
+        setTimeout(() => {
+            const menu = document.getElementById('start-menu');
+            if(menu) {
+                const newBtns = `
+                    <div class="h-px bg-white/10 my-1 w-full"></div>
+                    <button onclick="AetherApps.launchDream()" class="w-full text-left px-4 py-2 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white"><span class="text-purple-400">🖼️</span> Dream Weaver</button>
+                    <button onclick="AetherApps.launchChroma()" class="w-full text-left px-4 py-2 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white"><span class="text-orange-400">🎨</span> Chroma Node</button>
+                `;
+                menu.innerHTML += newBtns;
+            }
+        }, 1500);
+
+        // ==========================================
+        // 4. DESKTOP CONTEXT MENU (Right Click)
+        // ==========================================
+        const desktop = document.getElementById('os-desktop');
+        const ctxMenu = document.createElement('div');
+        ctxMenu.id = 'os-context-menu';
+        ctxMenu.className = 'absolute hidden bg-black/90 backdrop-blur border border-white/20 rounded shadow-2xl z-[99999] w-48 py-1 font-mono text-xs text-white';
+        ctxMenu.innerHTML = `
+            <div class="px-4 py-2 text-white/40 uppercase tracking-widest text-[9px] border-b border-white/10 mb-1">AETHER SHELL</div>
+            <button onclick="AetherOS.createWindow('sys-diag', 'System Diagnostics', AetherOS.templates.diagnostics(), 600, 400)" class="w-full text-left px-4 py-2 hover:bg-cyan-900/50 hover:text-cyan-300 transition">Run Diagnostics</button>
+            <button onclick="AetherApps.launchVault()" class="w-full text-left px-4 py-2 hover:bg-indigo-900/50 hover:text-indigo-300 transition">Open Scratchpad</button>
+            <div class="h-px bg-white/10 my-1"></div>
+            <button onclick="document.querySelectorAll('.os-window').forEach(w => w.classList.add('hidden'))" class="w-full text-left px-4 py-2 hover:bg-white/10 transition text-white/70">Hide All Windows</button>
+            <button onclick="document.querySelectorAll('.os-window').forEach(w => w.classList.remove('hidden'))" class="w-full text-left px-4 py-2 hover:bg-white/10 transition text-white/70">Show All Windows</button>
+            <div class="h-px bg-white/10 my-1"></div>
+            <button onclick="location.reload()" class="w-full text-left px-4 py-2 hover:bg-red-900/50 hover:text-red-400 transition text-red-300">Reboot Kernel</button>
+        `;
+        document.body.appendChild(ctxMenu);
+
+        desktop.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            ctxMenu.style.left = `${e.clientX}px`;
+            ctxMenu.style.top = `${e.clientY}px`;
+            ctxMenu.classList.remove('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if(!ctxMenu.contains(e.target)) ctxMenu.classList.add('hidden');
+        });
+
+        console.log('[AETHER KERNEL] Part 4 Initialized successfully. OS BOOT COMPLETE.');
+        
+        // Remove initial boot sequence class once everything is loaded
+        setTimeout(() => document.body.classList.remove('os-booting'), 2000);
+    </script>
+
 </body>
 </html>
