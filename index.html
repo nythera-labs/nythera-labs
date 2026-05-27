@@ -24,8 +24,8 @@
       border: 1px solid rgba(255, 255, 255, 0.1); 
       border-radius: 1rem; 
     }
-    /* Scrollbar styling for chat */
-    ::-webkit-scrollbar { width: 6px; }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
   </style>
@@ -52,7 +52,9 @@
       <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition shadow">🤖 AI Chat</button>
       <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition shadow">🖼️ Image Gen</button>
       <button onclick="openTool('qrcode')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition shadow">🛠️ QR Code</button>
-      <button class="px-4 py-2 rounded-full border border-white/10 text-sm font-medium opacity-50 cursor-not-allowed">More coming soon...</button>
+      <button onclick="openTool('cipher')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition shadow">🔐 Cipher Kit</button>
+      <button onclick="openTool('password')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition shadow">🔑 Pass Gen</button>
+      <button onclick="openTool('forge')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition shadow">💻 HTML Forge</button>
     </div>
 
     <div class="glass w-full flex-1 flex flex-col relative shadow-2xl overflow-hidden p-6" id="tool-window">
@@ -97,6 +99,54 @@
         </div>
       </div>
 
+      <div id="tool-cipher" class="hidden flex-1 flex flex-col h-full">
+        <h2 class="text-xl font-bold mb-4 text-yellow-400 border-b border-white/10 pb-2">Cipher Kit (Base64)</h2>
+        <textarea id="cipher-input" class="w-full h-32 bg-black/40 border border-white/20 rounded-lg p-3 text-white focus:outline-none focus:border-yellow-400 transition font-mono text-sm mb-4" placeholder="Enter text to encode or decode..."></textarea>
+        <div class="flex gap-4 justify-center mb-4">
+          <button onclick="runCipher('encode')" class="bg-yellow-600/80 hover:bg-yellow-500 px-6 py-2 rounded-lg font-bold transition shadow-lg">Encode (B64)</button>
+          <button onclick="runCipher('decode')" class="bg-yellow-800/80 hover:bg-yellow-700 px-6 py-2 rounded-lg font-bold transition shadow-lg">Decode (B64)</button>
+        </div>
+        <textarea id="cipher-output" class="w-full flex-1 bg-black/60 border border-white/10 rounded-lg p-3 text-yellow-200 font-mono text-sm" placeholder="Result will appear here..." readonly></textarea>
+      </div>
+
+      <div id="tool-password" class="hidden flex-1 flex flex-col h-full items-center">
+        <h2 class="text-xl font-bold mb-4 text-red-400 w-full border-b border-white/10 pb-2">Password Generator</h2>
+        <div class="w-full max-w-md bg-black/40 p-6 rounded-lg border border-white/10 flex flex-col gap-4 mt-4">
+          <div class="flex items-center justify-between">
+            <label class="text-white/80">Length: <span id="pass-length-val">16</span></label>
+            <input type="range" id="pass-length" min="8" max="64" value="16" oninput="document.getElementById('pass-length-val').innerText = this.value" class="w-3/5 accent-red-500">
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="pass-numbers" checked class="w-4 h-4 accent-red-500">
+            <label class="text-white/80">Include Numbers (0-9)</label>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="pass-symbols" checked class="w-4 h-4 accent-red-500">
+            <label class="text-white/80">Include Symbols (!@#$)</label>
+          </div>
+          <button onclick="generatePassword()" class="bg-red-600 hover:bg-red-500 w-full py-3 rounded-lg font-bold transition shadow-lg mt-2">Generate Password</button>
+          
+          <div class="flex gap-2 mt-4">
+            <input type="text" id="pass-output" class="flex-1 bg-black/60 border border-white/20 rounded-lg p-3 text-red-200 font-mono text-center tracking-wider" readonly placeholder="Click Generate">
+            <button onclick="copyPassword()" class="bg-white/10 hover:bg-white/20 px-4 rounded-lg transition border border-white/20" title="Copy">📋</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="tool-forge" class="hidden flex-1 flex flex-col h-full">
+        <h2 class="text-xl font-bold mb-4 text-orange-400 border-b border-white/10 pb-2">HTML Forge</h2>
+        <div class="flex-1 flex flex-col md:flex-row gap-4 h-full">
+          <div class="flex-1 flex flex-col">
+            <div class="text-xs text-white/50 mb-1 uppercase tracking-wider">Code (HTML/CSS/JS)</div>
+            <textarea id="forge-input" oninput="updateForge()" class="w-full flex-1 bg-black/40 border border-white/20 rounded-lg p-3 text-orange-200 focus:outline-none focus:border-orange-400 transition font-mono text-sm leading-relaxed" spellcheck="false" placeholder="<h1>Hello World</h1>&#10;<style>h1 { color: #f97316; }</style>"></textarea>
+          </div>
+          <div class="flex-1 flex flex-col">
+            <div class="text-xs text-white/50 mb-1 uppercase tracking-wider">Live Preview</div>
+            <iframe id="forge-output" class="w-full flex-1 bg-white rounded-lg border border-white/20 shadow-inner"></iframe>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -112,7 +162,6 @@
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    // Your exact keys from the Firebase console
     const firebaseConfig = {
       apiKey: "AIzaSyAk_rARkhkZGriWHMWkD6vRGhd82Ko32wM",
       authDomain: "aether-lab.firebaseapp.com",
@@ -124,12 +173,10 @@
       measurementId: "G-H0L7P4LY83"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // DOM Elements
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
     const userInfo = document.getElementById('user-info');
@@ -137,7 +184,6 @@
     const userAvatar = document.getElementById('user-avatar');
     const activityFeed = document.getElementById('activity-feed');
 
-    // Auth Logic
     const provider = new GoogleAuthProvider();
     
     loginBtn.onclick = () => signInWithPopup(auth, provider).catch(console.error);
@@ -156,10 +202,8 @@
       }
     });
 
-    // Database Logic (Live Feed)
     const feedRef = ref(db, 'activity');
     
-    // Attach logging to window so standard JS functions below can use it!
     window.globalLogActivity = function(message) {
       push(feedRef, { text: message, timestamp: serverTimestamp() });
     };
@@ -167,43 +211,41 @@
     onChildAdded(feedRef, (data) => {
       const li = document.createElement('li');
       li.textContent = `> ${data.val().text}`;
-      activityFeed.prepend(li); // Adds new items to the top
+      activityFeed.prepend(li);
     });
   </script>
 
   <script>
-    // Helper to log if user is signed in
     function tryLog(msg) {
-      if(window.globalLogActivity) {
-        window.globalLogActivity(msg);
-      }
+      if(window.globalLogActivity) { window.globalLogActivity(msg); }
     }
 
-    // --- UI Navigation Logic ---
+    // --- Navigation ---
+    const allTools = ['chat', 'image', 'qrcode', 'cipher', 'password', 'forge'];
     function openTool(toolName) {
       document.getElementById('default-view').classList.add('hidden');
-      document.getElementById('tool-chat').classList.add('hidden');
-      document.getElementById('tool-image').classList.add('hidden');
-      document.getElementById('tool-qrcode').classList.add('hidden');
-      
+      allTools.forEach(t => {
+        const el = document.getElementById('tool-' + t);
+        if(el) {
+          el.classList.add('hidden');
+          el.classList.remove('flex');
+        }
+      });
       document.getElementById('tool-' + toolName).classList.remove('hidden');
       document.getElementById('tool-' + toolName).classList.add('flex');
     }
 
-    // --- AI Chat Logic ---
+    // --- AI Chat ---
     async function sendChatMessage() {
       const input = document.getElementById('chat-input');
       const output = document.getElementById('chat-output');
       const text = input.value.trim();
-      
       if (!text) return;
       
-      // Add User Message
       output.innerHTML += `<div class="text-right"><span class="bg-blue-600 px-4 py-2 rounded-lg inline-block text-white shadow-lg">${text}</span></div>`;
       input.value = '';
-      tryLog(`User asked Aether AI a question.`);
+      tryLog(`User conversed with Aether AI.`);
       
-      // Add Loading State
       const loadingId = 'loading-' + Date.now();
       output.innerHTML += `<div id="${loadingId}" class="text-left"><span class="bg-white/10 px-4 py-2 rounded-lg inline-block text-white/60 animate-pulse">Processing request...</span></div>`;
       output.scrollTop = output.scrollHeight;
@@ -211,25 +253,20 @@
       try {
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(text)}`);
         const reply = await response.text();
-        
         document.getElementById(loadingId).remove();
         output.innerHTML += `<div class="text-left"><span class="bg-blue-900/40 border border-blue-500/30 px-4 py-2 rounded-lg inline-block text-blue-100 whitespace-pre-wrap">${reply}</span></div>`;
       } catch (error) {
         document.getElementById(loadingId).remove();
-        output.innerHTML += `<div class="text-left text-red-400 bg-red-900/20 px-4 py-2 rounded-lg inline-block border border-red-500/30">System Error: Connection to AI core lost.</div>`;
+        output.innerHTML += `<div class="text-left text-red-400 bg-red-900/20 px-4 py-2 rounded-lg inline-block border border-red-500/30">System Error: Core connection lost.</div>`;
       }
       output.scrollTop = output.scrollHeight;
     }
+    document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
-    document.getElementById('chat-input').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') sendChatMessage();
-    });
-
-    // --- AI Image Logic ---
+    // --- AI Image ---
     function generateImage() {
       const input = document.getElementById('image-input').value.trim();
       if (!input) return;
-
       const placeholder = document.getElementById('image-placeholder');
       const imgResult = document.getElementById('result-image');
       
@@ -237,8 +274,7 @@
       placeholder.classList.remove('hidden');
       placeholder.classList.add('animate-pulse');
       imgResult.classList.add('hidden');
-      
-      tryLog(`User generating image: "${input.substring(0, 20)}..."`);
+      tryLog(`User generated an image.`);
 
       const randomSeed = Math.floor(Math.random() * 1000000);
       const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}?seed=${randomSeed}&width=1024&height=768&nologo=true`;
@@ -252,26 +288,75 @@
       };
       tempImg.src = imageUrl;
     }
+    document.getElementById('image-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') generateImage(); });
 
-    document.getElementById('image-input').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') generateImage();
-    });
-
-    // --- QR Code Logic ---
+    // --- QR Code ---
     function generateQR() {
       const input = document.getElementById('qr-input').value.trim();
       const qrOutput = document.getElementById('qr-output');
-      
       if (!input) return;
-      tryLog(`User forged a new QR code.`);
-      
-      // QR with nice colors fitting the dark theme
+      tryLog(`User forged a QR code.`);
       qrOutput.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(input)}&color=ffffff&bgcolor=0f172a`;
     }
+    document.getElementById('qr-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') generateQR(); });
 
-    document.getElementById('qr-input').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') generateQR();
-    });
+    // --- Cipher Kit ---
+    function runCipher(action) {
+      const input = document.getElementById('cipher-input').value;
+      const output = document.getElementById('cipher-output');
+      if (!input) return;
+      
+      try {
+        if (action === 'encode') {
+          output.value = btoa(unescape(encodeURIComponent(input)));
+          tryLog(`User encoded data via Cipher.`);
+        } else {
+          output.value = decodeURIComponent(escape(atob(input)));
+          tryLog(`User decoded data via Cipher.`);
+        }
+      } catch (e) {
+        output.value = "Error: Invalid input string for Base64 conversion.";
+      }
+    }
+
+    // --- Password Generator ---
+    function generatePassword() {
+      const length = document.getElementById('pass-length').value;
+      const useNums = document.getElementById('pass-numbers').checked;
+      const useSyms = document.getElementById('pass-symbols').checked;
+      
+      const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const nums = "0123456789";
+      const syms = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+      
+      let validChars = chars;
+      if (useNums) validChars += nums;
+      if (useSyms) validChars += syms;
+      
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += validChars.charAt(Math.floor(Math.random() * validChars.length));
+      }
+      
+      document.getElementById('pass-output').value = password;
+      tryLog(`User generated a ${length}-character password.`);
+    }
+    
+    function copyPassword() {
+      const pass = document.getElementById('pass-output');
+      if (pass.value && pass.value !== "Click Generate") {
+        pass.select();
+        document.execCommand("copy");
+        alert("Password copied to clipboard!");
+      }
+    }
+
+    // --- HTML Forge ---
+    function updateForge() {
+      const input = document.getElementById('forge-input').value;
+      const iframe = document.getElementById('forge-output');
+      iframe.srcdoc = input;
+    }
   </script>
 
   <script>
@@ -282,7 +367,6 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    // Creates the glowing ring effect
     const geometry = new THREE.TorusGeometry(12, 0.2, 16, 100);
     const material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.25 });
     const torus = new THREE.Mesh(geometry, material);
@@ -296,10 +380,8 @@
       torus.rotation.y += 0.002;
       renderer.render(scene, camera);
     }
-    
     animate();
 
-    // Handle Window Resizing smoothly
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
