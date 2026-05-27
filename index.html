@@ -7,11 +7,27 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-    body { margin: 0; overflow: hidden; background: radial-gradient(circle at center, #0f172a, #000000); color: #fff; font-family: system-ui, -apple-system, sans-serif; }
-    #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-    .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; }
-    .tool-chip { transition: all 0.2s ease; }
-    .tool-chip:hover { background: rgba(255, 255, 255, 0.15); transform: translateY(-2px); }
+    body { 
+      margin: 0; 
+      overflow: hidden; 
+      background: radial-gradient(circle at center, #0f172a, #000000); 
+      color: #fff; 
+      font-family: system-ui, -apple-system, sans-serif; 
+    }
+    #canvas-container { 
+      position: absolute; 
+      top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
+    }
+    .glass { 
+      background: rgba(255, 255, 255, 0.05); 
+      backdrop-filter: blur(10px); 
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+      border-radius: 1rem; 
+    }
+    /* Scrollbar styling for chat */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
   </style>
 </head>
 <body class="h-screen flex flex-col relative">
@@ -21,34 +37,73 @@
   <header class="p-6 flex justify-between items-center z-10">
     <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 tracking-wider">Aether Lab</h1>
     <div id="auth-container">
-      <button id="login-btn" class="glass px-6 py-2 hover:bg-white/10 transition">Sign in with Google</button>
-      <div id="user-info" class="hidden flex items-center gap-3 glass px-4 py-2">
-        <img id="user-avatar" class="w-8 h-8 rounded-full" src="" alt="Avatar">
+      <button id="login-btn" class="glass px-6 py-2 hover:bg-white/10 transition font-medium shadow-lg">Sign in with Google</button>
+      <div id="user-info" class="hidden flex items-center gap-3 glass px-4 py-2 shadow-lg">
+        <img id="user-avatar" class="w-8 h-8 rounded-full border border-white/20" src="" alt="Avatar">
         <span id="user-name" class="font-medium text-sm"></span>
-        <button id="logout-btn" class="text-xs text-red-400 ml-2 hover:text-red-300">Exit</button>
+        <button id="logout-btn" class="text-xs text-red-400 ml-2 hover:text-red-300 transition">Exit</button>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 flex flex-col items-center justify-center p-6 z-10 w-full max-w-5xl mx-auto">
+  <main class="flex-1 flex flex-col items-center p-6 z-10 w-full max-w-5xl mx-auto overflow-hidden">
     
-    <div class="glass w-full p-4 mb-8 flex flex-wrap justify-center gap-3">
-      <button class="tool-chip px-4 py-2 rounded-full border border-white/20 text-sm font-medium">🤖 AI Chat</button>
-      <button class="tool-chip px-4 py-2 rounded-full border border-white/20 text-sm font-medium">🤖 Image Gen</button>
-      <button class="tool-chip px-4 py-2 rounded-full border border-white/20 text-sm font-medium">🛠️ QR Code</button>
-      <button class="tool-chip px-4 py-2 rounded-full border border-white/20 text-sm font-medium">🔐 Cipher Kit</button>
-      <button class="tool-chip px-4 py-2 rounded-full border border-white/20 text-sm font-medium">💻 HTML Forge</button>
+    <div class="glass w-full p-4 mb-4 flex flex-wrap justify-center gap-3 shadow-lg">
+      <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition shadow">🤖 AI Chat</button>
+      <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition shadow">🖼️ Image Gen</button>
+      <button onclick="openTool('qrcode')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition shadow">🛠️ QR Code</button>
+      <button class="px-4 py-2 rounded-full border border-white/10 text-sm font-medium opacity-50 cursor-not-allowed">More coming soon...</button>
     </div>
 
-    <div class="glass w-full h-[50vh] flex items-center justify-center relative shadow-2xl">
-      <p class="text-white/50 text-lg">Select a tool to begin...</p>
+    <div class="glass w-full flex-1 flex flex-col relative shadow-2xl overflow-hidden p-6" id="tool-window">
+      
+      <div id="default-view" class="flex-1 flex flex-col items-center justify-center text-center">
+        <div class="text-5xl mb-4 opacity-80">🌌</div>
+        <h2 class="text-2xl font-bold text-white/90 mb-2">Welcome to Aether Lab</h2>
+        <p class="text-white/50 text-lg">Select a tool from the menu above to begin building.</p>
+      </div>
+
+      <div id="tool-chat" class="hidden flex-1 flex flex-col h-full">
+        <h2 class="text-xl font-bold mb-4 text-blue-400 border-b border-white/10 pb-2">Aether AI</h2>
+        <div id="chat-output" class="flex-1 glass p-4 mb-4 overflow-y-auto font-mono text-sm space-y-4 bg-black/40 rounded-lg">
+          <div class="text-left"><span class="bg-blue-900/40 border border-blue-500/30 px-4 py-2 rounded-lg inline-block text-blue-100">System online. How can I assist you today?</span></div>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" id="chat-input" class="flex-1 bg-black/40 border border-white/20 rounded-lg p-3 text-white focus:outline-none focus:border-blue-400 transition" placeholder="Ask the universe something...">
+          <button onclick="sendChatMessage()" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg font-bold transition shadow-lg">Send</button>
+        </div>
+      </div>
+
+      <div id="tool-image" class="hidden flex-1 flex flex-col h-full">
+        <h2 class="text-xl font-bold mb-4 text-purple-400 border-b border-white/10 pb-2">Dream Weaver</h2>
+        <div class="flex gap-2 mb-4">
+          <input type="text" id="image-input" class="flex-1 bg-black/40 border border-white/20 rounded-lg p-3 text-white focus:outline-none focus:border-purple-400 transition" placeholder="Describe a highly detailed image...">
+          <button onclick="generateImage()" class="bg-purple-600 hover:bg-purple-500 px-6 py-3 rounded-lg font-bold transition shadow-lg">Generate</button>
+        </div>
+        <div id="image-output" class="flex-1 glass flex items-center justify-center bg-black/40 overflow-hidden relative rounded-lg">
+          <p class="text-white/40 font-medium" id="image-placeholder">Your generated image will appear here</p>
+          <img id="result-image" src="" class="hidden h-full w-full object-contain p-2">
+        </div>
+      </div>
+
+      <div id="tool-qrcode" class="hidden flex-1 flex flex-col h-full items-center">
+        <h2 class="text-xl font-bold mb-4 text-green-400 w-full border-b border-white/10 pb-2">QR Forge</h2>
+        <div class="w-full max-w-xl flex gap-2 mb-8 mt-4">
+          <input type="text" id="qr-input" class="flex-1 bg-black/40 border border-white/20 rounded-lg p-3 text-white focus:outline-none focus:border-green-400 transition" placeholder="Enter a URL, text, or secret message...">
+          <button onclick="generateQR()" class="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-lg font-bold transition shadow-lg">Create</button>
+        </div>
+        <div class="glass p-8 bg-white/5 rounded-2xl shadow-2xl flex items-center justify-center border border-white/10">
+          <img id="qr-output" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=AetherLab+Initialized&color=ffffff&bgcolor=0f172a" alt="QR Code" class="w-56 h-56 rounded-lg mix-blend-screen">
+        </div>
+      </div>
+
     </div>
   </main>
 
-  <footer class="glass m-4 p-4 z-10 max-h-32 overflow-y-auto">
-    <h3 class="text-xs text-purple-400 font-bold uppercase tracking-widest mb-2">Live Activity</h3>
-    <ul id="activity-feed" class="text-sm text-white/70 space-y-1">
-      <li>System initialized. Awaiting cosmic input...</li>
+  <footer class="glass m-6 p-4 z-10 h-32 overflow-hidden flex flex-col shadow-lg">
+    <h3 class="text-xs text-purple-400 font-bold uppercase tracking-widest mb-2 border-b border-white/10 pb-1">Live Activity Stream</h3>
+    <ul id="activity-feed" class="text-sm text-white/70 space-y-1 overflow-y-auto flex-1 font-mono pr-2">
+      <li>> Awaiting cosmic input...</li>
     </ul>
   </footer>
 
@@ -57,7 +112,7 @@
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    // Your exact keys from the console
+    // Your exact keys from the Firebase console
     const firebaseConfig = {
       apiKey: "AIzaSyAk_rARkhkZGriWHMWkD6vRGhd82Ko32wM",
       authDomain: "aether-lab.firebaseapp.com",
@@ -69,6 +124,7 @@
       measurementId: "G-H0L7P4LY83"
     };
 
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
@@ -93,7 +149,7 @@
         userInfo.classList.remove('hidden');
         userName.textContent = user.displayName;
         userAvatar.src = user.photoURL;
-        logActivity(`${user.displayName} connected to Aether Lab.`);
+        window.globalLogActivity(`${user.displayName} connected to the Lab.`);
       } else {
         loginBtn.classList.remove('hidden');
         userInfo.classList.add('hidden');
@@ -103,14 +159,118 @@
     // Database Logic (Live Feed)
     const feedRef = ref(db, 'activity');
     
-    function logActivity(message) {
+    // Attach logging to window so standard JS functions below can use it!
+    window.globalLogActivity = function(message) {
       push(feedRef, { text: message, timestamp: serverTimestamp() });
-    }
+    };
 
     onChildAdded(feedRef, (data) => {
       const li = document.createElement('li');
       li.textContent = `> ${data.val().text}`;
-      activityFeed.prepend(li);
+      activityFeed.prepend(li); // Adds new items to the top
+    });
+  </script>
+
+  <script>
+    // Helper to log if user is signed in
+    function tryLog(msg) {
+      if(window.globalLogActivity) {
+        window.globalLogActivity(msg);
+      }
+    }
+
+    // --- UI Navigation Logic ---
+    function openTool(toolName) {
+      document.getElementById('default-view').classList.add('hidden');
+      document.getElementById('tool-chat').classList.add('hidden');
+      document.getElementById('tool-image').classList.add('hidden');
+      document.getElementById('tool-qrcode').classList.add('hidden');
+      
+      document.getElementById('tool-' + toolName).classList.remove('hidden');
+      document.getElementById('tool-' + toolName).classList.add('flex');
+    }
+
+    // --- AI Chat Logic ---
+    async function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const output = document.getElementById('chat-output');
+      const text = input.value.trim();
+      
+      if (!text) return;
+      
+      // Add User Message
+      output.innerHTML += `<div class="text-right"><span class="bg-blue-600 px-4 py-2 rounded-lg inline-block text-white shadow-lg">${text}</span></div>`;
+      input.value = '';
+      tryLog(`User asked Aether AI a question.`);
+      
+      // Add Loading State
+      const loadingId = 'loading-' + Date.now();
+      output.innerHTML += `<div id="${loadingId}" class="text-left"><span class="bg-white/10 px-4 py-2 rounded-lg inline-block text-white/60 animate-pulse">Processing request...</span></div>`;
+      output.scrollTop = output.scrollHeight;
+
+      try {
+        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(text)}`);
+        const reply = await response.text();
+        
+        document.getElementById(loadingId).remove();
+        output.innerHTML += `<div class="text-left"><span class="bg-blue-900/40 border border-blue-500/30 px-4 py-2 rounded-lg inline-block text-blue-100 whitespace-pre-wrap">${reply}</span></div>`;
+      } catch (error) {
+        document.getElementById(loadingId).remove();
+        output.innerHTML += `<div class="text-left text-red-400 bg-red-900/20 px-4 py-2 rounded-lg inline-block border border-red-500/30">System Error: Connection to AI core lost.</div>`;
+      }
+      output.scrollTop = output.scrollHeight;
+    }
+
+    document.getElementById('chat-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') sendChatMessage();
+    });
+
+    // --- AI Image Logic ---
+    function generateImage() {
+      const input = document.getElementById('image-input').value.trim();
+      if (!input) return;
+
+      const placeholder = document.getElementById('image-placeholder');
+      const imgResult = document.getElementById('result-image');
+      
+      placeholder.textContent = "Weaving pixels... please wait.";
+      placeholder.classList.remove('hidden');
+      placeholder.classList.add('animate-pulse');
+      imgResult.classList.add('hidden');
+      
+      tryLog(`User generating image: "${input.substring(0, 20)}..."`);
+
+      const randomSeed = Math.floor(Math.random() * 1000000);
+      const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}?seed=${randomSeed}&width=1024&height=768&nologo=true`;
+
+      const tempImg = new Image();
+      tempImg.onload = function() {
+        imgResult.src = imageUrl;
+        placeholder.classList.remove('animate-pulse');
+        placeholder.classList.add('hidden');
+        imgResult.classList.remove('hidden');
+      };
+      tempImg.src = imageUrl;
+    }
+
+    document.getElementById('image-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') generateImage();
+    });
+
+    // --- QR Code Logic ---
+    function generateQR() {
+      const input = document.getElementById('qr-input').value.trim();
+      const qrOutput = document.getElementById('qr-output');
+      
+      if (!input) return;
+      tryLog(`User forged a new QR code.`);
+      
+      // QR with nice colors fitting the dark theme
+      qrOutput.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(input)}&color=ffffff&bgcolor=0f172a`;
+    }
+
+    document.getElementById('qr-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') generateQR();
     });
   </script>
 
@@ -122,8 +282,9 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    const geometry = new THREE.TorusGeometry(10, 0.5, 16, 100);
-    const material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.3 });
+    // Creates the glowing ring effect
+    const geometry = new THREE.TorusGeometry(12, 0.2, 16, 100);
+    const material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.25 });
     const torus = new THREE.Mesh(geometry, material);
     
     scene.add(torus);
@@ -138,6 +299,7 @@
     
     animate();
 
+    // Handle Window Resizing smoothly
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
