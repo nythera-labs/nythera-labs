@@ -68,7 +68,7 @@
 
     <script>
         const AetherOS = {
-            version: '5.0.UTILITY',
+            version: '5.1.UTILITY_AUTHORIZED',
             windows: new Map(),
             zIndexCounter: 100,
             
@@ -76,7 +76,6 @@
                 this.initClock();
                 this.initTelemetry();
                 this.initWebGLMatrix();
-                // Spawn Image Maker immediately on boot so it's front and center
                 this.createWindow('dream', 'Dream Weaver (Image Maker)', this.templates.dreamWeaver(), 600, 550);
             },
 
@@ -153,7 +152,6 @@
             },
 
             templates: {
-                // THE IMAGE MAKER
                 dreamWeaver: () => `
                     <div class="flex flex-col h-full gap-4">
                         <div class="flex gap-2 shrink-0">
@@ -174,19 +172,18 @@
                     </div>
                 `,
                 
-                // MEDIA FETCHER (YT/IG/FB)
-                mediaFetcher: () => `
+                streamMatrix: () => `
                     <div class="flex flex-col h-full gap-4">
                         <div class="text-rose-400 font-bold border-b border-rose-500/30 pb-2 flex justify-between items-center">
-                            <span>MEDIA FETCHER (YT / IG / FB / TIKTOK)</span>
-                            <span class="text-[10px] text-rose-500/50">Powered by Cobalt API</span>
+                            <span>STREAM MATRIX</span>
+                            <span class="text-[10px] text-rose-500/50">Authorized iFrame Nodes</span>
                         </div>
                         <div class="flex gap-2 shrink-0">
-                            <input type="text" id="media-url" class="flex-1 bg-black/60 border border-white/20 rounded p-3 text-white focus:border-rose-400 outline-none transition font-mono text-sm" placeholder="Paste video link here..." onkeypress="if(event.key === 'Enter') AetherApps.downloadMedia()">
-                            <button onclick="AetherApps.downloadMedia()" class="bg-rose-700/90 hover:bg-rose-600 text-white px-6 py-2 rounded font-bold transition text-xs uppercase tracking-widest shadow-[0_0_10px_rgba(225,29,72,0.3)]">Rip Video</button>
+                            <input type="text" id="embed-url" class="flex-1 bg-black/60 border border-white/20 rounded p-3 text-white focus:border-rose-400 outline-none transition font-mono text-sm" placeholder="Paste YouTube or Spotify URL..." onkeypress="if(event.key === 'Enter') AetherApps.renderEmbed()">
+                            <button onclick="AetherApps.renderEmbed()" class="bg-rose-700/90 hover:bg-rose-600 text-white px-6 py-2 rounded font-bold transition text-xs uppercase tracking-widest shadow-[0_0_10px_rgba(225,29,72,0.3)]">Inject</button>
                         </div>
-                        <div id="media-output" class="flex-1 bg-black/80 border border-white/10 rounded p-4 text-white/70 font-mono text-xs overflow-y-auto space-y-2 shadow-inner">
-                            <div class="text-white/40">> Awaiting target URL. Ready to extract media payloads...</div>
+                        <div id="embed-output" class="flex-1 bg-black/80 border border-white/10 rounded flex items-center justify-center overflow-hidden shadow-inner p-1 relative">
+                            <div id="embed-placeholder" class="text-white/40 font-mono text-xs text-center p-4">> Awaiting authorized stream URL...</div>
                         </div>
                     </div>
                 `,
@@ -200,7 +197,6 @@
         };
 
         window.AetherApps = {
-            // Dream Weaver
             launchDream: () => AetherOS.createWindow('dream', 'Dream Weaver', AetherOS.templates.dreamWeaver(), 600, 550),
             genImage: () => {
                 const input = document.getElementById('dream-input').value.trim();
@@ -225,42 +221,27 @@
                 tempImg.src = url;
             },
 
-            // Media Fetcher (YT/IG/FB) via Cobalt API
-            launchMedia: () => AetherOS.createWindow('media', 'Media Fetcher', AetherOS.templates.mediaFetcher(), 500, 450),
-            downloadMedia: async () => {
-                const url = document.getElementById('media-url').value.trim();
-                const out = document.getElementById('media-output');
+            launchEmbed: () => AetherOS.createWindow('embed', 'Stream Matrix', AetherOS.templates.streamMatrix(), 550, 450),
+            renderEmbed: () => {
+                const url = document.getElementById('embed-url').value.trim();
+                const out = document.getElementById('embed-output');
                 if(!url) return;
                 
-                out.innerHTML += `<div class="text-rose-300 mt-2">> Intercepting stream for: <span class="text-white/60">${url.substring(0, 40)}...</span></div>`;
-                out.scrollTop = out.scrollHeight;
+                let embedHtml = `<div class="text-red-400 font-mono text-xs">> ERR: Unsupported URI format. Use standard YouTube or Spotify links.</div>`;
                 
-                try {
-                    // Cobalt public API for bypassing CORS and fetching raw media
-                    const res = await fetch('https://api.cobalt.tools/api/json', {
-                        method: 'POST',
-                        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: url, vQuality: "720" })
-                    });
-                    
-                    const data = await res.json();
-                    
-                    if(data && data.url) {
-                        out.innerHTML += `
-                            <div class="text-green-400 mt-1">> SUCCESS: Payload isolated.</div>
-                            <a href="${data.url}" target="_blank" class="block bg-rose-600/20 border border-rose-500/50 p-3 rounded text-center text-rose-300 hover:bg-rose-600/40 hover:text-white font-bold tracking-widest transition mt-2 cursor-pointer">
-                                ⬇️ Download Media File
-                            </a>`;
-                    } else {
-                        out.innerHTML += `<div class="text-red-400 mt-1">> ERR: Platform restriction or invalid link. Try another URL.</div>`;
-                    }
-                } catch(e) {
-                    out.innerHTML += `<div class="text-red-400 mt-1">> ERR: API Fetch failed. The public scraping node might be overloaded.</div>`;
+                const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+                const spotMatch = url.match(/spotify\.com\/(track|album|playlist|episode)\/([\w]+)/);
+
+                if (ytMatch && ytMatch[1]) {
+                    embedHtml = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="rounded"></iframe>`;
+                } else if (spotMatch && spotMatch[1] && spotMatch[2]) {
+                    embedHtml = `<iframe src="https://open.spotify.com/embed/${spotMatch[1]}/${spotMatch[2]}" width="100%" height="100%" frameborder="0" allowtransparency="true" allow="encrypted-media" class="rounded"></iframe>`;
                 }
-                out.scrollTop = out.scrollHeight;
+                
+                out.innerHTML = embedHtml;
+                document.getElementById('embed-url').value = '';
             },
 
-            // AI Core
             launchAI: () => AetherOS.createWindow('ai', 'AI Logic Core', AetherOS.templates.aiLogic(), 450, 500),
             sendChat: async () => {
                 const i = document.getElementById('ai-in'), o = document.getElementById('ai-out');
@@ -270,7 +251,6 @@
                 i.value = ''; o.scrollTop = o.scrollHeight;
             },
 
-            // Cipher Core
             launchCipher: () => AetherOS.createWindow('ci', 'Cipher Core', AetherOS.templates.cipherCore(), 500, 400),
             runC: async (a) => {
                 const i = document.getElementById('c-in').value, o = document.getElementById('c-out');
@@ -279,7 +259,6 @@
                 if(a==='sha256') { const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(i)); o.value = Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
             },
 
-            // Data Vault
             launchVault: () => {
                 AetherOS.createWindow('dv', 'Data Vault', AetherOS.templates.dataVault(), 400, 350);
                 setTimeout(()=>document.getElementById('vault-txt').value=localStorage.getItem('aether_v')||'',100);
@@ -291,7 +270,6 @@
             }
         };
 
-        // Registry & Start Menu
         AetherOS.initStartMenu = function() {
             const menu = document.createElement('div'); menu.id = 'start-menu';
             menu.className = 'absolute bottom-[62px] left-2 w-72 bg-black/90 backdrop-blur-xl border border-white/10 rounded-xl p-4 flex flex-col gap-1 shadow-2xl transition-all duration-200 opacity-0 pointer-events-none scale-95 origin-bottom-left z-[9999]';
@@ -301,7 +279,7 @@
             menu.innerHTML = `
                 <div class="text-[10px] text-white/40 font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2 px-2">Primary Utilities</div>
                 ${btn('Dream Weaver', '🖼️', "AetherApps.launchDream(); AetherOS.toggleStartMenu(false)")}
-                ${btn('Media Fetcher', '📥', "AetherApps.launchMedia(); AetherOS.toggleStartMenu(false)")}
+                ${btn('Stream Matrix', '🎬', "AetherApps.launchEmbed(); AetherOS.toggleStartMenu(false)")}
                 ${btn('AI Logic Core', '🤖', "AetherApps.launchAI(); AetherOS.toggleStartMenu(false)")}
                 ${btn('Cipher Core', '🔐', "AetherApps.launchCipher(); AetherOS.toggleStartMenu(false)")}
                 ${btn('Data Vault', '💾', "AetherApps.launchVault(); AetherOS.toggleStartMenu(false)")}
