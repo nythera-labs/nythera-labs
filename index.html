@@ -1,85 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aether Lab</title>
+  <title>Aether Lab // Mesh</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-    body { margin: 0; overflow: hidden; background: radial-gradient(circle at center, #0f172a, #000000); color: #fff; font-family: system-ui, -apple-system, sans-serif; }
+    body { margin: 0; overflow: hidden; background: #000; color: #fff; font-family: system-ui, sans-serif; }
     #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
     .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    .hidden { display: none !important; }
   </style>
 </head>
-<body class="h-screen flex flex-col relative">
+<body class="h-screen flex flex-col p-4">
 
   <div id="canvas-container"></div>
 
-  <header class="p-6 flex justify-between items-center z-10">
-    <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 tracking-wider">Aether Lab</h1>
-    <div id="auth-container">
-      <button id="login-btn" class="glass px-6 py-2 hover:bg-white/10 transition font-medium shadow-lg">Sign in</button>
-      <div id="user-info" class="hidden flex items-center gap-3 glass px-4 py-2 shadow-lg">
-        <img id="user-avatar" class="w-8 h-8 rounded-full border border-white/20" src="" alt="Avatar">
-        <span id="user-name" class="font-medium text-sm"></span>
-        <button id="logout-btn" class="text-xs text-red-400 ml-2 hover:text-red-300 transition">Exit</button>
-      </div>
+  <nav class="glass p-4 mb-4 flex gap-3 justify-center">
+    <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-blue-500/30 text-blue-300 text-sm font-bold hover:bg-blue-500/20">AI Core</button>
+    <button onclick="openTool('cipher')" class="px-4 py-2 rounded-full border border-yellow-500/30 text-yellow-300 text-sm font-bold hover:bg-yellow-500/20">Cipher</button>
+    <button onclick="openTool('vault')" class="px-4 py-2 rounded-full border border-indigo-500/30 text-indigo-300 text-sm font-bold hover:bg-indigo-500/20">Vault</button>
+  </nav>
+
+  <div class="glass flex-1 p-6 relative" id="tool-container">
+    <div id="tool-chat" class="hidden h-full flex-col">
+        <h2 class="text-blue-400 font-bold mb-2">AI Logic Core</h2>
+        <div class="flex-1 bg-black/50 p-4 rounded text-sm font-mono">System Ready.</div>
     </div>
-  </header>
-
-  <main class="flex-1 flex flex-col items-center p-4 z-10 w-full max-w-5xl mx-auto overflow-hidden">
-    <div class="glass w-full p-4 mb-6 flex flex-wrap justify-center gap-3 shadow-lg">
-      <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition">🤖 AI</button>
-      <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition">🖼️ Dream</button>
-      <button onclick="openTool('glitch')" class="px-4 py-2 rounded-full border border-pink-500/50 text-pink-300 text-sm font-bold hover:bg-pink-500/20 transition">🔮 Glitch</button>
-      <button onclick="openTool('audio')" class="px-4 py-2 rounded-full border border-cyan-500/50 text-cyan-300 text-sm font-bold hover:bg-cyan-500/20 transition">🎙️ Resonance</button>
-      <div class="w-px h-8 bg-white/20 mx-2 hidden md:block"></div>
-      <button onclick="openTool('cipher')" class="px-4 py-2 rounded-full border border-yellow-500/50 text-yellow-300 text-sm font-bold hover:bg-yellow-500/20 transition">🔐 Cipher Core</button>
-      <button onclick="openTool('sysscan')" class="px-4 py-2 rounded-full border border-green-500/50 text-green-300 text-sm font-bold hover:bg-green-500/20 transition">📟 Sys-Scan</button>
-      <button onclick="openTool('vault')" class="px-4 py-2 rounded-full border border-indigo-500/50 text-indigo-300 text-sm font-bold hover:bg-indigo-500/20 transition">💾 Data Vault</button>
-      <button onclick="openTool('qrcode')" class="px-4 py-2 rounded-full border border-emerald-500/50 text-emerald-300 text-sm font-bold hover:bg-emerald-500/20 transition">🛠️ QR Forge</button>
+    <div id="tool-cipher" class="hidden h-full flex-col">
+        <h2 class="text-yellow-400 font-bold mb-2">Cipher Matrix</h2>
+        <textarea class="w-full h-32 bg-black/50 text-white p-2"></textarea>
     </div>
-
-    <div class="glass w-full flex-1 flex flex-col relative shadow-2xl overflow-hidden p-6" id="tool-window">
-      <div id="default-view" class="flex-1 flex flex-col items-center justify-center text-center">
-        <div class="text-5xl mb-4 opacity-80 animate-pulse">🌌</div>
-        <h2 class="text-2xl font-bold text-white/90 mb-2">Systems Purged & Optimized</h2>
-        <p class="text-white/50 text-lg">Select a core function to begin.</p>
-      </div>
-
-      <!-- Modules omitted for length, keeping structure: -->
-      <div id="tool-chat" class="hidden flex-1 flex-col h-full">...</div>
-      <div id="tool-image" class="hidden flex-1 flex-col h-full">...</div>
-      <!-- Add your previous tool divs here -->
+    <div id="tool-vault" class="hidden h-full flex-col">
+        <h2 class="text-indigo-400 font-bold mb-2">Data Vault</h2>
+        <textarea class="w-full h-32 bg-black/50 text-white p-2"></textarea>
     </div>
-  </main>
-
-  <footer class="glass m-4 p-3 z-10 h-24 overflow-hidden flex flex-col shadow-lg">
-    <h3 class="text-xs text-purple-400 font-bold uppercase tracking-widest mb-1 border-b border-white/10 pb-1">Network Feed</h3>
-    <ul id="activity-feed" class="text-xs text-white/70 space-y-1 overflow-y-auto flex-1 font-mono pr-2">
-      <li>> UI optimized. Utilities loaded.</li>
-    </ul>
-  </footer>
+  </div>
 
   <script>
-    // Three.js background setup
-    const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('canvas-container').appendChild(renderer.domElement);
-    const geometry = new THREE.TorusGeometry(14, 0.1, 16, 100); const material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.15 });
-    const torus = new THREE.Mesh(geometry, material); scene.add(torus); camera.position.z = 25;
-    function animate() { requestAnimationFrame(animate); torus.rotation.x += 0.0005; torus.rotation.y += 0.001; renderer.render(scene, camera); } animate();
-    window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
-
-    function openTool(toolName) {
-      document.getElementById('default-view').classList.add('hidden');
+    // 1. Tool Switcher Logic
+    function openTool(name) {
+      console.log("Switching to:", name);
       document.querySelectorAll('[id^="tool-"]').forEach(el => el.classList.add('hidden'));
-      document.getElementById('tool-' + toolName).classList.remove('hidden');
+      const target = document.getElementById('tool-' + name);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('flex');
+      }
     }
+
+    // 2. Three.js Background Mesh
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({alpha: true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+    const geo = new THREE.IcosahedronGeometry(10, 2);
+    const mat = new THREE.MeshBasicMaterial({color: 0x3b82f6, wireframe: true, transparent: true, opacity: 0.2});
+    const mesh = new THREE.Mesh(geo, mat);
+    scene.add(mesh);
+    camera.position.z = 20;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      mesh.rotation.y += 0.005;
+      renderer.render(scene, camera);
+    }
+    animate();
   </script>
 </body>
 </html>
