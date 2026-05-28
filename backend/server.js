@@ -1,31 +1,31 @@
 const express = require('express');
-const ytDl = require('yt-dlp-exec');
+const cors = require('cors');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/ping', (req, res) => res.send('Pong!'));
+app.use(cors());
+app.use(express.json());
 
-// 🚀 The New Private Extraction API
-app.get('/api/rip', async (req, res) => {
-  const url = req.query.url;
-  if (!url) return res.status(400).send('Missing URL');
-
-  try {
-    // This fetches the direct MP4 stream URL without downloading the whole file
-    const data = await ytDl(url, {
-      dumpSingleJson: true,
-      noCheckCertificates: true,
-      format: 'best',
-    });
-
-    // Send the direct, high-quality stream URL back to your frontend
-    res.json({
-      title: data.title,
-      streamUrl: data.url
-    });
-  } catch (err) {
-    res.status(500).send('Extraction failed: ' + err.message);
-  }
+// 🟢 Keep-Alive (Cron Job stays green)
+app.get('/ping', (req, res) => {
+  res.status(200).send(`Pong! Aether Backend is wide awake.`);
 });
 
-app.listen(PORT, () => console.log(`API running on port ${PORT}`));
+// 🔴 The Stealth Ghost Router
+app.get('/api/rip', (req, res) => {
+  const videoUrl = req.query.url; 
+  if (!videoUrl) {
+    return res.status(400).send(`Missing video URL.`);
+  }
+
+  // Instead of fetching the video on the server (and getting banned),
+  // we bounce the user to a specialized downloader with the link pre-loaded.
+  const ghostUrl = `https://savefrom.net/${videoUrl}`;
+
+  res.redirect(ghostUrl);
+});
+
+app.listen(PORT, () => {
+  console.log(`Backend live on port ${PORT}`);
+});
