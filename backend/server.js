@@ -26,12 +26,22 @@ app.get('/api/rip', async (req, res) => {
     // Force the browser to download the file instead of playing it
     res.header('Content-Disposition', 'attachment; filename="Aether_Extraction.mp4"');
     
-    // Rip and stream the video directly to the client
-    ytdl(videoUrl, { format: 'mp4' }).pipe(res);
+    // Rip and stream the video directly to the client, WITH error handling
+    ytdl(videoUrl, { format: 'mp4' })
+      .on('error', (err) => {
+        console.error('YouTube Stream Error:', err.message);
+        // Only send an error response if the download hasn't already started
+        if (!res.headersSent) {
+          res.status(429).send('Extraction Matrix Failed: YouTube blocked the request (HTTP 429).');
+        }
+      })
+      .pipe(res);
 
   } catch (error) {
     console.error('Extraction error:', error);
-    res.status(500).send('Extraction Matrix Failed: Could not process the video.');
+    if (!res.headersSent) {
+      res.status(500).send('Extraction Matrix Failed: Could not process the video.');
+    }
   }
 });
 
