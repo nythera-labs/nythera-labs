@@ -96,7 +96,7 @@
         <div class="flex flex-wrap justify-between items-center mb-3 border-b border-white/10 pb-2 gap-2">
           <h2 class="text-xl font-bold text-teal-400">Worker Live Registry</h2>
           <span class="text-xs font-mono bg-teal-950/40 border border-teal-500/30 px-3 py-1 rounded-full text-teal-300">
-            Active Nodes: <span id="worker-count">0</span> / 1000
+            Active Nodes: <span id="worker-count">0</span> / 100
           </span>
         </div>
 
@@ -272,7 +272,8 @@
         const data = snapshot.val();
         const key = snapshot.key;
 
-        if (nodeMap.size >= 1000) {
+        // Capped layout memory at exactly 100 entries for your dashboard profile criteria
+        if (nodeMap.size >= 100) {
           const oldestKey = nodeMap.keys().next().value;
           const oldestRow = document.getElementById(`node-${oldestKey}`);
           if (oldestRow) oldestRow.remove();
@@ -283,7 +284,6 @@
         row.className = "grid grid-cols-4 p-3 hover:bg-white/5 transition items-center text-white/80 border-b border-white/5 font-mono text-xs";
         row.id = `node-${key}`;
         
-        // Cache node text values onto elements directly as custom tracking attributes for instant filtering
         row.setAttribute('data-name', (data.name || '').toLowerCase());
         row.setAttribute('data-status', data.status || 'Active');
 
@@ -301,7 +301,6 @@
         nodeMap.set(key, row);
         counter.innerText = nodeMap.size;
         
-        // Ensure new incoming backend pushes respect user's search configurations instantly
         executeClientFilters();
       });
 
@@ -315,7 +314,7 @@
           const clockCell = rowNode.querySelector('.clock-cell');
           if (statusCell) {
             const statusColor = data.status === 'Active' ? 'text-green-400' : 'text-amber-400';
-            statusCell.innerHTML = `<span class="inline-block h-1.5 w-1.5 rounded-full bg-current ${statusColor} mr-1.5 animate-pulse"></span>${data.status || 'Active'}`;
+            statusCell.innerHTML = `<span class="inline-block h-1.5 w-1.5 rounded-full bg-current ${statusColor} mr-1.5 animate-pulse"></span>${data.status || 'Active'}</div>`;
           }
           if (clockCell && data.timestamp) {
             clockCell.innerText = new Date(data.timestamp).toLocaleTimeString();
@@ -325,7 +324,7 @@
       });
     }
 
-    // NEW: Client-Side Dashboard Matrix Sorting & Filtering Engine
+    // Client-Side Dashboard Matrix Sorting & Filtering Engine
     function executeClientFilters() {
       const searchInput = document.getElementById('worker-search').value.toLowerCase().trim();
       const filterSelect = document.getElementById('worker-filter').value;
@@ -342,7 +341,6 @@
         const matchesFilter = filterSelect === 'all' || nodeStatus === filterSelect;
 
         if (matchesSearch && matchesFilter) {
-          // Reset visibility layout parameters cleanly matching Tailwind layouts
           row.style.setProperty('display', 'grid', 'important');
         } else {
           row.style.setProperty('display', 'none', 'important');
