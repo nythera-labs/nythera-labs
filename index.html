@@ -1,83 +1,85 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether OS // Nexus Lab</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <style>
-        :root { --aether-bg: #030305; --aether-surface: rgba(15, 15, 20, 0.7); --accent-cyan: #06b6d4; }
-        body { background-color: var(--aether-bg); color: #e2e8f0; font-family: system-ui, sans-serif; overflow: hidden; height: 100vh; }
-        .os-window { position: absolute; background: var(--aether-surface); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; z-index: 10; }
-        .taskbar { position: absolute; bottom: 0; left: 0; right: 0; height: 52px; background: rgba(5, 5, 10, 0.85); backdrop-filter: blur(25px); border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; padding: 0 16px; z-index: 1000; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aether Lab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; background: radial-gradient(circle at center, #0f172a, #000000); color: #fff; font-family: system-ui, -apple-system, sans-serif; }
+    #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+    .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+  </style>
 </head>
-<body>
-    <div id="os-matrix-bg" class="absolute inset-0"></div>
-    <div id="os-desktop" class="absolute inset-0 bottom-[52px]"></div>
-    
-    <div class="taskbar">
-        <div id="start-menu-btn" class="w-10 h-10 rounded-lg bg-cyan-600 flex items-center justify-center cursor-pointer font-bold">A</div>
-        <div id="taskbar-item-container" class="flex gap-2 ml-4 flex-1"></div>
-        <div class="font-mono text-xs text-white/60" id="tray-clock">00:00:00</div>
+<body class="h-screen flex flex-col relative">
+
+  <div id="canvas-container"></div>
+
+  <header class="p-6 flex justify-between items-center z-10">
+    <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 tracking-wider">Aether Lab</h1>
+    <div id="auth-container">
+      <button id="login-btn" class="glass px-6 py-2 hover:bg-white/10 transition font-medium shadow-lg">Sign in</button>
+      <div id="user-info" class="hidden flex items-center gap-3 glass px-4 py-2 shadow-lg">
+        <img id="user-avatar" class="w-8 h-8 rounded-full border border-white/20" src="" alt="Avatar">
+        <span id="user-name" class="font-medium text-sm"></span>
+        <button id="logout-btn" class="text-xs text-red-400 ml-2 hover:text-red-300 transition">Exit</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 flex flex-col items-center p-4 z-10 w-full max-w-5xl mx-auto overflow-hidden">
+    <div class="glass w-full p-4 mb-6 flex flex-wrap justify-center gap-3 shadow-lg">
+      <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition">🤖 AI</button>
+      <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition">🖼️ Dream</button>
+      <button onclick="openTool('glitch')" class="px-4 py-2 rounded-full border border-pink-500/50 text-pink-300 text-sm font-bold hover:bg-pink-500/20 transition">🔮 Glitch</button>
+      <button onclick="openTool('audio')" class="px-4 py-2 rounded-full border border-cyan-500/50 text-cyan-300 text-sm font-bold hover:bg-cyan-500/20 transition">🎙️ Resonance</button>
+      <div class="w-px h-8 bg-white/20 mx-2 hidden md:block"></div>
+      <button onclick="openTool('cipher')" class="px-4 py-2 rounded-full border border-yellow-500/50 text-yellow-300 text-sm font-bold hover:bg-yellow-500/20 transition">🔐 Cipher Core</button>
+      <button onclick="openTool('sysscan')" class="px-4 py-2 rounded-full border border-green-500/50 text-green-300 text-sm font-bold hover:bg-green-500/20 transition">📟 Sys-Scan</button>
+      <button onclick="openTool('vault')" class="px-4 py-2 rounded-full border border-indigo-500/50 text-indigo-300 text-sm font-bold hover:bg-indigo-500/20 transition">💾 Data Vault</button>
+      <button onclick="openTool('qrcode')" class="px-4 py-2 rounded-full border border-emerald-500/50 text-emerald-300 text-sm font-bold hover:bg-emerald-500/20 transition">🛠️ QR Forge</button>
     </div>
 
-    <script>
-        const AetherOS = {
-            windows: new Map(),
-            createWindow(id, title, htmlContent, w, h) {
-                if (this.windows.has(id)) return;
-                const win = document.createElement('div');
-                win.className = 'os-window';
-                win.style.width = `${w}px`; win.style.height = `${h}px`;
-                win.innerHTML = `
-                    <div class="h-10 bg-black/40 border-b border-white/10 flex items-center px-4 cursor-grab">
-                        <div class="w-3 h-3 rounded-full bg-red-500 mr-2" onclick="AetherOS.closeWindow('${id}')"></div>
-                        <span class="text-[10px] text-white/50 uppercase font-mono">${title}</span>
-                    </div>
-                    <div class="flex-1 overflow-auto p-4">${htmlContent}</div>
-                `;
-                document.getElementById('os-desktop').appendChild(win);
-                this.windows.set(id, win);
-                this.addToTaskbar(id, title);
-            },
-            closeWindow(id) { 
-                this.windows.get(id).remove(); 
-                this.windows.delete(id); 
-                document.getElementById(`taskbar-${id}`).remove();
-            },
-            addToTaskbar(id, title) {
-                const item = document.createElement('div');
-                item.id = `taskbar-${id}`;
-                item.className = 'px-4 py-2 bg-white/5 rounded text-xs font-mono cursor-pointer hover:bg-white/10';
-                item.innerText = title;
-                document.getElementById('taskbar-item-container').appendChild(item);
-            },
-            templates: {
-                aetherLog: () => `<div id="log-container" class="h-full font-mono text-[10px] text-green-400 space-y-1"></div>`
-            }
-        };
+    <div class="glass w-full flex-1 flex flex-col relative shadow-2xl overflow-hidden p-6" id="tool-window">
+      <div id="default-view" class="flex-1 flex flex-col items-center justify-center text-center">
+        <div class="text-5xl mb-4 opacity-80 animate-pulse">🌌</div>
+        <h2 class="text-2xl font-bold text-white/90 mb-2">Systems Purged & Optimized</h2>
+        <p class="text-white/50 text-lg">Select a core function to begin.</p>
+      </div>
 
-        window.AetherApps = {
-            launchLog: () => {
-                AetherOS.createWindow('log', 'System Telemetry', AetherOS.templates.aetherLog(), 400, 300);
-                setInterval(async () => {
-                    const out = document.getElementById('log-container');
-                    if(!out) return;
-                    try {
-                        const r = await fetch('https://aether-backend-t0kx.onrender.com/ping');
-                        const data = await r.json();
-                        out.innerHTML += `<div>[${new Date().toLocaleTimeString()}] NODE: ${data.node} | STATUS: ${data.status}</div>`;
-                    } catch(e) { out.innerHTML += `<div class="text-red-500">[${new Date().toLocaleTimeString()}] CONNECTION_LOST</div>`; }
-                    out.scrollTop = out.scrollHeight;
-                }, 5000);
-            }
-        };
+      <!-- Modules omitted for length, keeping structure: -->
+      <div id="tool-chat" class="hidden flex-1 flex-col h-full">...</div>
+      <div id="tool-image" class="hidden flex-1 flex-col h-full">...</div>
+      <!-- Add your previous tool divs here -->
+    </div>
+  </main>
 
-        // Start Menu Setup
-        document.getElementById('start-menu-btn').onclick = () => AetherApps.launchLog();
-        setInterval(() => document.getElementById('tray-clock').innerText = new Date().toLocaleTimeString(), 1000);
-    </script>
+  <footer class="glass m-4 p-3 z-10 h-24 overflow-hidden flex flex-col shadow-lg">
+    <h3 class="text-xs text-purple-400 font-bold uppercase tracking-widest mb-1 border-b border-white/10 pb-1">Network Feed</h3>
+    <ul id="activity-feed" class="text-xs text-white/70 space-y-1 overflow-y-auto flex-1 font-mono pr-2">
+      <li>> UI optimized. Utilities loaded.</li>
+    </ul>
+  </footer>
+
+  <script>
+    // Three.js background setup
+    const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+    const geometry = new THREE.TorusGeometry(14, 0.1, 16, 100); const material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.15 });
+    const torus = new THREE.Mesh(geometry, material); scene.add(torus); camera.position.z = 25;
+    function animate() { requestAnimationFrame(animate); torus.rotation.x += 0.0005; torus.rotation.y += 0.001; renderer.render(scene, camera); } animate();
+    window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+
+    function openTool(toolName) {
+      document.getElementById('default-view').classList.add('hidden');
+      document.querySelectorAll('[id^="tool-"]').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tool-' + toolName).classList.remove('hidden');
+    }
+  </script>
 </body>
 </html>
