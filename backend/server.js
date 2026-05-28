@@ -1,26 +1,21 @@
 const express = require('express');
-const cors = require('cors');
-const ytdl = require('@distube/ytdl-core');
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use(cors({ origin: 'https://aether-lab.web.app' }));
+// Middleware for parsing JSON
+app.use(express.json());
 
-app.get('/ping', (req, res) => res.status(200).send('AWAKE'));
-
-app.get('/api/rip', async (req, res) => {
-    try {
-        const url = req.query.url;
-        const info = await ytdl.getInfo(url);
-        res.header('Content-Disposition', 'attachment; filename="video.mp4"');
-        ytdl(url, { format: 'mp4' }).pipe(res);
-    } catch (e) { res.status(500).send(e.message); }
+// Basic health check endpoint
+app.get('/', (req, res) => {
+    res.send('Aether Backend is running successfully.');
 });
 
-app.get('/api/proxy', async (req, res) => {
-    try {
-        const response = await fetch(req.query.url);
-        res.json(await response.json());
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
+// If you need a replacement for video processing, 
+// you would add your new logic here, for example:
+// app.get('/video-info', async (req, res) => {
+//    // Add your new yt-dlp-exec logic here
+// });
 
-app.listen(process.env.PORT || 3000);
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
