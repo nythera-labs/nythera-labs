@@ -7,69 +7,188 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-    body { margin: 0; overflow: hidden; background: radial-gradient(circle at center, #0f172a, #000000); color: #fff; font-family: system-ui, sans-serif; }
-    #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-    .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; }
+    body { 
+      margin: 0; 
+      overflow: hidden; 
+      background: radial-gradient(circle at center, #0f172a, #000000); 
+      color: #fff; 
+      font-family: system-ui, -apple-system, sans-serif; 
+    }
+    #canvas-container { 
+      position: absolute; 
+      top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
+    }
+    .glass { 
+      background: rgba(255, 255, 255, 0.05); 
+      backdrop-filter: blur(10px); 
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+      border-radius: 1rem; 
+    }
     .tool-tab { display: none !important; }
     .tool-tab.flex { display: flex !important; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
   </style>
 </head>
-<body class="h-screen flex flex-col p-4">
+<body class="h-screen flex flex-col relative p-4">
 
   <div id="canvas-container"></div>
 
-  <nav class="glass p-4 mb-4 flex gap-3 justify-center z-10 flex-wrap">
-    <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-blue-500/30 text-blue-300 text-sm font-bold hover:bg-blue-500/20">🤖 AI Core</button>
-    <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-purple-500/30 text-purple-300 text-sm font-bold hover:bg-purple-500/20">🖼️ Dream</button>
-    <button onclick="openTool('vault')" class="px-4 py-2 rounded-full border border-indigo-500/30 text-indigo-300 text-sm font-bold hover:bg-indigo-500/20">💾 Vault</button>
-  </nav>
+  <header class="p-6 flex justify-between items-center z-10">
+    <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 tracking-wider">Aether Lab</h1>
+  </header>
 
-  <div class="glass flex-1 p-6 relative z-10" id="tool-container">
-    <div id="default-view" class="h-full flex items-center justify-center text-white/50">System Offline. Select module.</div>
+  <main class="flex-1 flex flex-col items-center z-10 w-full max-w-5xl mx-auto overflow-hidden">
     
-    <div id="tool-chat" class="tool-tab flex-col h-full">
-        <h2 class="text-blue-400 font-bold mb-2">AI Logic</h2>
-        <div id="chat-out" class="flex-1 bg-black/40 p-4 mb-2 rounded font-mono text-sm"></div>
-        <input type="text" id="chat-in" class="bg-black/60 p-2 text-white border border-white/10" placeholder="Prompt...">
+    <div class="glass w-full p-4 mb-6 flex flex-wrap justify-center gap-3 shadow-lg">
+      <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-blue-500/30 text-blue-300 text-sm font-bold hover:bg-blue-500/20 transition">🤖 AI Core</button>
+      <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-purple-500/30 text-purple-300 text-sm font-bold hover:bg-purple-500/20 transition">🖼️ Dream</button>
+      <button onclick="openTool('vault')" class="px-4 py-2 rounded-full border border-indigo-500/30 text-indigo-300 text-sm font-bold hover:bg-indigo-500/20 transition">💾 Vault</button>
     </div>
 
-    <div id="tool-image" class="tool-tab flex-col h-full">
-        <h2 class="text-purple-400 font-bold mb-2">Dream Weaver</h2>
-        <input type="text" id="img-in" class="bg-black/60 p-2 text-white border border-white/10" placeholder="Image prompt...">
-        <button onclick="genImg()" class="bg-purple-600 px-4 py-2 mt-2 rounded">Synthesize</button>
-        <img id="img-out" class="mt-4 max-h-64 object-contain">
-    </div>
+    <div class="glass w-full flex-1 flex flex-col relative shadow-2xl overflow-hidden p-6" id="tool-window">
+      
+      <div id="default-view" class="flex-1 flex flex-col items-center justify-center text-center">
+        <div class="text-5xl mb-4 opacity-80 animate-pulse">🌌</div>
+        <h2 class="text-2xl font-bold text-white/90 mb-2">Systems Purged & Optimized</h2>
+        <p class="text-white/50 text-lg">Select a core function to begin.</p>
+      </div>
 
-    <div id="tool-vault" class="tool-tab flex-col h-full">
-        <h2 class="text-indigo-400 font-bold mb-2">Local Vault</h2>
-        <textarea id="vault-in" oninput="saveVault()" class="flex-1 bg-black/40 p-4 text-indigo-100 font-mono"></textarea>
+      <div id="tool-chat" class="tool-tab hidden flex-1 flex-col h-full w-full">
+        <h2 class="text-xl font-bold mb-4 text-blue-400 border-b border-white/10 pb-2">AI Logic Core</h2>
+        <div id="chat-out" class="flex-1 glass p-4 mb-4 overflow-y-auto font-mono text-sm space-y-4 bg-black/40 rounded-lg border border-white/5 whitespace-pre-wrap leading-relaxed text-blue-100 shadow-inner">
+          <div class="text-left"><span class="text-blue-400/50">> System localized. Ready for stream parameters.</span></div>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" id="chat-in" class="flex-1 bg-black/40 border border-white/20 rounded-lg p-3 text-white focus:outline-none focus:border-blue-400 transition" placeholder="Type instructions...">
+          <button onclick="sendChat()" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition">Send</button>
+        </div>
+      </div>
+
+      <div id="tool-image" class="tool-tab hidden flex-1 flex flex-col h-full w-full">
+        <h2 class="text-xl font-bold mb-4 text-purple-400 border-b border-white/10 pb-2">Dream Weaver</h2>
+        <div class="flex gap-2 mb-4">
+          <input type="text" id="img-in" class="flex-1 bg-black/40 border border-white/20 rounded-lg p-3 text-white focus:outline-none focus:border-purple-400 transition" placeholder="Describe synthetic prompt...">
+          <button onclick="genImg()" class="bg-purple-600 hover:bg-purple-500 px-6 py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition">Synthesize</button>
+        </div>
+        <div id="image-output" class="flex-1 glass flex items-center justify-center bg-black/40 overflow-hidden relative rounded-xl border border-white/5 p-2 shadow-inner">
+          <div id="img-loader" class="hidden text-purple-400 font-mono text-xs animate-pulse">> Initializing graphic engine array...</div>
+          <img id="img-out" src="" class="hidden h-full w-full object-contain rounded-lg transition-all duration-300">
+        </div>
+      </div>
+
+      <div id="tool-vault" class="tool-tab hidden flex-1 flex flex-col h-full w-full">
+        <h2 class="text-xl font-bold mb-4 text-indigo-400 border-b border-white/10 pb-2">Local Vault</h2>
+        <textarea id="vault-in" oninput="saveVault()" class="w-full flex-1 bg-black/40 border border-indigo-500/30 rounded-xl p-6 text-indigo-100 focus:outline-none focus:border-indigo-400 transition font-mono leading-relaxed" spellcheck="false" placeholder="Drop secrets or configurations here. Stays persistent on device runtime."></textarea>
+      </div>
+
     </div>
-  </div>
+  </main>
 
   <script>
-    function openTool(name) {
-      document.getElementById('default-view').style.display = 'none';
-      document.querySelectorAll('.tool-tab').forEach(el => el.classList.remove('flex'));
-      document.getElementById('tool-' + name).classList.add('flex');
+    const allTools = ['chat', 'image', 'vault'];
+    
+    function openTool(toolName) {
+      const defView = document.getElementById('default-view');
+      if (defView) defView.style.display = 'none';
+      
+      allTools.forEach(t => {
+        const el = document.getElementById('tool-' + t);
+        if(el) { 
+          el.classList.remove('flex');
+          el.classList.add('hidden'); 
+        }
+      });
+      
+      const target = document.getElementById('tool-' + toolName);
+      if(target) {
+        target.classList.remove('hidden');
+        target.classList.add('flex');
+      }
     }
 
-    // AI Logic (Client-side fetch to public API)
+    // AI Stream Handler
     async function sendChat() {
-        const i = document.getElementById('chat-in');
-        const o = document.getElementById('chat-out');
-        const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(i.value)}`);
-        o.innerText = await res.text();
+        const input = document.getElementById('chat-in');
+        const output = document.getElementById('chat-out');
+        const promptText = input.value.trim();
+        if (!promptText) return;
+
+        output.innerHTML += `<div class="text-white/40 mt-2">> USER: ${promptText}</div>`;
+        const loaderId = 'load-' + Date.now();
+        output.innerHTML += `<div id="${loaderId}" class="text-blue-400 animate-pulse mt-1">> Processing query stream...</div>`;
+        input.value = '';
+        output.scrollTop = output.scrollHeight;
+
+        try {
+            const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(promptText)}`);
+            document.getElementById(loaderId).remove();
+            output.innerHTML += `<div class="bg-blue-950/20 border border-blue-500/20 p-3 rounded-lg mt-2 text-blue-200">${await res.text()}</div>`;
+        } catch (err) { 
+            document.getElementById(loaderId).className = "text-red-400";
+            document.getElementById(loaderId).innerText = `> Error: Link to matrix terminated.`; 
+        }
+        output.scrollTop = output.scrollHeight;
     }
 
-    // Image Logic (Client-side)
+    // Image Generator Engine
     function genImg() {
-        const i = document.getElementById('img-in').value;
-        document.getElementById('img-out').src = `https://image.pollinations.ai/prompt/${encodeURIComponent(i)}`;
+        const input = document.getElementById('img-in').value.trim();
+        if (!input) return;
+
+        const loader = document.getElementById('img-loader');
+        const img = document.getElementById('img-out');
+
+        img.classList.add('hidden');
+        loader.classList.remove('hidden');
+
+        const finalUri = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}?seed=${Math.floor(Math.random()*99999)}&width=1024&height=1024&nologo=true`;
+        
+        const monitor = new Image();
+        monitor.onload = () => {
+            img.src = finalUri;
+            loader.classList.add('hidden');
+            img.classList.remove('hidden');
+        };
+        monitor.src = finalUri;
     }
 
-    // Vault Logic (Local Browser Storage)
+    // Key Listeners
+    document.getElementById('chat-in').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
+    document.getElementById('img-in').addEventListener('keypress', (e) => { if (e.key === 'Enter') genImg(); });
+
+    // Storage Matrix
     function saveVault() { localStorage.setItem('vault', document.getElementById('vault-in').value); }
-    window.onload = () => document.getElementById('vault-in').value = localStorage.getItem('vault') || '';
+    window.onload = () => { if(document.getElementById('vault-in')) document.getElementById('vault-in').value = localStorage.getItem('vault') || ''; };
+  </script>
+
+  <script>
+    const scene = new THREE.Scene(); 
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); 
+    renderer.setSize(window.innerWidth, window.innerHeight); 
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+    
+    const geometry = new THREE.TorusGeometry(14, 0.1, 16, 100); 
+    const material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.12 });
+    const torus = new THREE.Mesh(geometry, material); 
+    scene.add(torus); 
+    camera.position.z = 25;
+
+    function animate() { 
+      requestAnimationFrame(animate); 
+      torus.rotation.x += 0.0006; 
+      torus.rotation.y += 0.0012; 
+      renderer.render(scene, camera); 
+    } 
+    animate();
+
+    window.addEventListener('resize', () => { 
+      camera.aspect = window.innerWidth / window.innerHeight; 
+      camera.updateProjectionMatrix(); 
+      renderer.setSize(window.innerWidth, window.innerHeight); 
+    });
   </script>
 </body>
 </html>
