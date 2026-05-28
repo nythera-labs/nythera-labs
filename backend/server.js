@@ -4,7 +4,6 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -22,15 +21,14 @@ app.get('/api/rip', (req, res) => {
   }
 
   // GHOST ROUTING: 
-  // Since Cloudflare blocks Render's Server IP, we bounce the request 
-  // to your iPad so you use your safe home Wi-Fi IP instead.
+  // We bounce the request to the client so the download happens on their home Wi-Fi IP,
+  // bypassing the data-center ban on your Render server.
   const ghostUrl = `https://cobalt.tools/#${videoUrl}`;
 
-  // Instantly teleport the browser to the pre-filled extraction page
+  // Redirect the browser to the extraction page with the link pre-loaded
   res.redirect(ghostUrl);
 });
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Aether Backend running on port ${PORT}`);
 });
