@@ -1,1021 +1,645 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aether Lab // Infinite Master Toolbox</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <style>
-    body { 
-      margin: 0; 
-      overflow: hidden; 
-      background: #060913; 
-      color: #fff; 
-      font-family: system-ui, -apple-system, sans-serif; 
-      user-select: none;
-    }
-    #canvas-container { 
-      position: fixed; 
-      top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; 
-      pointer-events: none;
-    }
-    .main-layout {
-      position: relative;
-      z-index: 10;
-    }
-    .glass { 
-      background: rgba(10, 15, 30, 0.85); 
-      backdrop-filter: blur(14px); 
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.06); 
-      border-radius: 1rem; 
-    }
-    .inner-panel {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-    .tool-tab { display: none !important; }
-    .tool-tab.flex { display: flex !important; }
+	<title>Cadet Mission Coaching Center. Be Active, Be Creative</title>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Links -->
+    <link rel="icon" href="/asset/frontend_asset/assets/img/core/fav.png"/>
+    <!-- Bootstrap Css -->
+    <link rel="stylesheet" type="text/css" href="/asset/frontend_asset/assets/css/bootstrap.css">
+    <!-- Nice Select Css -->
+    <link rel="stylesheet" href="/asset/frontend_asset/assets/css/nice-select.css"/>
+    <!-- Select2 Css -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Slick Slider -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/SlickNav/1.0.10/slicknav.min.css" rel="stylesheet"/>
+    <!-- Template Css -->
+    <link rel="stylesheet" type="text/css" href="/asset/frontend_asset/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/asset/frontend_asset/assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cadetmission.com/asset/toastr.min.css">
     
-    @keyframes textGlitch {
-      0% { text-shadow: 2px -2px 0 #ff00c1, -2px 2px 0 #00fff0; }
-      25% { text-shadow: -2px 2px 0 #ff00c1, 2px -2px 0 #00fff0; }
-      50% { text-shadow: 2px 2px 0 #ff00c1, -2px -2px 0 #00fff0; }
-      75% { text-shadow: -2px -2px 0 #ff00c1, 2px 2px 0 #00fff0; }
-      100% { text-shadow: 2px -2px 0 #ff00c1, -2px 2px 0 #00fff0; }
-    }
-    .cyber-glitch:hover {
-      animation: textGlitch 0.2s linear infinite;
-    }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
-  </style>
 </head>
-<body class="h-screen flex flex-col relative p-3">
-
-  <div id="canvas-container"></div>
-
-  <div class="main-layout flex flex-col h-full w-full">
-    <header class="p-4 flex justify-between items-center">
-      <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-teal-400 tracking-wider cyber-glitch cursor-pointer transition-all duration-300">Aether Lab</h1>
-      <div id="auth-container">
-        <button id="login-btn" onclick="playAudioTone(600, 'square', 0.04)" class="glass px-5 py-2 hover:bg-white/10 transition font-medium shadow-lg text-xs tracking-widest uppercase text-white/70">Sign in</button>
-        <div id="user-info" class="hidden items-center gap-3 glass px-4 py-1.5 shadow-lg">
-          <img id="user-avatar" class="w-7 h-7 rounded-full border border-white/20 shadow-inner" src="" alt="Avatar">
-          <span id="user-name" class="font-bold text-[11px] tracking-wider uppercase text-white/80"></span>
-          <button id="logout-btn" onclick="playAudioTone(250, 'sawtooth', 0.1)" class="text-[10px] text-red-400/60 ml-2 hover:text-red-400 font-bold tracking-widest uppercase transition">Exit</button>
-        </div>
+<body>
+    <!-- Page Wrapper Start -->
+    <div class="page-wrapper">
+      <div class="side-whatsapp-buttons">
+          <a href="https://wa.me/+8801713599468">
+            <img height="60" src="/asset/frontend_asset/assets/img/core/whatsapp.svg">
+          </a>
       </div>
-    </header>
+	    <!-- Header Section Start -->
+<header class="header">
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-container">
+        <div class="mobile-menu-close"></div>
+        <div id="mobile-menu-wrap"></div>
+    </div>
+    <!-- Mobile Menu End -->
 
-    <main class="flex-1 flex flex-col items-center w-full max-w-6xl mx-auto overflow-hidden px-2">
-      
-      <div class="glass w-full p-3 mb-4 flex flex-wrap justify-center gap-2 shadow-lg">
-        <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-blue-500/20 text-blue-300 text-xs uppercase tracking-widest font-bold hover:bg-blue-500/10 transition">🤖 AI Core</button>
-        <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-purple-500/20 text-purple-300 text-xs uppercase tracking-widest font-bold hover:bg-purple-500/10 transition">🖼️ Dream</button>
-        <button onclick="openTool('vault')" class="px-4 py-2 rounded-full border border-indigo-500/20 text-indigo-300 text-xs uppercase tracking-widest font-bold hover:bg-indigo-500/10 transition">💾 Vault</button>
-        <button onclick="openTool('crypto')" class="px-4 py-2 rounded-full border border-teal-500/20 text-teal-300 text-xs uppercase tracking-widest font-bold hover:bg-teal-500/10 transition">🔐 Crypto</button>
-        <button onclick="openTool('dev')" class="px-4 py-2 rounded-full border border-emerald-500/20 text-emerald-300 text-xs uppercase tracking-widest font-bold hover:bg-emerald-500/10 transition">🛠️ Dev Utils</button>
-        <button onclick="openTool('math')" class="px-4 py-2 rounded-full border border-amber-500/20 text-amber-300 text-xs uppercase tracking-widest font-bold hover:bg-amber-500/10 transition">📐 Math</button>
-        <button onclick="openTool('graphics')" class="px-4 py-2 rounded-full border border-pink-500/20 text-pink-300 text-xs uppercase tracking-widest font-bold hover:bg-pink-500/10 transition">🎨 Graphics</button>
-        <button onclick="openTool('audio')" class="px-4 py-2 rounded-full border border-orange-500/20 text-orange-300 text-xs uppercase tracking-widest font-bold hover:bg-orange-500/10 transition">🔊 Audio</button>
-        <button onclick="openTool('games')" class="px-4 py-2 rounded-full border border-red-500/20 text-red-300 text-xs uppercase tracking-widest font-bold hover:bg-red-500/10 transition">🎮 Games</button>
-      </div>
+	<!-- Main Menu Start -->
+	<div class="main-nav">
+		<div class="container">
+			<div class="row">
+				<nav class="navbar navbar-expand-lg navbar-light w-100 site-navigation">
+			  		<a class="navbar-brand" href="/">
+						<img src="/asset/frontend_asset/assets/img/core/logo.png" alt="" >
+			  		</a>
+			  		<h3 class="phone-header">ক্যাডেট মিশন <br> কোচিং সেন্টার</h3>
+				  	<button class="mobile-menu-trigger"> 
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+				 	
+				  	<div class="navbar-collapse site-menu-wrap">
+				  		<!-- Close Menu Icon -->
+					 	<div class="close-menu-wrap">
+					 		<span class="fa fa-times close-menu-icon"></span>
+					 	</div>
 
-      <div class="glass w-full flex-1 flex flex-col relative shadow-2xl overflow-hidden p-5 mb-3" id="tool-window">
-        
-        <div id="default-view" class="flex-1 flex flex-col items-center justify-center text-center">
-          <div class="text-5xl mb-4 opacity-50 animate-pulse">🌌</div>
-          <h2 class="text-xl font-bold tracking-widest uppercase text-white/80 mb-2">Cluster Operational</h2>
-          <p class="text-white/30 text-xs font-mono">> Deploy client module system arrays from utility node mapping.</p>
-        </div>
+					    <ul class="navbar-nav site-menu">
+						    <li class="nav-item ">
+						        <a class="menu-link active" href="/"><i class="fa fa-home"></i> Home</a>
+						    </li>
+						    <li class="nav-item ">
+						        <a class="menu-link active" href="/program">Program</a>
+						    </li>
+						    <li class="nav-item">
+						        <a class="menu-link" href="/admission">Online Admission
+						        </a>
+						    </li>
+						    <li class="nav-item">
+						        <a class="menu-link" href="/branch">Branch
+						        </a>
+						    </li>
+						    <li class="nav-item">
+						        <a class="menu-link" href="/result">Result
+						        </a>
+						    </li>
+						    <li class="nav-item">
+						        <a class="menu-link" href="/notice">Notice
+						        </a>
+						    </li>
+						    <li class="nav-item">
+						        <a class="menu-link" href="/gallery">Gallery
+						        </a>
+						    </li>
+						    <li class="nav-item">
+						        <a class="menu-link" href="/video">Video
+						        </a>
+						    </li>
+						    <li class="nav-item">
+						        <a class="menu-link" href="/connect-with-us">Contact Us</a>
+						    </li>
+						</ul>
+				  	</div>
+				</nav>
+			</div>
+		</div>
+	</div>
+</header>
+<!-- Header Section End -->        <!-- Hero Slider Area Start -->
+<section class="hero-slider-area">
+	<div class="hero-slider">
+		<div class="hero-slider-inner owl-carousel">
+            			<div class="hero-slider-item" style="background-image: url('/asset/backend_asset/assets/images/slider/imagetBcsr.jpg');">
+			</div>
+            			<div class="hero-slider-item" style="background-image: url('/asset/backend_asset/assets/images/slider/imageGpdFv.jpg');">
+			</div>
+            			<div class="hero-slider-item" style="background-image: url('/asset/backend_asset/assets/images/slider/imageK2D2b.jpg');">
+			</div>
+            			<div class="hero-slider-item" style="background-image: url('/asset/backend_asset/assets/images/slider/imagearWpZ.jpg');">
+			</div>
+            		</div>
+	</div>
+</section>
+<!-- End Hero Slider Area -->
+<section class="recent_notice_area p-4">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<marquee width="100%" direction="left" height="100px">
+					<p class="breaking mb-0"> Cadet Mission Coaching Center. Be Active, Be Creative.  </p>
+				</marquee>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- About Section -->
+<section class="about-section relative p-4">
+	<div class="container">
+		<div class="row justify-content-center pt-2">
+			<div class="col-md-6 col-lg-6 col-xl-6">
+			     
+				<div class="row">
+					<div class="col-md-7 pb-2">
+						<img class="ceo-image" src="/asset/backend_asset/assets/images/artista/imagePtfci.jpg" width="100%">	
+					</div>
+				</div>
+				<p><p class="MsoNormal"><span style="font-size: 12pt; line-height: 107%; font-family: &quot;Nirmala UI&quot;, sans-serif;"><b>আশেক মাহমোদ&nbsp;<o:p></o:p></b></span></p>
 
-        <div id="tool-chat" class="tool-tab hidden flex-1 flex-col h-full w-full">
-          <h2 class="text-xs font-mono tracking-widest text-blue-400 uppercase border-b border-white/10 pb-2 mb-3">> SYSTEM INTELLIGENCE ARRAY</h2>
-          <div id="chat-out" class="flex-1 inner-panel p-4 mb-3 overflow-y-auto font-mono text-xs space-y-4 rounded-lg whitespace-pre-wrap leading-relaxed text-blue-100 shadow-inner">
-            <div class="text-left"><span class="text-blue-400/40">> Connection active. Ready to process local pipeline prompts.</span></div>
-          </div>
-          <div class="flex gap-2">
-            <input type="text" id="chat-in" class="flex-1 bg-black/40 border border-white/10 rounded-lg p-3 text-xs font-mono text-white focus:outline-none focus:border-blue-500/50 transition" placeholder="Transmit query sequences...">
-            <button onclick="sendChat()" class="bg-blue-600/20 border border-blue-500/40 hover:bg-blue-600/40 px-5 py-3 rounded-lg font-mono text-xs uppercase font-bold tracking-widest text-blue-200 transition">Execute</button>
-          </div>
-        </div>
-
-        <div id="tool-image" class="tool-tab hidden flex-1 flex-col h-full w-full">
-          <h2 class="text-xs font-mono tracking-widest text-purple-400 uppercase border-b border-white/10 pb-2 mb-3">> SYNTHETIC VISUALIZATION ENGINE</h2>
-          <div class="flex gap-2 mb-3">
-            <input type="text" id="img-in" class="flex-1 bg-black/40 border border-white/10 rounded-lg p-3 text-xs font-mono text-white focus:outline-none focus:border-purple-500/50 transition" placeholder="Input neural imagery matrix descriptions...">
-            <button onclick="genImg()" class="bg-purple-600/20 border border-purple-500/40 hover:bg-purple-600/40 px-5 py-3 rounded-lg font-mono text-xs uppercase font-bold tracking-widest text-purple-200 transition">Synthesize</button>
-          </div>
-          <div id="image-output" class="flex-1 inner-panel flex items-center justify-center overflow-hidden relative rounded-xl p-2 shadow-inner">
-            <div id="img-loader" class="hidden text-purple-400 font-mono text-xs animate-pulse">> Routing algorithmic pixel channels...</div>
-            <img id="img-out" src="" class="hidden h-full w-full object-contain rounded-lg transition-all duration-500">
-          </div>
-        </div>
-
-        <div id="tool-vault" class="tool-tab hidden flex-1 flex-col h-full w-full">
-          <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3">
-            <h2 class="text-xs font-mono tracking-widest text-indigo-400 uppercase">> INTERNAL DEVICE CONFIGURATION SHEET</h2>
-            <div class="flex gap-2">
-              <button onclick="downloadVaultData()" class="bg-indigo-950/40 border border-indigo-500/30 hover:bg-indigo-500/20 px-3 py-1 rounded text-[10px] font-mono tracking-wider uppercase text-indigo-300 transition">Export File</button>
-              <button onclick="clearVaultData()" class="bg-red-950/40 border border-red-500/30 hover:bg-red-500/20 px-3 py-1 rounded text-[10px] font-mono tracking-wider uppercase text-red-300 transition">Purge Vault</button>
-            </div>
-          </div>
-          <textarea id="vault-in" oninput="saveVault()" class="w-full flex-1 bg-black/40 border border-indigo-500/20 rounded-xl p-4 text-indigo-100 focus:outline-none focus:border-indigo-500/40 transition font-mono text-xs leading-relaxed" spellcheck="false" placeholder="Drop internal text structures here. Keeps state synchronized locally."></textarea>
-        </div>
-
-        <div id="tool-crypto" class="tool-tab hidden flex-1 flex-col h-full w-full overflow-hidden">
-          <h2 class="text-xs font-mono tracking-widest text-teal-400 uppercase border-b border-white/10 pb-2 mb-3">> SECURITY CIPHERS & GENERATORS</h2>
-          <div class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pr-1">
-            
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2">
-              <span class="text-[11px] font-mono text-teal-400 font-bold uppercase tracking-wider">UTL-01 // SHA-256 Crypto Cryptography</span>
-              <input type="text" id="c-sha-in" oninput="computeCryptoSha256()" class="bg-black/40 border border-white/10 rounded p-2 text-xs font-mono text-white focus:outline-none focus:border-teal-500/30" placeholder="Type hashing text...">
-              <div id="c-sha-out" class="bg-teal-950/10 border border-teal-500/20 text-teal-300 font-mono text-[10px] p-2 rounded break-all min-h-[32px]">> Awaiting Array</div>
-            </div>
-
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2">
-              <span class="text-[11px] font-mono text-teal-400 font-bold uppercase tracking-wider">UTL-02 // Base64 Processing Core</span>
-              <input type="text" id="c-b64-in" class="bg-black/40 border border-white/10 rounded p-2 text-xs font-mono text-white focus:outline-none" placeholder="Enter string parameters...">
-              <div class="flex gap-2">
-                <button onclick="executeBase64Engine(true)" class="flex-1 bg-teal-950/30 border border-teal-500/20 text-[10px] font-mono p-1 rounded text-teal-300 uppercase font-bold hover:bg-teal-500/20 transition">Encode</button>
-                <button onclick="executeBase64Engine(false)" class="flex-1 bg-teal-950/30 border border-teal-500/20 text-[10px] font-mono p-1 rounded text-teal-300 uppercase font-bold hover:bg-teal-500/20 transition">Decode</button>
-              </div>
-              <div id="c-b64-out" class="bg-teal-950/10 border border-teal-500/20 text-teal-300 font-mono text-[10px] p-2 rounded break-all min-h-[32px]">> Standby</div>
-            </div>
-
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2">
-              <span class="text-[11px] font-mono text-teal-400 font-bold uppercase tracking-wider">UTL-03 // ROT13 Variable Cipher</span>
-              <input type="text" id="c-rot-in" oninput="executeRot13Cipher()" class="bg-black/40 border border-white/10 rounded p-2 text-xs font-mono text-white focus:outline-none" placeholder="Input alpha character strings...">
-              <div id="c-rot-out" class="bg-teal-950/10 border border-teal-500/20 text-teal-300 font-mono text-[10px] p-2 rounded min-h-[32px]">> Standby</div>
-            </div>
-
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2">
-              <span class="text-[11px] font-mono text-teal-400 font-bold uppercase tracking-wider">UTL-04 // Random Token Generator</span>
-              <div class="flex gap-2 items-center text-[10px] font-mono">
-                <span class="text-white/40 uppercase">Size:</span>
-                <input type="range" id="c-tok-len" min="8" max="64" value="24" class="flex-1 accent-teal-500" oninput="document.getElementById('c-tok-lbl').innerText=this.value">
-                <span id="c-tok-lbl" class="text-teal-300 w-5">24</span>
-              </div>
-              <button onclick="generateSecureToken()" class="bg-teal-950/30 border border-teal-500/20 text-[10px] font-mono p-1.5 rounded text-teal-300 uppercase font-bold hover:bg-teal-500/20 transition">Build Vector Key</button>
-              <div id="c-tok-out" class="bg-teal-950/10 border border-teal-500/20 text-teal-300 font-mono text-[10px] p-2 rounded break-all text-center select-all min-h-[32px] tracking-wider">> Awaiting Command</div>
-            </div>
-
-          </div>
-        </div>
-
-        <div id="tool-dev" class="tool-tab hidden flex-1 flex-col h-full w-full overflow-hidden">
-          <h2 class="text-xs font-mono tracking-widest text-emerald-400 uppercase border-b border-white/10 pb-2 mb-3">> CODE UTILITIES & FORMATTERS</h2>
-          <div class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pr-1">
-            
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2">
-              <span class="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider">UTL-05 // JSON Array Lint Beautifier</span>
-              <textarea id="d-json-in" class="bg-black/40 border border-white/10 rounded p-2 text-xs font-mono text-white focus:outline-none h-16 resize-none" placeholder='{"key":"value"}'></textarea>
-              <button onclick="beautifyJsonString()" class="bg-emerald-950/30 border border-emerald-500/20 text-[10px] font-mono p-1.5 rounded text-emerald-300 uppercase font-bold hover:bg-emerald-500/20 transition">Format Object Map</button>
-              <pre id="d-json-out" class="bg-emerald-950/10 border border-emerald-500/20 text-emerald-300 font-mono text-[10px] p-2 rounded overflow-x-auto max-h-28 whitespace-pre min-h-[32px] select-all">> Waiting</pre>
-            </div>
-
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2">
-              <span class="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider">UTL-06 // Request URI Router Escaper</span>
-              <input type="text" id="d-url-in" class="bg-black/40 border border-white/10 rounded p-2 text-xs font-mono text-white focus:outline-none" placeholder="http://domain.com/query params">
-              <div class="flex gap-2">
-                <button onclick="processUrlCodec(true)" class="flex-1 bg-emerald-950/30 border border-emerald-500/20 text-[10px] font-mono p-1 rounded text-emerald-300 uppercase font-bold hover:bg-emerald-500/20 transition">Encode</button>
-                <button onclick="processUrlCodec(false)" class="flex-1 bg-emerald-950/30 border border-emerald-500/20 text-[10px] font-mono p-1 rounded text-emerald-300 uppercase font-bold hover:bg-emerald-500/20 transition">Decode</button>
-              </div>
-              <div id="d-url-out" class="bg-emerald-950/10 border border-emerald-500/20 text-emerald-300 font-mono text-[10px] p-2 rounded break-all min-h-[32px]">> Waiting</div>
-            </div>
-
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2 md:col-span-2">
-              <span class="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider">UTL-07 // HTML Entity Compiler Mapping</span>
-              <input type="text" id="d-ent-in" oninput="compileHtmlEntities()" class="bg-black/40 border border-white/10 rounded p-2 text-xs font-mono text-white focus:outline-none" placeholder="Type strings with characters like <, >, &, or quotes...">
-              <div id="d-ent-out" class="bg-emerald-950/10 border border-emerald-500/20 text-emerald-300 font-mono text-[10px] p-2 rounded min-h-[32px] select-all">> Standby</div>
-            </div>
-
-          </div>
-        </div>
-
-        <div id="tool-math" class="tool-tab hidden flex-1 flex-col h-full w-full overflow-hidden">
-          <h2 class="text-xs font-mono tracking-widest text-amber-400 uppercase border-b border-white/10 pb-2 mb-3">> MATHEMATICAL EVALUATION ARRAYS</h2>
-          <div class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pr-1">
-            
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2">
-              <span class="text-[11px] font-mono text-amber-400 font-bold uppercase tracking-wider">UTL-08 // Radix Base Converter Mapping</span>
-              <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-                <div>
-                  <label class="text-[10px] text-white/40 block mb-1">DECIMAL</label>
-                  <input type="number" id="m-rad-dec" oninput="syncRadixBases('dec')" class="w-full bg-black/40 border border-white/10 p-1.5 rounded focus:outline-none text-white text-xs">
+<p class="MsoNormal"><span style="font-size: 12pt; line-height: 107%; font-family: &quot;Nirmala UI&quot;, sans-serif;"><b>পরিচালক, ক্যাডেট মিশন কোচিং সেন্টার</b></span></p><p class="MsoNormal" style="margin-bottom: 15pt; text-align: justify; line-height: normal; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;"><span style="font-size: 13pt; font-family: &quot;Nirmala UI&quot;, sans-serif;">সুপ্রিয় সুধী,</span></p><p class="MsoNormal" style="margin-bottom: 15pt; text-align: justify; line-height: normal; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;"><span style="font-family: &quot;Nirmala UI&quot;, sans-serif; font-size: 13pt;">আসসালামু আলাইকুম। আপনাকে স্বাগতম, আপনার আগ্রহ এবং আমাদের
+প্রতি আন্তরিকতার জন্য এই শিক্ষা সংক্রান্ত পাতায়। “ক্যাডেট মিশন”&nbsp; বিশ্বাস
+করে প্রতিটি শিশু অনন্য মেধার অধিকারী। তাদের সুপ্ত মেধা বিকাশের গুরু দায়িত্ব
+যখন আপনারা আমাদের হাতে তুলে দেন তখন তা পালন করা আমাদের দায়িত্ব এবং কর্তব্যে
+পরিণত হয়।</span></p><p class="MsoNormal" style="margin-bottom: 15pt; text-align: justify; line-height: normal; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;"><span style="font-size: 13pt; font-family: &quot;Nirmala UI&quot;, sans-serif;">আপনাদের আস্থা আর&nbsp;বিশ্বাসের&nbsp;শতভাগ প্রতিফলন এবং
+আপনার সন্তানকে সেরা মেধাবী হিসাবে তৈরীতে “ক্যাডেট মিশন” শিক্ষা পরিবারের একঝাঁক
+অভিজ্ঞতাসম্পন্ন ও তরুণ মেধাবী শিক্ষক সদা সচেষ্ট।</span><span style="font-size: 13pt; font-family: &quot;Nunito Sans&quot;;"><o:p></o:p></span></p><p class="MsoNormal" style="margin-bottom: 15pt; text-align: justify; line-height: normal; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;"><span style="font-size: 13pt; font-family: &quot;Nirmala UI&quot;, sans-serif;">আপনাদের যে কোন পরামর্শ বা দিক—নির্দেশনা আমাদের কাছে আগামী
+পথচলার আলোক—বর্তিকা স্বরূপ। আপনার সময় উপযোগী সিদ্ধান্তই আপনার সন্তানের ভবিষ্যৎ
+নির্ধারণ করে, তার সাথে সঠিক পথ প্রদর্শক যুক্ত হলে আগামীর মেধাবী প্রজন্ম আশা করি
+খুব বেশি দূরে নয়।</span></p><p class="MsoNormal" style="margin-bottom: 15pt; text-align: justify; line-height: normal; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;"><span style="font-size: 13pt; font-family: &quot;Nirmala UI&quot;, sans-serif;">সর্বোপরি, ধন্যবাদ আপনাকে। সুস্থ থাকুন, পাশে থাকুন।</span></p><p class="MsoNormal"><o:p></o:p></p></p>
+			</div>
+			<div class="col-xl-6 col-md-6 col-lg-6">
+			    <div class="pb-2">
+                    <b>Our Companion : 40259</b>
                 </div>
-                <div>
-                  <label class="text-[10px] text-white/40 block mb-1">BINARY</label>
-                  <input type="text" id="m-rad-bin" oninput="syncRadixBases('bin')" class="w-full bg-black/40 border border-white/10 p-1.5 rounded focus:outline-none text-white text-xs">
-                </div>
-                <div>
-                  <label class="text-[10px] text-white/40 block mb-1">HEXADECIMAL</label>
-                  <input type="text" id="m-rad-hex" oninput="syncRadixBases('hex')" class="w-full bg-black/40 border border-white/10 p-1.5 rounded focus:outline-none text-white text-xs">
-                </div>
-                <div>
-                  <label class="text-[10px] text-white/40 block mb-1">OCTAL</label>
-                  <input type="text" id="m-rad-oct" oninput="syncRadixBases('oct')" class="w-full bg-black/40 border border-white/10 p-1.5 rounded focus:outline-none text-white text-xs">
-                </div>
-              </div>
-            </div>
-
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2">
-              <span class="text-[11px] font-mono text-amber-400 font-bold uppercase tracking-wider">UTL-09 // Prime Factor Engine Cluster</span>
-              <div class="flex gap-2">
-                <input type="number" id="m-prm-in" class="flex-1 bg-black/40 border border-white/10 rounded p-1.5 text-xs font-mono text-white focus:outline-none" placeholder="Integer index...">
-                <button onclick="evaluateNumberPrimes()" class="bg-amber-600/20 border border-amber-500/40 hover:bg-amber-500/40 px-3 text-[10px] font-mono rounded font-bold text-amber-200 uppercase tracking-wider">Test</button>
-              </div>
-              <div id="m-prm-out" class="bg-amber-950/10 border border-amber-500/20 text-amber-300 font-mono text-[10px] p-2 rounded min-h-[32px]">> Standby</div>
-            </div>
-
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2 md:col-span-2">
-              <span class="text-[11px] font-mono text-amber-400 font-bold uppercase tracking-wider">UTL-10 // Coordinate Graph Function Plotter</span>
-              <div class="flex gap-2 mb-2">
-                <select id="m-gph-eqn" class="bg-black/50 border border-white/10 text-xs font-mono text-white p-1.5 rounded focus:outline-none">
-                  <option value="sine">f(x) = sin(x)</option>
-                  <option value="cosine">f(x) = cos(x)</option>
-                  <option value="quad">f(x) = 0.1 * x²</option>
-                  <option value="wave">f(x) = sin(x) * cos(0.5*x)</option>
-                </select>
-                <button onclick="renderEquationGraph()" class="bg-amber-600/20 border border-amber-500/40 hover:bg-amber-500/40 px-4 text-[10px] font-mono rounded font-bold text-amber-200 uppercase tracking-wider">Plot Array</button>
-              </div>
-              <div class="w-full flex justify-center bg-black/30 rounded-lg p-2 border border-white/5">
-                <canvas id="math-graph-canvas" width="460" height="140" class="w-full max-w-md h-36 bg-black/50 rounded border border-white/5"></canvas>
-              </div>
-            </div>
-
-          </div>
+				<div class="single_notice_box">
+					<div class="card text-white card_news mb-3">
+					  	<div class="card-header"><i class="fa fa-file-text notice-board-icon"></i>  Recent Notice</div>
+						<div class="card-body p-0">
+							<ul class="recent_news_inner d-block">
+																<a href="/notice/aro-kichu-srwsesh-sadharn-jngan-2026">
+                                <li>
+                                	<p>
+												                            	<i class="fa fa-calendar"></i>
+		                            	26 December 2025
+									</p>
+									<p>
+										<i class="fa fa-check"></i>
+                                    	আরো কিছু সর্বশেষ সাধারণ জ্ঞান-2026
+									</p>
+								</li>
+								</a>
+																<a href="/notice/aidizal-krtrrik-prkasit-srwsesh-sadharn-jngan-2026">
+                                <li>
+                                	<p>
+												                            	<i class="fa fa-calendar"></i>
+		                            	26 December 2025
+									</p>
+									<p>
+										<i class="fa fa-check"></i>
+                                    	আইডিয়াল কর্তৃক প্রকাশিত সর্বশেষ সাধারণ জ্ঞান	-2026
+									</p>
+								</li>
+								</a>
+																<a href="/notice/aidizal-krtrrik-prkasit-srwsesh-sadharn-jngan">
+                                <li>
+                                	<p>
+												                            	<i class="fa fa-calendar"></i>
+		                            	3 January 2025
+									</p>
+									<p>
+										<i class="fa fa-check"></i>
+                                    	আইডিয়াল কর্তৃক প্রকাশিত সর্বশেষ সাধারণ জ্ঞান
+									</p>
+								</li>
+								</a>
+																<a href="/notice/kzadet-vittik-mdel-preeksha-14-er-flafl-balk-2024">
+                                <li>
+                                	<p>
+												                            	<i class="fa fa-calendar"></i>
+		                            	26 December 2024
+									</p>
+									<p>
+										<i class="fa fa-check"></i>
+                                    	ক্যাডেট ভিত্তিক মডেল পরীক্ষা -14 এর ফলাফল (বালক)-2024
+									</p>
+								</li>
+								</a>
+																<a href="/notice/kzadet-vittik-mdel-preeksha-14-er-flafl-balika-2024">
+                                <li>
+                                	<p>
+												                            	<i class="fa fa-calendar"></i>
+		                            	26 December 2024
+									</p>
+									<p>
+										<i class="fa fa-check"></i>
+                                    	ক্যাডেট ভিত্তিক মডেল পরীক্ষা -14 এর ফলাফল (বালিকা)-2024
+									</p>
+								</li>
+								</a>
+																<a href="/notice/kzadet-vittik-mdel-preeksha-13-er-flafl-balika-2024">
+                                <li>
+                                	<p>
+												                            	<i class="fa fa-calendar"></i>
+		                            	26 December 2024
+									</p>
+									<p>
+										<i class="fa fa-check"></i>
+                                    	ক্যাডেট ভিত্তিক মডেল পরীক্ষা -13 এর ফলাফল (বালিকা)-2024
+									</p>
+								</li>
+								</a>
+																<a href="/notice/kzadet-vittik-mdel-preeksha-13-er-flafl-balk-2024">
+                                <li>
+                                	<p>
+												                            	<i class="fa fa-calendar"></i>
+		                            	26 December 2024
+									</p>
+									<p>
+										<i class="fa fa-check"></i>
+                                    	ক্যাডেট ভিত্তিক মডেল পরীক্ষা -13 এর ফলাফল (বালক)-2024
+									</p>
+								</li>
+								</a>
+																<a href="/notice/kzadet-vittik-mdel-preeksha-12-er-flafl-balk-2024">
+                                <li>
+                                	<p>
+												                            	<i class="fa fa-calendar"></i>
+		                            	16 December 2024
+									</p>
+									<p>
+										<i class="fa fa-check"></i>
+                                    	ক্যাডেট ভিত্তিক মডেল পরীক্ষা -12 এর ফলাফল (বালক)-2024
+									</p>
+								</li>
+								</a>
+																<a href="/notice/kzadet-vittik-mdel-preeksha-12-er-flafl-balika-202">
+                                <li>
+                                	<p>
+												                            	<i class="fa fa-calendar"></i>
+		                            	16 December 2024
+									</p>
+									<p>
+										<i class="fa fa-check"></i>
+                                    	ক্যাডেট ভিত্তিক মডেল পরীক্ষা -12 এর ফলাফল (বালিকা)-202
+									</p>
+								</li>
+								</a>
+																<a href="/notice/kzadet-vittik-mdel-preeksha-11-er-flafl-balika-202">
+                                <li>
+                                	<p>
+												                            	<i class="fa fa-calendar"></i>
+		                            	16 December 2024
+									</p>
+									<p>
+										<i class="fa fa-check"></i>
+                                    	ক্যাডেট ভিত্তিক মডেল পরীক্ষা -11 এর ফলাফল (বালিকা)-202
+									</p>
+								</li>
+								</a>
+															</ul>
+							<div class="text-center m-2">
+							    <a href="/notice">View More</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
         </div>
+	</div>
+</section>
+<!-- End About Section -->
 
-        <div id="tool-graphics" class="tool-tab hidden flex-1 flex-col h-full w-full overflow-hidden">
-          <h2 class="text-xs font-mono tracking-widest text-pink-400 uppercase border-b border-white/10 pb-2 mb-3">> VECTOR ARRAYS & GRAPHICS MATRIX</h2>
-          <div class="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden">
-            
-            <div class="w-full md:w-1/3 flex flex-col gap-3">
-              <div class="inner-panel p-3 rounded-xl flex flex-col gap-2">
-                <span class="text-[10px] font-mono text-pink-400 font-bold uppercase tracking-wider">UTL-11 // Gradient Spectrum CSS Mapper</span>
-                <div class="flex gap-2 items-center">
-                  <input type="color" id="g-col-1" value="#3b82f6" class="bg-transparent w-8 h-8 rounded cursor-pointer" oninput="generateGradientCss()">
-                  <input type="color" id="g-col-2" value="#ec4899" class="bg-transparent w-8 h-8 rounded cursor-pointer" oninput="generateGradientCss()">
-                  <select id="g-col-dir" class="flex-1 bg-black/50 border border-white/10 rounded p-1.5 text-[10px] font-mono text-white" onchange="generateGradientCss()">
-                    <option value="to right">Right</option>
-                    <option value="to bottom">Bottom</option>
-                    <option value="45deg">45 Deg</option>
-                  </select>
-                </div>
-                <div id="g-grad-preview" class="w-full h-8 rounded border border-white/10 transition shadow-inner"></div>
-                <div id="g-grad-css" class="bg-pink-950/10 border border-pink-500/20 text-pink-300 text-[9px] font-mono p-1.5 rounded select-all break-all min-h-[24px]"></div>
-              </div>
-
-              <div class="inner-panel p-3 rounded-xl flex flex-col gap-2">
-                <span class="text-[10px] font-mono text-pink-400 font-bold uppercase tracking-wider">UTL-12 // Brush Config</span>
-                <div class="flex justify-between items-center text-[10px] font-mono">
-                  <input type="color" id="g-paint-color" value="#14b8a6" class="bg-transparent w-6 h-6 rounded cursor-pointer">
-                  <select id="g-paint-size" class="bg-black/50 border border-white/10 rounded p-1 text-[10px] font-mono text-white">
-                    <option value="2">Thin (2px)</option>
-                    <option value="5" selected>Mid (5px)</option>
-                    <option value="12">Thick (12px)</option>
-                  </select>
-                  <button onclick="clearPaintCanvas()" class="text-red-400 border border-red-500/20 bg-red-950/20 px-2 py-0.5 rounded uppercase font-bold tracking-wider hover:bg-red-500/20 text-[9px]">Wipe</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="flex-1 inner-panel p-3 rounded-xl flex flex-col gap-2 overflow-hidden">
-              <span class="text-[10px] font-mono text-pink-400 font-bold uppercase tracking-wider">UTL-13 // Interactive Vector Pad Matrix</span>
-              <div class="flex-1 bg-black/40 rounded-lg border border-white/5 overflow-hidden relative">
-                <canvas id="graphics-paint-canvas" class="absolute top-0 left-0 w-full h-full cursor-crosshair bg-black/20"></canvas>
-              </div>
-            </div>
-
-          </div>
+<!-- Service Section -->
+<section class="service-section relative p-4">
+	<div class="container">
+		<div class="row justify-content-center pt-2">
+			<div class="col-md-12 pb-2">
+    			<div class="about-title text-center">
+					<h2 class="pb-4">Our Programs</h2>
+				</div>
+			</div>
         </div>
+        <div class="row">
+                    	<div class="col-md-3 col-12 pb-4">
+        		<a href="/program/pncm-srenee">
+                    <div class="main-services-box">
+                        <div class="service-image text-center pt-3">
+                            <img src="/asset/backend_asset/assets/images/program/imagenrQeV.webp">
+                        </div>
+                        <div class="course-content text-center">
+                            <a href="/program/pncm-srenee" title=""><h3>পঞ্চম শ্রেণী</h3></a>
+                            <p>
+                            	<p>বৃওি ব্যাচ + অ্যাডভান্স ক্যাডেট ব্যাচ</p><p><span style="font-family: &quot;Nirmala UI&quot;, sans-serif; font-size: 16px;">বাংলা + English Version</span><br></p>
+                            </p>
+                        </div>
+                    </div>      
+                </a>
+        	</div>
+                    	<div class="col-md-3 col-12 pb-4">
+        		<a href="/program/shshth-srenee">
+                    <div class="main-services-box">
+                        <div class="service-image text-center pt-3">
+                            <img src="/asset/backend_asset/assets/images/program/imagejEnK7.webp">
+                        </div>
+                        <div class="course-content text-center">
+                            <a href="/program/shshth-srenee" title=""><h3>ষষ্ঠ শ্রেণী</h3></a>
+                            <p>
+                            	<p class="MsoNormal"><font face="Nirmala UI, sans-serif"><span style="font-size: 16px;">ক্যাডেট ব্যাচ / ক্লাস কোচিং&nbsp;</span></font></p><p class="MsoNormal"><font face="Nirmala UI, sans-serif"><span style="font-size: 16px;">বাংলা + English Version</span><br></font><br></p>
+                            </p>
+                        </div>
+                    </div>      
+                </a>
+        	</div>
+                    	<div class="col-md-3 col-12 pb-4">
+        		<a href="/program/sptm-srenee">
+                    <div class="main-services-box">
+                        <div class="service-image text-center pt-3">
+                            <img src="/asset/backend_asset/assets/images/program/imageCG9Er.webp">
+                        </div>
+                        <div class="course-content text-center">
+                            <a href="/program/sptm-srenee" title=""><h3>সপ্তম শ্রেণী</h3></a>
+                            <p>
+                            	<p class="MsoNormal"><font face="Nirmala UI, sans-serif"><span style="font-size: 16px;">ক্লাস কোচিং</span></font><br></p>
+                            </p>
+                        </div>
+                    </div>      
+                </a>
+        	</div>
+                    	<div class="col-md-3 col-12 pb-4">
+        		<a href="/program/oshtm-srenee">
+                    <div class="main-services-box">
+                        <div class="service-image text-center pt-3">
+                            <img src="/asset/backend_asset/assets/images/program/imageF7Xkg.webp">
+                        </div>
+                        <div class="course-content text-center">
+                            <a href="/program/oshtm-srenee" title=""><h3>অষ্টম শ্রেণী</h3></a>
+                            <p>
+                            	<p class="MsoNormal"><font face="Nirmala UI, sans-serif"><span style="font-size: 16px;">ক্লাস কোচিং</span></font><br></p>
+                            </p>
+                        </div>
+                    </div>      
+                </a>
+        	</div>
+                    </div>
+	</div>
+</section>
+<!-- End Services Section -->
 
-        <div id="tool-audio" class="tool-tab hidden flex-1 flex-col h-full w-full overflow-hidden">
-          <h2 class="text-xs font-mono tracking-widest text-orange-400 uppercase border-b border-white/10 pb-2 mb-3">> AUDIO SYNTHESIZERS & FREQUENCY OSCILLATORS</h2>
-          <div class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pr-1">
-            
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2">
-              <span class="text-[11px] font-mono text-orange-400 font-bold uppercase tracking-wider">UTL-14 // Wave Oscillator Synthesizer</span>
-              <div class="flex gap-2 items-center text-[10px] font-mono">
-                <span class="text-white/40">Waveform:</span>
-                <select id="a-osc-wave" class="bg-black/50 border border-white/10 rounded p-1 text-white text-[10px]">
-                  <option value="sine">Sine Wave</option>
-                  <option value="square">Square Wave</option>
-                  <option value="triangle">Triangle Wave</option>
-                  <option value="sawtooth">Sawtooth Wave</option>
-                </select>
-              </div>
-              <div class="grid grid-cols-4 gap-1.5 mt-1">
-                <button onclick="playAudioTone(261.63, document.getElementById('a-osc-wave').value, 0.3)" class="bg-orange-950/30 border border-orange-500/20 rounded p-2 text-[10px] font-mono text-orange-300 font-bold active:bg-orange-500/30 transition">C4</button>
-                <button onclick="playAudioTone(293.66, document.getElementById('a-osc-wave').value, 0.3)" class="bg-orange-950/30 border border-orange-500/20 rounded p-2 text-[10px] font-mono text-orange-300 font-bold active:bg-orange-500/30 transition">D4</button>
-                <button onclick="playAudioTone(329.63, document.getElementById('a-osc-wave').value, 0.3)" class="bg-orange-950/30 border border-orange-500/20 rounded p-2 text-[10px] font-mono text-orange-300 font-bold active:bg-orange-500/30 transition">E4</button>
-                <button onclick="playAudioTone(349.23, document.getElementById('a-osc-wave').value, 0.3)" class="bg-orange-950/30 border border-orange-500/20 rounded p-2 text-[10px] font-mono text-orange-300 font-bold active:bg-orange-500/30 transition">F4</button>
-                <button onclick="playAudioTone(392.00, document.getElementById('a-osc-wave').value, 0.3)" class="bg-orange-950/30 border border-orange-500/20 rounded p-2 text-[10px] font-mono text-orange-300 font-bold active:bg-orange-500/30 transition">G4</button>
-                <button onclick="playAudioTone(440.00, document.getElementById('a-osc-wave').value, 0.3)" class="bg-orange-950/30 border border-orange-500/20 rounded p-2 text-[10px] font-mono text-orange-300 font-bold active:bg-orange-500/30 transition">A4</button>
-                <button onclick="playAudioTone(493.88, document.getElementById('a-osc-wave').value, 0.3)" class="bg-orange-950/30 border border-orange-500/20 rounded p-2 text-[10px] font-mono text-orange-300 font-bold active:bg-orange-500/30 transition">B4</button>
-                <button onclick="playAudioTone(523.25, document.getElementById('a-osc-wave').value, 0.3)" class="bg-orange-950/30 border border-orange-500/20 rounded p-2 text-[10px] font-mono text-orange-300 font-bold active:bg-orange-500/30 transition">C5</button>
-              </div>
-            </div>
-
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2">
-              <span class="text-[11px] font-mono text-orange-400 font-bold uppercase tracking-wider">UTL-15 // Morse Signal Generator</span>
-              <input type="text" id="a-mrs-in" class="bg-black/40 border border-white/10 rounded p-2 text-xs font-mono text-white focus:outline-none" placeholder="SOS / HELLO">
-              <button onclick="convertTextToMorseAudio()" class="bg-orange-600/20 border border-orange-500/40 hover:bg-orange-500/40 p-1.5 rounded text-[10px] font-mono uppercase font-bold text-orange-200 tracking-wider transition">Transmit Pulses</button>
-              <div id="a-mrs-out" class="bg-orange-950/10 border border-orange-500/20 text-orange-300 font-mono text-xs p-2 rounded text-center tracking-widest min-h-[32px]">> Ready</div>
-            </div>
-
-            <div class="inner-panel p-4 rounded-xl flex flex-col gap-2 md:col-span-2">
-              <span class="text-[11px] font-mono text-orange-400 font-bold uppercase tracking-wider">UTL-16 // Metronome Rhythm Trigger Matrix</span>
-              <div class="flex gap-4 items-center">
-                <div class="flex gap-2 items-center text-[10px] font-mono">
-                  <span class="text-white/40 uppercase">BPM:</span>
-                  <input type="range" id="a-met-bpm" min="40" max="220" value="120" class="w-32 accent-orange-500" oninput="document.getElementById('a-met-lbl').innerText=this.value">
-                  <span id="a-met-lbl" class="text-orange-300 font-bold w-7">120</span>
-                </div>
-                <button id="metronome-toggle-btn" onclick="toggleMetronomeEngine()" class="flex-1 bg-orange-950/30 border border-orange-500/20 rounded p-1.5 text-[10px] font-mono uppercase font-bold text-orange-300 hover:bg-orange-500/20 transition">Start Matrix Click</button>
-              </div>
-              <div class="flex justify-center gap-4 mt-1">
-                <div id="met-b-1" class="w-4 h-4 rounded-full bg-white/10 border border-white/5 transition-all"></div>
-                <div id="met-b-2" class="w-4 h-4 rounded-full bg-white/10 border border-white/5 transition-all"></div>
-                <div id="met-b-3" class="w-4 h-4 rounded-full bg-white/10 border border-white/5 transition-all"></div>
-                <div id="met-b-4" class="w-4 h-4 rounded-full bg-white/10 border border-white/5 transition-all"></div>
-              </div>
-            </div>
-
-          </div>
+<!-- Branch Section -->
+<section class="branch-section relative p-4">
+	<div class="container">
+		<div class="row justify-content-center pt-2">
+			<div class="col-md-12 pb-2">
+    			<div class="about-title text-center">
+					<h2 class="pb-4">Our Branch</h2>
+				</div>
+			</div>
         </div>
-
-        <div id="tool-games" class="tool-tab hidden flex-1 flex-col h-full w-full overflow-hidden">
-          <h2 class="text-xs font-mono tracking-widest text-red-400 uppercase border-b border-white/10 pb-2 mb-3">> SYSTEM SIMULATION LOGIC CORE</h2>
-          <div class="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden">
-            
-            <div class="w-full md:w-1/3 flex flex-col gap-3">
-              <div class="inner-panel p-3 rounded-xl flex flex-col gap-2">
-                <span class="text-[10px] font-mono text-red-400 font-bold uppercase tracking-wider">UTL-17 // Matrix Snake Runtime Engine</span>
-                <div class="flex justify-between items-center text-xs font-mono bg-black/30 p-2 rounded border border-white/5">
-                  <span class="text-white/40">SCORE:</span>
-                  <span id="g-snk-score" class="text-red-400 font-bold">0</span>
-                </div>
-                <button onclick="triggerSnakeGameStart()" class="bg-red-600/20 border border-red-500/40 hover:bg-red-500/40 p-2 rounded text-[10px] font-mono uppercase font-bold text-red-200 tracking-wider text-center transition">Boot Loop Matrix</button>
-                <div class="text-[9px] font-mono text-white/30 leading-normal border-t border-white/5 pt-1">
-                  > Use browser keys (Arrows) or tap canvas boundaries to vector directions on mobile viewports.
-                </div>
-              </div>
-
-              <div class="inner-panel p-3 rounded-xl flex flex-col gap-2">
-                <span class="text-[10px] font-mono text-red-400 font-bold uppercase tracking-wider">UTL-18 // Reflex Latency Tester</span>
-                <button id="g-rfx-btn" onclick="handleReflexTesterTrigger()" class="w-full h-16 bg-red-950/40 border border-red-500/30 rounded-lg font-mono text-[11px] text-red-300 font-bold uppercase tracking-widest text-center transition-all duration-150">Initialize</button>
-                <div id="g-rfx-out" class="bg-red-950/10 border border-red-500/10 font-mono text-[10px] text-red-400 p-2 rounded text-center min-h-[28px]">> Ready</div>
-              </div>
+        <div class="row">
+                    	<div class="col-md-4">
+                <a href="/branch/mein-branc">
+                    <div class="branch">
+                        <img src="/asset/backend_asset/assets/images/branch/imageYkuAT.png" alt="">
+                        <div class="branchtext text-center">
+                            <div class="campusname">
+                                <p>মেইন ব্রাঞ্চ</p>
+                            </div>
+                            <div class="addressdetailsmubc">
+                                <div class="addresscampus pb-1">
+                                    <h6>১ নং বাউন্ডারি রোড, ময়মনসিংহ</h6>
+                                    <h6>Phone : 01713-599468 , 01973599511</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
-
-            <div class="flex-1 inner-panel p-3 rounded-xl flex flex-col gap-2 overflow-hidden">
-              <span class="text-[10px] font-mono text-red-400 font-bold uppercase tracking-wider">UTL-19 // Arcade Sandbox Grid Canvas</span>
-              <div class="flex-1 bg-black/40 rounded-lg border border-white/5 overflow-hidden relative flex items-center justify-center">
-                <canvas id="games-arcade-canvas" width="300" height="200" class="bg-black border border-white/10 rounded shadow-2xl max-w-full h-auto max-h-full"></canvas>
-              </div>
+                    	<div class="col-md-4">
+                <a href="/branch/eeswrgnj-sakha">
+                    <div class="branch">
+                        <img src="/asset/backend_asset/assets/images/branch/image7gjPn.jpg" alt="">
+                        <div class="branchtext text-center">
+                            <div class="campusname">
+                                <p>ঈশ্বরগঞ্জ শাখা</p>
+                            </div>
+                            <div class="addressdetailsmubc">
+                                <div class="addresscampus pb-1">
+                                    <h6>কালীবাড়ি রোড</h6>
+                                    <h6>Phone : 01721-299921</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
+                    	<div class="col-md-4">
+                <a href="/branch/neekona-sakha">
+                    <div class="branch">
+                        <img src="/asset/backend_asset/assets/images/branch/image3SFCU.jpg" alt="">
+                        <div class="branchtext text-center">
+                            <div class="campusname">
+                                <p>নেএকোনা শাখা</p>
+                            </div>
+                            <div class="addressdetailsmubc">
+                                <div class="addresscampus pb-1">
+                                    <h6>মোক্তারপাড়া,নেএকোনা</h6>
+                                    <h6>Phone : 01973599512, 01619067555</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+                    	<div class="col-md-4">
+                <a href="/branch/goureepur-sakha">
+                    <div class="branch">
+                        <img src="/asset/backend_asset/assets/images/branch/imageDu0qr.png" alt="">
+                        <div class="branchtext text-center">
+                            <div class="campusname">
+                                <p>গৌরীপুর  শাখা</p>
+                            </div>
+                            <div class="addressdetailsmubc">
+                                <div class="addresscampus pb-1">
+                                    <h6>নূর-মহল,(দ্বিতীয় তলা) কলাবাগান, গৌরীপুর</h6>
+                                    <h6>Phone : 01711-120876</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+                    	<div class="col-md-4">
+                <a href="/branch/satksheera-sakha">
+                    <div class="branch">
+                        <img src="/asset/backend_asset/assets/images/branch/imagezdolH.png" alt="">
+                        <div class="branchtext text-center">
+                            <div class="campusname">
+                                <p>সাতক্ষীরা শাখা</p>
+                            </div>
+                            <div class="addressdetailsmubc">
+                                <div class="addresscampus pb-1">
+                                    <h6>রাজার বাগান সরকারি কলেজ রোড,  সাতক্ষীরা</h6>
+                                    <h6>Phone : 01712-266274</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+                    </div>
+	</div>
+</section>
+<!-- End Branchs Section -->
 
-          </div>
+<section class="video-section relative p-4">
+	<div class="container">
+		<div class="row justify-content-center pt-2">
+			<div class="col-md-12 pb-2">
+    			<div class="about-title text-center">
+					<h2 class="pb-2">Youtube Video</h2>
+				</div>
+			</div>
+						<div class="col-md-6 pb-4">
+				<iframe width="100%" height="400" src="https://www.youtube.com/embed/6BcntkNSjNc" title="Cadet Mission Coaching Center." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+			</div>
+						<div class="col-md-6 pb-4">
+				<iframe width="100%" height="400" src="https://www.youtube.com/embed/yxKqtOztL-o" title="Cadet Mission Coaching Center." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+			</div>
+			        </div>
+    </div>
+</section> 
+
+<!-- <div class="col-12 mt-2">
+	<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3652.302865049332!2d90.42797861445557!3d23.73657689522243!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8405d1f169b%3A0x230c62f329cb4f05!2zQURIQVlBTiAo4KaF4Kan4KeN4Kav4Kef4KaoKQ!5e0!3m2!1sen!2sus!4v1671273374241!5m2!1sen!2sus" width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+</div> -->
+<input type="hidden" value="40259" id="visitor_count">
+    </div>
+    <!-- Page Wrapper End -->
+    <!-- Footer Section Start -->
+<footer class="main-footer">
+	<!-- Footer Top -->
+	<div class="footer-top-area">
+		<div class="container">
+    		<div class="widget-section">
+    			<div class="row clearfix">
+
+                    <div class="col-lg-3 col-md-12 col-12 mb-30">
+                       <div class="footer-widget">
+                            <h4 class="title">Address</h4>
+                            <div class="contact-info-widget">
+                                <ul>
+                                	<li>
+                                		<p>
+		                                	১ নং বাউন্ডারি রোড, ময়মনসিংহ
+		                                </p>
+                                	</li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-12 mb-30">
+                       <div class="footer-widget">
+                            <h4 class="title">Branch</h4>
+                            <div class="link-widget">
+                                <ul>
+                                                                        <li><a href="/branch/mein-branc">মেইন ব্রাঞ্চ</a></li>
+                                                                        <li><a href="/branch/eeswrgnj-sakha">ঈশ্বরগঞ্জ শাখা</a></li>
+                                                                        <li><a href="/branch/neekona-sakha">নেএকোনা শাখা</a></li>
+                                                                        <li><a href="/branch/goureepur-sakha">গৌরীপুর  শাখা</a></li>
+                                                                        <li><a href="/branch/satksheera-sakha">সাতক্ষীরা শাখা</a></li>
+                                                                    </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-12 mb-30">
+                       <div class="footer-widget">
+                            <h4 class="title">Quick Links</h4>
+                            <div class="link-widget">
+                                <ul>
+                                    <li><a href="/about">About Us</a></li>
+                                    <li><a href="/mission-vission">Mission &amp; Vission</a></li>
+                                    <li><a href="/privacy-policy">Terms &amp; Condition</a></li>
+                                    <li><a href="/terms-condition">Privacy Policy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-12 col-12 mb-30">
+                       <div class="footer-widget">
+                            <h4 class="title">Keep up with us</h4>
+                            <div class="contact-info-widget">
+                                <ul>
+                                                                        <li>
+                                    	<span class="icon flaticon-telephone"></span>
+	                                    <a href="tel:01713-599468">
+	                                    	01713-599468
+	                                    </a>
+	                                </li>
+                                    	                                                                    <li>
+                                        <span class="icon flaticon-telephone"></span>
+                                        <a href="tel:01973-599511">
+                                            01973-599511
+                                        </a>
+                                    </li>
+                                                                                                            <li>
+                                    	<span class="icon flaticon-email-2"></span>
+	                                    <a href="/cdn-cgi/l/email-protection#b591dcdbd3dac7d8d4c1dcdadb988bd0d8d4dcd9">
+	                                    	<span class="__cf_email__" data-cfemail="92f1f3f6f7e6fffbe1e1fbfdfca0a6a5d2f5fff3fbfebcf1fdff">[email&#160;protected]</span>
+	                                    </a>
+                                    </li>
+                                                                    </ul>
+                            </div>
+                            <div class="social-link-widget">
+                                                                <a href="https://www.facebook.com/profile.php?id=100057168742289" target="_blank"><i class="fa fa-facebook"></i></a>
+                                                                                                <a href="https://www.twitter.com/" target="_blank"><i class="fa fa-twitter"></i></a>
+                                                                                                <a href="https://www.instagram.com/" target="_blank"><i class="fa fa-instagram"></i></a>
+                                                                                                <a href="https://www.linkedin.com/" target="_blank"><i class="fa fa-linkedin"></i></a>
+                                                                                                <a href="https://wa.me/+8801713599468" target="_blank"><i class="fa fa-whatsapp"></i></a>
+                                                            </div>
+                            
+                        </div>
+                    </div>
+    			</div>
+    		</div>
+    	</div>
+	</div>
+	<!-- Footer Bottom -->
+	<div class="footer-bottom-area">
+        <div class="container">
+            <div class="row ">
+                <!-- Copyright -->
+                <div class="copyright col-12 centered">
+                    <p class="mb-0 text-white copy-div">© CMCC. All rights reserved 2023. <p class="company text-white">Designed & Developed By <a href="https://bizitbd.com/" target="_blank"><span style="color: #d50000;">  Biz IT BD</p></span></a></p>
+                </div>
+            </div>
         </div>
-
-      </div>
-    </main>
-
-    <footer class="glass m-4 p-3 h-24 overflow-hidden flex flex-col shadow-lg">
-      <h3 class="text-[10px] text-purple-400 font-bold uppercase tracking-widest mb-1 border-b border-white/10 pb-1">Network Matrix Feed</h3>
-      <ul id="activity-feed" class="text-[11px] text-white/60 space-y-1 overflow-y-auto flex-1 font-mono pr-2">
-        <li>> Infinite Master Edition initialized. All components operational locally.</li>
-      </ul>
-    </footer>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAk_rARkhkZGriWHMWkD6vRGhd82Ko32wM",
-      authDomain: "aether-lab.firebaseapp.com",
-      projectId: "aether-lab",
-      storageBucket: "aether-lab.firebasestorage.app",
-      messagingSenderId: "1044048980464",
-      appId: "1:1044048980464:web:f44f00902acf6c4ccc5535"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    const loginBtn = document.getElementById('login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    const userInfo = document.getElementById('user-info');
-    const userName = document.getElementById('user-name');
-    const userAvatar = document.getElementById('user-avatar');
-    const provider = new GoogleAuthProvider();
-    
-    loginBtn.onclick = () => { signInWithPopup(auth, provider).catch(console.error); };
-    logoutBtn.onclick = () => { signOut(auth); };
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loginBtn.classList.add('hidden'); userInfo.classList.remove('hidden'); userInfo.classList.add('flex');
-        userName.textContent = user.displayName; userAvatar.src = user.photoURL;
-        window.globalLogActivity(`${user.displayName} authenticated locally.`);
-      } else {
-        loginBtn.classList.remove('hidden'); userInfo.classList.add('hidden'); userInfo.classList.remove('flex');
-      }
-    });
-  </script>
-
+    </div>
+</footer>
+<!-- Footer Section  End -->    <!-- Script Start -->
+	<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/asset/frontend_asset/assets/js/jquery.js"></script>
+	<script src="/asset/frontend_asset/assets/js/jquery.waypoints.min.js"></script>
+	<script src="/asset/frontend_asset/assets/js/jquery.counterup.min.js"></script>
+	<script src="/asset/frontend_asset/assets/js/popper.min.js"></script>
+	<script src="/asset/frontend_asset/assets/js/bootstrap.min.js"></script>
+	<script src="/asset/frontend_asset/assets/js/owl.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/SlickNav/1.0.10/jquery.slicknav.min.js"></script>
+	<script src="/asset/frontend_asset/assets/js/jquery.nice-select.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script src="/asset/frontend_asset/assets/js/jquery-ui.js"></script>
+	<script src="/asset/frontend_asset/assets/js/main.js" defer=""></script>
+  <script src="https://cadetmission.com/asset/toastr.min.js"></script>
+  <script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
   <script>
-    // System Event Frame Logger Function
-    window.globalLogActivity = function(message) {
-      const activityFeed = document.getElementById('activity-feed');
-      if (!activityFeed) return;
-      const li = document.createElement('li');
-      li.textContent = `> ${message}`;
-      activityFeed.prepend(li);
-    };
-
-    // Client Web Audio Sound Generator Routing
-    function playAudioTone(freq, waveType, duration) {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const nodeOsc = audioCtx.createOscillator();
-        const nodeGain = audioCtx.createGain();
-        nodeOsc.type = waveType;
-        nodeOsc.frequency.value = freq;
-        nodeGain.gain.setValueAtTime(0.015, audioCtx.currentTime);
-        nodeGain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-        nodeOsc.connect(nodeGain);
-        nodeGain.connect(audioCtx.destination);
-        nodeOsc.start();
-        nodeOsc.stop(audioCtx.currentTime + duration);
-      } catch (err) {}
-    }
-
-    const tabsMap = ['chat', 'image', 'vault', 'crypto', 'dev', 'math', 'graphics', 'audio', 'games'];
     
-    function openTool(toolName) {
-      playAudioTone(700, 'sine', 0.04);
-      const defView = document.getElementById('default-view');
-      if (defView) defView.style.display = 'none';
-      
-      tabsMap.forEach(t => {
-        const el = document.getElementById('tool-' + t);
-        if(el) { el.classList.remove('flex'); el.classList.add('hidden'); }
-      });
-      
-      const target = document.getElementById('tool-' + toolName);
-      if(target) { target.classList.remove('hidden'); target.classList.add('flex'); }
-
-      if (toolName === 'vault') loadVault();
-      if (toolName === 'graphics') initializePaintpadCanvas();
-    }
-
-    // AI Language Evaluation Component Router
-    async function sendChat() {
-        playAudioTone(880, 'sine', 0.03);
-        const input = document.getElementById('chat-in');
-        const output = document.getElementById('chat-out');
-        const promptText = input.value.trim();
-        if (!promptText) return;
-
-        output.innerHTML += `<div class="text-white/40 mt-2">> USER: ${promptText}</div>`;
-        const loaderId = 'load-' + Date.now();
-        output.innerHTML += `<div id="${loaderId}" class="text-blue-400 animate-pulse mt-1">> Processing evaluation stream...</div>`;
-        input.value = '';
-        output.scrollTop = output.scrollHeight;
-
-        try {
-            const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(promptText)}`);
-            document.getElementById(loaderId).remove();
-            playAudioTone(1050, 'sine', 0.05);
-            output.innerHTML += `<div class="bg-blue-950/20 border border-blue-500/20 p-3 rounded-lg mt-2 text-blue-200">${await res.text()}</div>`;
-        } catch (err) { 
-            document.getElementById(loaderId).className = "text-red-400";
-            document.getElementById(loaderId).innerText = `> Error: Transmission frame blocked.`; 
-        }
-        output.scrollTop = output.scrollHeight;
-    }
-
-    // AI Vision Weaver Module Router
-    function genImg() {
-        playAudioTone(440, 'square', 0.06);
-        const input = document.getElementById('img-in').value.trim();
-        if (!input) return;
-
-        const loader = document.getElementById('img-loader');
-        const img = document.getElementById('img-out');
-
-        img.classList.add('hidden');
-        loader.classList.remove('hidden');
-
-        const finalUri = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}?seed=${Math.floor(Math.random()*99999)}&width=1024&height=1024&nologo=true`;
-        
-        const monitor = new Image();
-        monitor.onload = () => {
-            img.src = finalUri;
-            loader.classList.add('hidden');
-            img.classList.remove('hidden');
-            playAudioTone(900, 'sine', 0.08);
-        };
-        monitor.src = finalUri;
-    }
-
-    // --- ENGINES & MATH CONVERTER IMPLEMENTATIONS ---
-
-    // 1. SHA-256 Client Processing Core Matrix
-    async function computeCryptoSha256() {
-      const rawText = document.getElementById('c-sha-in').value;
-      const targetDiv = document.getElementById('c-sha-out');
-      if(!rawText) { targetDiv.innerText = ' > Awaiting Array'; return; }
-      try {
-        const encoder = new TextEncoder();
-        const textBuffer = encoder.encode(rawText);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', textBuffer);
-        const outputArray = Array.from(new Uint8Array(hashBuffer));
-        targetDiv.innerText = outputArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      } catch(e) { targetDiv.innerText = ' > Error calculating crypto vector.'; }
-    }
-
-    // 2. Base64 Engine Mapper
-    function executeBase64Engine(isEncode) {
-      playAudioTone(800, 'sine', 0.02);
-      const input = document.getElementById('c-b64-in').value;
-      const display = document.getElementById('c-b64-out');
-      if(!input) return;
-      try {
-        display.innerText = isEncode ? btoa(input) : atob(input);
-      } catch(err) { display.innerText = " > Error: Invalid binary stream matrix mapped."; }
-    }
-
-    // 3. ROT13 Encoder Cipher Loop
-    function executeRot13Cipher() {
-      const src = document.getElementById('c-rot-in').value;
-      const target = document.getElementById('c-rot-out');
-      if(!src) { target.innerText = ' > Standby'; return; }
-      target.innerText = src.replace(/[a-z]/gi, letter => String.fromCharCode(letter.charCodeAt(0) + (letter.toLowerCase().charCodeAt(0) < 110 ? 13 : -13)));
-    }
-
-    // 4. Secure Token Generator
-    function generateSecureToken() {
-      playAudioTone(880, 'sine', 0.02);
-      const length = parseInt(document.getElementById('c-tok-len').value);
-      const pools = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
-      let compiled = '';
-      for (let i = 0; i < length; i++) { compiled += pools.charAt(Math.floor(Math.random() * pools.length)); }
-      document.getElementById('c-tok-out').innerText = compiled;
-    }
-
-    // 5. JSON Array Formatting Utility
-    function beautifyJsonString() {
-      playAudioTone(600, 'sine', 0.03);
-      const src = document.getElementById('d-json-in').value;
-      const out = document.getElementById('d-json-out');
-      if(!src) return;
-      try { out.innerText = JSON.stringify(JSON.parse(src), null, 2); } 
-      catch (e) { out.innerText = "Syntax Error: Parsing string map broken."; }
-    }
-
-    // 6. Request URI Router Component
-    function processUrlCodec(isEncode) {
-      playAudioTone(780, 'sine', 0.02);
-      const input = document.getElementById('d-url-in').value;
-      const output = document.getElementById('d-url-out');
-      if(!input) return;
-      output.innerText = isEncode ? encodeURIComponent(input) : decodeURIComponent(input);
-    }
-
-    // 7. HTML Entity Encoder Map
-    function compileHtmlEntities() {
-      const str = document.getElementById('d-ent-in').value;
-      const output = document.getElementById('d-ent-out');
-      if(!str) { output.innerText = ' > Standby'; return; }
-      output.innerText = str.replace(/[\u00A0-\u9999<>\&]/g, i => '&#'+i.charCodeAt(0)+';');
-    }
-
-    // 8. Radix Numbers Systems Base Converter Multi-Sync Mapping
-    function syncRadixBases(origin) {
-      const inputDec = document.getElementById('m-rad-dec');
-      const inputBin = document.getElementById('m-rad-bin');
-      const inputHex = document.getElementById('m-rad-hex');
-      const inputOct = document.getElementById('m-rad-oct');
-      let baseVal = 0;
-
-      try {
-        if(origin === 'dec' && inputDec.value) baseVal = parseInt(inputDec.value, 10);
-        else if(origin === 'bin' && inputBin.value) baseVal = parseInt(inputBin.value, 2);
-        else if(origin === 'hex' && inputHex.value) baseVal = parseInt(inputHex.value, 16);
-        else if(origin === 'oct' && inputOct.value) baseVal = parseInt(inputOct.value, 8);
-        else { return; }
-
-        if(isNaN(baseVal)) return;
-        if(origin !== 'dec') inputDec.value = baseVal.toString(10);
-        if(origin !== 'bin') inputBin.value = baseVal.toString(2);
-        if(origin !== 'hex') inputHex.value = baseVal.toString(16).toUpperCase();
-        if(origin !== 'oct') inputOct.value = baseVal.toString(8);
-      } catch(e) {}
-    }
-
-    // 9. Primes Factor Evaluator
-    function evaluateNumberPrimes() {
-      playAudioTone(700, 'sine', 0.03);
-      const val = parseInt(document.getElementById('m-prm-in').value, 10);
-      const out = document.getElementById('m-prm-out');
-      if(isNaN(val) || val < 2) { out.innerText = "Enter integer code index >= 2"; return; }
-      
-      let compositeCheck = true;
-      let limit = Math.sqrt(val);
-      for(let i=2; i<=limit; i++) {
-        if(val % i === 0) { compositeCheck = false; break; }
-      }
-      out.innerText = compositeCheck ? `${val} is a standard PURE PRIME vector.` : `${val} is COMPOSITE matrix number.`;
-    }
-
-    // 10. Canvas Equation Plotter Graphics Engine
-    function renderEquationGraph() {
-      playAudioTone(620, 'sine', 0.04);
-      const canvas = document.getElementById('math-graph-canvas');
-      const ctx = canvas.getContext('2d');
-      const selection = document.getElementById('m-gph-eqn').value;
-      
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-      ctx.lineWidth = 1;
-      
-      ctx.beginPath();
-      ctx.moveTo(0, canvas.height / 2);
-      ctx.lineTo(canvas.width, canvas.height / 2);
-      ctx.moveTo(canvas.width / 2, 0);
-      ctx.lineTo(canvas.width / 2, canvas.height);
-      ctx.stroke();
-
-      ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-
-      for (let x = 0; x < canvas.width; x++) {
-        let evaluatedX = (x - canvas.width / 2) * 0.1;
-        let evaluatedY = 0;
-
-        if (selection === 'sine') evaluatedY = Math.sin(evaluatedX);
-        else if (selection === 'cosine') evaluatedY = Math.cos(evaluatedX);
-        else if (selection === 'quad') evaluatedY = 0.1 * (evaluatedX * evaluatedX);
-        else if (selection === 'wave') evaluatedY = Math.sin(evaluatedX) * Math.cos(0.5 * evaluatedX);
-
-        let canvasY = canvas.height / 2 - (evaluatedY * 35);
-        if (x === 0) ctx.moveTo(x, canvasY);
-        else ctx.lineTo(x, canvasY);
-      }
-      ctx.stroke();
-    }
-
-    // 11. CSS Gradient Vector Palette Parser
-    function generateGradientCss() {
-      const c1 = document.getElementById('g-col-1').value;
-      const c2 = document.getElementById('g-col-2').value;
-      const dir = document.getElementById('g-col-dir').value;
-      const stringRepresentation = `linear-gradient(${dir}, ${c1}, ${c2})`;
-      
-      document.getElementById('g-grad-preview').style.background = stringRepresentation;
-      document.getElementById('g-grad-css').innerText = `background: ${stringRepresentation};`;
-    }
-
-    // 12. Canvas Vector Paintpad Rendering Suite
-    let paintActive = false;
-    let canvasPaintRef, canvasPaintCtx;
-
-    function initializePaintpadCanvas() {
-      if(window.paintCanvasConfigured) return;
-      window.paintCanvasConfigured = true;
-      
-      canvasPaintRef = document.getElementById('graphics-paint-canvas');
-      canvasPaintCtx = canvasPaintRef.getContext('2d');
-      
-      function resizeCanvasToLayout() {
-        canvasPaintRef.width = canvasPaintRef.parentElement.clientWidth;
-        canvasPaintRef.height = canvasPaintRef.parentElement.clientHeight;
-        canvasPaintCtx.lineCap = 'round';
-      }
-      resizeCanvasToLayout();
-      window.addEventListener('resize', resizeCanvasToLayout);
-
-      function grabInputCoordinates(e) {
-        const boundary = canvasPaintRef.getBoundingClientRect();
-        if(e.touches && e.touches[0]) {
-          return { x: e.touches[0].clientX - boundary.left, y: e.touches[0].clientY - boundary.top };
-        }
-        return { x: e.clientX - boundary.left, y: e.clientY - boundary.top };
-      }
-
-      function beginTracing(e) {
-        paintActive = true;
-        const coords = grabInputCoordinates(e);
-        canvasPaintCtx.beginPath();
-        canvasPaintCtx.moveTo(coords.x, coords.y);
-        canvasPaintCtx.strokeStyle = document.getElementById('g-paint-color').value;
-        canvasPaintCtx.lineWidth = parseInt(document.getElementById('g-paint-size').value, 10);
-      }
-
-      function executeTracing(e) {
-        if(!paintActive) return;
-        e.preventDefault();
-        const coords = grabInputCoordinates(e);
-        canvasPaintCtx.lineTo(coords.x, coords.y);
-        canvasPaintCtx.stroke();
-      }
-
-      canvasPaintRef.addEventListener('mousedown', beginTracing);
-      canvasPaintRef.addEventListener('mousemove', executeTracing);
-      window.addEventListener('mouseup', () => paintActive = false);
-
-      canvasPaintRef.addEventListener('touchstart', beginTracing);
-      canvasPaintRef.addEventListener('touchmove', executeTracing);
-      window.addEventListener('touchend', () => paintActive = false);
-    }
-
-    function clearPaintCanvas() {
-      if(canvasPaintCtx) canvasPaintCtx.clearRect(0, 0, canvasPaintRef.width, canvasPaintRef.height);
-    }
-
-    // 13. Morse Code Audio Sequencer Signals Translator
-    function convertTextToMorseAudio() {
-      const mapping = {
-        'A': '.-', 'B': '-...', 'C': '-..-', 'D': '-..', 'E': '.', 'F': '..-.', 'G': '--.', 'H': '....',
-        'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---', 'P': '.--.',
-        'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
-        'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--', '4': '....-', '5': '.....',
-        '6': '-....', '7': '--...', '8': '---..', '9': '----.', '0': '-----'
-      };
-      const text = document.getElementById('a-mrs-in').value.toUpperCase().trim();
-      const display = document.getElementById('a-mrs-out');
-      if(!text) return;
-
-      let codeArray = text.split('').map(char => mapping[char] || ' ').join(' ');
-      display.innerText = codeArray;
-
-      let runtimeTimeline = 0;
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-      codeArray.split('').forEach(symbol => {
-        if(symbol === '.' || symbol === '-') {
-          let span = (symbol === '.') ? 0.1 : 0.3;
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.value = 800;
-          
-          gain.gain.setValueAtTime(0, audioCtx.currentTime + runtimeTimeline);
-          gain.gain.linearRampToValueAtTime(0.015, audioCtx.currentTime + runtimeTimeline + 0.01);
-          gain.gain.setValueAtTime(0.015, audioCtx.currentTime + runtimeTimeline + span - 0.01);
-          gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + runtimeTimeline + span);
-          
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(audioCtx.currentTime + runtimeTimeline);
-          osc.stop(audioCtx.currentTime + runtimeTimeline + span);
-          runtimeTimeline += span + 0.1;
-        } else {
-          runtimeTimeline += 0.2;
-        }
-      });
-    }
-
-    // 14. Precision Metronome Scheduler System
-    let metronomeTickerRef = null;
-    let currentMetronomeBeat = 0;
     
-    function toggleMetronomeEngine() {
-      const btn = document.getElementById('metronome-toggle-btn');
-      if (metronomeTickerRef) {
-        clearInterval(metronomeTickerRef);
-        metronomeTickerRef = null;
-        btn.innerText = "Start Metronome";
-        clearMetronomeLights();
-      } else {
-        const bpm = parseInt(document.getElementById('a-met-bpm').value, 10);
-        const loopInterval = (60 / bpm) * 1000;
-        metronomeTickerRef = setInterval(executeMetronomeTick, loopInterval);
-        btn.innerText = "Halt Clock";
-      }
-    }
-
-    function executeMetronomeTick() {
-      clearMetronomeLights();
-      currentMetronomeBeat = (currentMetronomeBeat % 4) + 1;
-      
-      const dot = document.getElementById(`met-b-${currentMetronomeBeat}`);
-      if(dot) {
-        dot.style.background = currentMetronomeBeat === 1 ? '#f97316' : '#ea580c';
-        dot.style.transform = 'scale(1.25)';
-      }
-      playAudioTone(currentMetronomeBeat === 1 ? 880 : 440, 'triangle', 0.05);
-    }
-
-    function clearMetronomeLights() {
-      for(let i=1; i<=4; i++) {
-        const dot = document.getElementById(`met-b-${i}`);
-        if(dot) { dot.style.background = 'rgba(255,255,255,0.1)'; dot.style.transform = 'scale(1)'; }
-      }
-    }
-
-    // 15. Real Sandbox Snake Simulation Interactive Module
-    let canvasArcadeRef, canvasArcadeCtx;
-    let snakeBody, snakeDirection, appleCoordinates, arcadeLoopRef = null;
-
-    function triggerSnakeGameStart() {
-      canvasArcadeRef = document.getElementById('games-arcade-canvas');
-      canvasArcadeCtx = canvasArcadeRef.getContext('2d');
-      
-      snakeBody = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
-      snakeDirection = 'right';
-      document.getElementById('g-snk-score').innerText = '0';
-      spawnAppleCoordinates();
-
-      if(arcadeLoopRef) clearInterval(arcadeLoopRef);
-      arcadeLoopRef = setInterval(processArcadeFrameTick, 130);
-
-      window.addEventListener('keydown', processSnakeInputKeys);
-      configureMobileArcadeTaps();
-    }
-
-    function spawnAppleCoordinates() {
-      appleCoordinates = {
-        x: Math.floor(Math.random() * (canvasArcadeRef.width / 10)),
-        y: Math.floor(Math.random() * (canvasArcadeRef.height / 10))
-      };
-    }
-
-    function processSnakeInputKeys(e) {
-      if(e.key === 'ArrowUp' && snakeDirection !== 'down') snakeDirection = 'up';
-      if(e.key === 'ArrowDown' && snakeDirection !== 'up') snakeDirection = 'down';
-      if(e.key === 'ArrowLeft' && snakeDirection !== 'right') snakeDirection = 'left';
-      if(e.key === 'ArrowRight' && snakeDirection !== 'left') snakeDirection = 'right';
-    }
-
-    function configureMobileArcadeTaps() {
-      canvasArcadeRef.onclick = (e) => {
-        const rect = canvasArcadeRef.getBoundingClientRect();
-        const tapX = e.clientX - rect.left;
-        const tapY = e.clientY - rect.top;
-        const head = snakeBody[0];
-        const headCanvasX = head.x * 10;
-        const headCanvasY = head.y * 10;
-
-        if (Math.abs(tapX - headCanvasX) > Math.abs(tapY - headCanvasY)) {
-          snakeDirection = (tapX > headCanvasX) ? (snakeDirection !== 'left' ? 'right' : snakeDirection) : (snakeDirection !== 'right' ? 'left' : snakeDirection);
-        } else {
-          snakeDirection = (tapY > headCanvasY) ? (snakeDirection !== 'up' ? 'down' : snakeDirection) : (snakeDirection !== 'down' ? 'up' : snakeDirection);
-        }
-      };
-    }
-
-    function processArcadeFrameTick() {
-      let head = Object.assign({}, snakeBody[0]);
-      if (snakeDirection === 'right') head.x++;
-      if (snakeDirection === 'left') head.x--;
-      if (snakeDirection === 'up') head.y--;
-      if (snakeDirection === 'down') head.y++;
-
-      // Collision Check Boundary Matrices
-      if (head.x < 0 || head.y < 0 || head.x >= (canvasArcadeRef.width / 10) || head.y >= (canvasArcadeRef.height / 10) || testSelfCollision(head)) {
-        clearInterval(arcadeLoopRef);
-        playAudioTone(150, 'sawtooth', 0.4);
-        window.globalLogActivity('Game Over: Snake connection vector split.');
-        alert(`Simulation crashed. Final Score: ${snakeBody.length - 3}`);
-        return;
-      }
-
-      snakeBody.unshift(head);
-
-      if (head.x === appleCoordinates.x && head.y === appleCoordinates.y) {
-        playAudioTone(900, 'sine', 0.05);
-        document.getElementById('g-snk-score').innerText = snakeBody.length - 3;
-        spawnAppleCoordinates();
-      } else {
-        snakeBody.pop();
-      }
-
-      // Draw Sequence
-      canvasArcadeCtx.clearRect(0, 0, canvasArcadeRef.width, canvasArcadeRef.height);
-      canvasArcadeCtx.fillStyle = '#ef4444';
-      canvasArcadeCtx.fillRect(appleCoordinates.x * 10, appleCoordinates.y * 10, 9, 9);
-
-      canvasArcadeCtx.fillStyle = '#10b981';
-      snakeBody.forEach((part, index) => {
-        canvasArcadeCtx.fillStyle = index === 0 ? '#34d399' : '#10b981';
-        canvasArcadeCtx.fillRect(part.x * 10, part.y * 10, 9, 9);
-      });
-    }
-
-    function testSelfCollision(head) {
-      return snakeBody.some((part, idx) => idx !== 0 && part.x === head.x && part.y === head.y);
-    }
-
-    // 16. Local Device Latency Reflex Matrix Tester
-    let reflexTimerRef = null, reflexStartClock;
-
-    function handleReflexTesterTrigger() {
-      const btn = document.getElementById('g-rfx-btn');
-      const out = document.getElementById('g-rfx-out');
-      
-      if(btn.innerText === "INITIALIZE") {
-        btn.innerText = "WAIT FOR VECTOR LINK...";
-        btn.style.background = "rgba(180, 83, 9, 0.4)";
-        btn.style.borderColor = "#b45309";
-        out.innerText = "Prepare interface cursor...";
-
-        let randomTargetDelay = Math.random() * 3000 + 2000;
-        reflexTimerRef = setTimeout(() => {
-          btn.innerText = "FIRE NOW!";
-          btn.style.background = "rgba(16, 185, 129, 0.5)";
-          btn.style.borderColor = "#10b981";
-          reflexStartClock = performance.now();
-        }, randomTargetDelay);
-      } else if (btn.innerText === "FIRE NOW!") {
-        let deltaLatency = performance.now() - reflexStartClock;
-        out.innerText = `Response latency: ${deltaLatency.toFixed(1)} ms`;
-        resetReflexButtonState();
-        playAudioTone(1000, 'sine', 0.05);
-      } else {
-        clearTimeout(reflexTimerRef);
-        out.innerText = "Trigger fired prematurely. Test sequence void.";
-        resetReflexButtonState();
-      }
-    }
-
-    function resetReflexButtonState() {
-      const btn = document.getElementById('g-rfx-btn');
-      btn.innerText = "INITIALIZE";
-      btn.style.background = "rgba(220, 38, 38, 0.2)";
-      btn.style.borderColor = "rgba(220, 38, 38, 0.3)";
-    }
-
-    // Vault Client Mechanics Storage Matrix Mapping
-    function loadVault() {
-      document.getElementById('vault-in').value = localStorage.getItem('vault') || '';
-    }
-    function saveVault() { 
-      localStorage.setItem('vault', document.getElementById('vault-in').value); 
-    }
-    function clearVaultData() {
-      playAudioTone(200, 'sawtooth', 0.15);
-      if(confirm("Confirm deletion of all saved vault configurations?")) {
-        localStorage.removeItem('vault');
-        document.getElementById('vault-in').value = '';
-        window.globalLogActivity('Vault data sheets safely wiped.');
-      }
-    }
-    function downloadVaultData() {
-      playAudioTone(650, 'sine', 0.08);
-      const stringData = document.getElementById('vault-in').value;
-      if(!stringData.trim()) return alert("Vault configuration matrix is empty.");
-      
-      const textBlob = new Blob([stringData], { type: 'text/plain' });
-      const downloaderElement = document.createElement('a');
-      downloaderElement.download = 'aether_vault_manifest.txt';
-      downloaderElement.href = window.URL.createObjectURL(textBlob);
-      downloaderElement.style.display = 'none';
-      document.body.appendChild(downloaderElement);
-      downloaderElement.click();
-      downloaderElement.remove();
-      window.globalLogActivity('Vault text file downloaded into device file tree.');
-    }
-
-    document.getElementById('chat-in').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
-  </script>
-
+    
+      </script>
   <script>
-    const scene = new THREE.Scene(); 
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); 
-    renderer.setSize(window.innerWidth, window.innerHeight); 
-    document.getElementById('canvas-container').appendChild(renderer.domElement);
-    
-    const geometry = new THREE.TorusGeometry(14, 0.1, 16, 100); 
-    const material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.11 });
-    const torus = new THREE.Mesh(geometry, material); 
-    scene.add(torus); 
-    camera.position.z = 25;
+    $(document).ready(function(){
+    	var previous = $("#visitor_count").val();
+		$.ajax({
+			url:"https://cadetmission.com/visitor-count",
+			type: "PATCH",
+			cache: false,
+			data:{
+                _token:'IWbKxaAQNtmfTJwTAJTnsKFzjgEI1RmQFELy5fPh',
+				visitor: 1 + parseInt(previous),
+			},
+			success: function(dataResult){
+                dataResult = JSON.parse(dataResult);
+	            if(dataResult.statusCode)
+	            {
+	                console.log('success')
+	            }
+			}
+		});
+	});
 
-    function animate() { 
-      requestAnimationFrame(animate); 
-      torus.rotation.x += 0.0004; 
-      torus.rotation.y += 0.0008; 
-      renderer.render(scene, camera); 
-    } 
-    animate();
-
-    window.addEventListener('resize', () => { 
-      camera.aspect = window.innerWidth / window.innerHeight; 
-      camera.updateProjectionMatrix(); 
-      renderer.setSize(window.innerWidth, window.innerHeight); 
-    });
-  </script>
+    </script>
 </body>
 </html>
