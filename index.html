@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Aether Lab // Core Experiment Array</title>
+  <title>Aether Lab // Zarir Matrix Core</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
@@ -14,8 +14,8 @@
       width: 100%;
       height: 100%;
       overflow: hidden; 
-      background: #03050a; 
-      color: #00fff0; 
+      background: #050308; 
+      color: #ff007f; 
       font-family: 'Courier New', Courier, monospace;
       user-select: none;
       -webkit-user-select: none;
@@ -31,7 +31,7 @@
       position: fixed; 
       top: 0; left: 0; width: 100vw; height: 100vh; z-index: 2; 
       pointer-events: none;
-      opacity: 0.12;
+      opacity: 0.14;
     }
 
     /* Global Interactive Main Context Grid Layout */
@@ -54,11 +54,11 @@
 
     /* Glassmorphic Cyber-Panel Framework */
     .cyber-glass { 
-      background: rgba(6, 10, 22, 0.85); 
+      background: rgba(10, 5, 18, 0.84); 
       backdrop-filter: blur(16px); 
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(0, 255, 240, 0.15); 
-      box-shadow: 0 0 25px rgba(0, 255, 240, 0.05), inset 0 0 15px rgba(0, 255, 240, 0.05);
+      border: 1px solid rgba(255, 0, 127, 0.2); 
+      box-shadow: 0 0 25px rgba(255, 0, 127, 0.05), inset 0 0 15px rgba(255, 0, 127, 0.05);
     }
 
     /* Togglable CRT Monitor Scanline Emulator Overlay */
@@ -67,7 +67,7 @@
       display: block;
       position: fixed;
       top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 127, 0.04), rgba(0, 255, 240, 0.02), rgba(139, 92, 246, 0.04));
       z-index: 999;
       background-size: 100% 4px, 6px 100%;
       pointer-events: none;
@@ -77,7 +77,7 @@
     .crt-vignette {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      box-shadow: inset 0 0 120px rgba(0,0,0,0.85);
+      box-shadow: inset 0 0 120px rgba(0,0,0,0.9);
       z-index: 1000;
       pointer-events: none;
     }
@@ -91,9 +91,9 @@
       content: attr(data-text);
       position: absolute;
       left: -2px;
-      text-shadow: 1px 0 #ff00c1;
+      text-shadow: 1px 0 #00fff0;
       top: 0;
-      color: #00fff0;
+      color: #ff007f;
       background: transparent;
       overflow: hidden;
       clip: rect(0, 900px, 0, 0); 
@@ -103,9 +103,9 @@
       content: attr(data-text);
       position: absolute;
       left: 2px;
-      text-shadow: -1px 0 #00fff0;
+      text-shadow: -1px 0 #8b5cf6;
       top: 0;
-      color: #ff00c1;
+      color: #00fff0;
       background: transparent;
       overflow: hidden;
       clip: rect(0, 900px, 0, 0); 
@@ -114,28 +114,23 @@
 
     @keyframes textMainGlitch {
       0%, 100% { transform: skew(0deg); }
-      2% { transform: skew(4deg); }
-      4% { transform: skew(-3deg); }
+      2% { transform: skew(3deg); }
+      4% { transform: skew(-2deg); }
       5% { transform: skew(0deg); }
     }
     @keyframes textSubGlitch-1 {
-      0% { clip: rect(20px, 9999px, 40px, 0); }
-      10% { clip: rect(85px, 9999px, 5px, 0); }
-      20% { clip: rect(42px, 9999px, 98px, 0); }
-      30% { clip: rect(12px, 9999px, 64px, 0); }
-      40% { clip: rect(76px, 9999px, 12px, 0); }
-      50% { clip: rect(55px, 9999px, 84px, 0); }
-      60% { clip: rect(5px, 9999px, 32px, 0); }
-      70% { clip: rect(92px, 9999px, 55px, 0); }
-      100% { clip: rect(18px, 9999px, 92px, 0); }
+      0% { clip: rect(15px, 9999px, 35px, 0); }
+      20% { clip: rect(40px, 9999px, 85px, 0); }
+      40% { clip: rect(70px, 9999px, 20px, 0); }
+      60% { clip: rect(5px, 9999px, 45px, 0); }
+      80% { clip: rect(85px, 9999px, 60px, 0); }
+      100% { clip: rect(25px, 9999px, 95px, 0); }
     }
     @keyframes textSubGlitch-2 {
-      0% { clip: rect(76px, 9999px, 5px, 0); }
-      20% { clip: rect(55px, 9999px, 12px, 0); }
-      40% { clip: rect(89px, 9999px, 43px, 0); }
-      60% { clip: rect(64px, 9999px, 5px, 0); }
-      80% { clip: rect(95px, 9999px, 18px, 0); }
-      100% { clip: rect(43px, 9999px, 81px, 0); }
+      0% { clip: rect(65px, 9999px, 10px, 0); }
+      30% { clip: rect(20px, 9999px, 75px, 0); }
+      60% { clip: rect(80px, 9999px, 5px, 0); }
+      100% { clip: rect(35px, 9999px, 70px, 0); }
     }
 
     @keyframes monitorFlicker {
@@ -148,9 +143,9 @@
     }
 
     @keyframes borderPulse {
-      0% { border-color: rgba(0, 255, 240, 0.15); box-shadow: 0 0 15px rgba(0, 255, 240, 0.05); }
-      50% { border-color: rgba(0, 255, 240, 0.4); box-shadow: 0 0 25px rgba(0, 255, 240, 0.15); }
-      100% { border-color: rgba(0, 255, 240, 0.15); box-shadow: 0 0 15px rgba(0, 255, 240, 0.05); }
+      0% { border-color: rgba(255, 0, 127, 0.2); box-shadow: 0 0 15px rgba(255, 0, 127, 0.05); }
+      50% { border-color: rgba(255, 0, 127, 0.5); box-shadow: 0 0 25px rgba(255, 0, 127, 0.15); }
+      100% { border-color: rgba(255, 0, 127, 0.2); box-shadow: 0 0 15px rgba(255, 0, 127, 0.05); }
     }
     .cyber-border-pulse {
       animation: borderPulse 4s infinite ease-in-out;
@@ -163,16 +158,16 @@
     .hud-vector-ring {
       position: absolute;
       top: 50%; left: 50%;
-      border: 1px dashed rgba(0, 255, 240, 0.06);
+      border: 1px dashed rgba(255, 0, 127, 0.06);
       border-radius: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
-      animation: hudRotate 40s linear infinite;
+      animation: hudRotate 45s linear infinite;
     }
 
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(0, 255, 240, 0.2); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 0, 127, 0.2); border-radius: 4px; }
   </style>
 </head>
 <body class="crt-monitor crt-flicker">
@@ -182,72 +177,72 @@
   <div class="crt-vignette"></div>
 
   <div class="hud-vector-ring w-[600px] h-[600px]"></div>
-  <div class="hud-vector-ring w-[900px] h-[900px]" style="animation-direction: reverse; animation-duration: 60s;"></div>
+  <div class="hud-vector-ring w-[850px] h-[850px]" style="animation-direction: reverse; animation-duration: 65s; border-color: rgba(0, 255, 240, 0.04);"></div>
 
   <div class="interface-master select-none">
     
     <div class="interactive-element cyber-glass cyber-border-pulse w-72 h-full rounded-xl p-4 flex flex-col justify-between overflow-hidden">
       <div class="flex flex-col gap-4 h-full">
-        <div class="border-b border-teal-500/20 pb-3">
-          <h1 class="text-xl font-black tracking-wider text-teal-400 glitch-text" data-text="AETHER LAB" onclick="executeAudioUIExplosion()">AETHER LAB</h1>
-          <span class="text-[9px] font-mono text-white/30 uppercase tracking-widest block mt-0.5">> Quantum Command Array</span>
+        <div class="border-b border-pink-500/20 pb-3">
+          <h1 class="text-xl font-black tracking-wider text-pink-500 glitch-text" data-text="ZARIR LAB" onclick="executeAudioUIExplosion()">ZARIR LAB</h1>
+          <span class="text-[9px] font-mono text-white/30 uppercase tracking-widest block mt-0.5">> Tech Animation Node</span>
         </div>
 
         <div class="flex flex-col gap-2">
-          <span class="text-[10px] text-white/40 uppercase tracking-wider font-bold">// Engine Modulation</span>
-          <button onclick="modify3DGeometryVector('speed')" class="w-full bg-teal-950/20 border border-teal-500/20 text-[10px] font-mono p-2 rounded text-left text-teal-300 tracking-wide hover:bg-teal-500/10 active:bg-teal-500/20 transition">
+          <span class="text-[10px] text-white/40 uppercase tracking-wider font-bold">// Laboratory Tuning</span>
+          <button onclick="modify3DGeometryVector('speed')" class="w-full bg-pink-950/20 border border-pink-500/20 text-[10px] font-mono p-2 rounded text-left text-pink-300 tracking-wide hover:bg-pink-500/10 active:bg-pink-500/20 transition">
             [01] ACCELERATE PARTICLES
           </button>
-          <button onclick="modify3DGeometryVector('color')" class="w-full bg-teal-950/20 border border-teal-500/20 text-[10px] font-mono p-2 rounded text-left text-teal-300 tracking-wide hover:bg-teal-500/10 active:bg-teal-500/20 transition">
+          <button onclick="modify3DGeometryVector('color')" class="w-full bg-pink-950/20 border border-pink-500/20 text-[10px] font-mono p-2 rounded text-left text-pink-300 tracking-wide hover:bg-pink-500/10 active:bg-pink-500/20 transition">
             [02] SHIFT COLOR SPECTRUM
           </button>
-          <button onclick="modify3DGeometryVector('warp')" class="w-full bg-teal-950/20 border border-teal-500/20 text-[10px] font-mono p-2 rounded text-left text-teal-300 tracking-wide hover:bg-teal-500/10 active:bg-teal-500/20 transition">
+          <button onclick="modify3DGeometryVector('warp')" class="w-full bg-pink-950/20 border border-pink-500/20 text-[10px] font-mono p-2 rounded text-left text-pink-300 tracking-wide hover:bg-pink-500/10 active:bg-pink-500/20 transition">
             [03] ENGAGE WARP GEOMETRY
           </button>
-          <button onclick="toggleMatrixRainOverlay()" class="w-full bg-teal-950/20 border border-teal-500/20 text-[10px] font-mono p-2 rounded text-left text-teal-300 tracking-wide hover:bg-teal-500/10 active:bg-teal-500/20 transition">
-            [04] TOGGLE LAYER CYPHER
+          <button onclick="toggleMatrixRainOverlay()" class="w-full bg-pink-950/20 border border-pink-500/20 text-[10px] font-mono p-2 rounded text-left text-pink-300 tracking-wide hover:bg-pink-500/10 active:bg-pink-500/20 transition">
+            [04] TOGGLE STREAMING CIPHER
           </button>
         </div>
 
         <div class="flex flex-col gap-2 bg-black/30 border border-white/5 p-3 rounded-lg">
-          <span class="text-[9px] text-purple-400 font-bold uppercase tracking-wider">// Acoustic Wave Synthesizer</span>
+          <span class="text-[9px] text-purple-400 font-bold uppercase tracking-wider">// Resonance Waves</span>
           <div class="grid grid-cols-3 gap-1">
-            <button onclick="triggerHapticWave(150, 'sawtooth')" class="bg-purple-950/20 border border-purple-500/20 text-[9px] p-1.5 rounded font-mono text-center text-purple-300 hover:bg-purple-500/20 active:bg-purple-500/40 transition">SAW</button>
-            <button onclick="triggerHapticWave(440, 'sine')" class="bg-purple-950/20 border border-purple-500/20 text-[9px] p-1.5 rounded font-mono text-center text-purple-300 hover:bg-purple-500/20 active:bg-purple-500/40 transition">SINE</button>
-            <button onclick="triggerHapticWave(600, 'square')" class="bg-purple-950/20 border border-purple-500/20 text-[9px] p-1.5 rounded font-mono text-center text-purple-300 hover:bg-purple-500/20 active:bg-purple-500/40 transition">SQUR</button>
+            <button onclick="triggerHapticWave(160, 'sawtooth')" class="bg-purple-950/20 border border-purple-500/20 text-[9px] p-1.5 rounded font-mono text-center text-purple-300 hover:bg-purple-500/20 active:bg-purple-500/40 transition">SAW</button>
+            <button onclick="triggerHapticWave(432, 'sine')" class="bg-purple-950/20 border border-purple-500/20 text-[9px] p-1.5 rounded font-mono text-center text-purple-300 hover:bg-purple-500/20 active:bg-purple-500/40 transition">SINE</button>
+            <button onclick="triggerHapticWave(580, 'square')" class="bg-purple-950/20 border border-purple-500/20 text-[9px] p-1.5 rounded font-mono text-center text-purple-300 hover:bg-purple-500/20 active:bg-purple-500/40 transition">SQUR</button>
           </div>
           <button onclick="engageAmbientNeuralHum()" id="hum-btn" class="w-full text-center text-[9px] border border-purple-500/30 bg-purple-950/30 py-1 rounded text-purple-200 uppercase font-bold tracking-widest mt-1 hover:bg-purple-500/20 transition">
-            Start Ambient Hum
+            Start Cosmic Drone
           </button>
         </div>
 
         <div class="flex-1 flex flex-col min-h-0 bg-black/40 border border-white/5 rounded-xl p-3 font-mono text-[9px] overflow-hidden">
-          <span class="text-teal-400/60 block border-b border-white/5 pb-1 mb-1.5 font-bold uppercase tracking-wider">// Lab Instance Telemetry</span>
+          <span class="text-pink-400/60 block border-b border-white/5 pb-1 mb-1.5 font-bold uppercase tracking-wider">// Telemetry Stream</span>
           <div id="telemetry-log-output" class="flex-1 overflow-y-auto space-y-1 text-white/50 leading-normal pr-1 select-text">
-            <div>[INIT] WebGL spatial particle cloud compiled.</div>
-            <div>[LOG] Touch event coordinates synchronized.</div>
-            <div>[SYS] Laboratory system running nominal status.</div>
+            <div>[INIT] Zarir Core framework compiled.</div>
+            <div>[LOG] Vector coordinates calibrated.</div>
+            <div>[SYS] Emotional resonance sync stable.</div>
           </div>
         </div>
       </div>
 
       <div class="text-[9px] font-mono text-white/20 tracking-wider pt-2 border-t border-white/5 mt-2">
-        AETHER HUB // SECURE CORE
+        AETHER // DESIGNED FOR ZARIR
       </div>
     </div>
 
     <div class="interactive-element flex-1 h-full cyber-glass cyber-border-pulse rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden">
       <div class="flex justify-between items-center border-b border-white/5 pb-2 font-mono text-xs select-none">
-        <div class="flex items-center gap-2 text-teal-400 font-bold tracking-wider">
-          <span class="h-1.5 w-1.5 bg-green-400 rounded-full animate-pulse"></span>
-          <span>CORE_WORKSPACE // QUANTUM_PARTICLE_MATRIX.SYS</span>
+        <div class="flex items-center gap-2 text-pink-400 font-bold tracking-wider">
+          <span class="h-1.5 w-1.5 bg-pink-500 rounded-full animate-pulse"></span>
+          <span>WORKSPACE_MAIN // NEURAL_PARTICLE_MATRIX.SYS</span>
         </div>
-        <div class="text-white/40 text-[10px] uppercase tracking-widest">
+        <div class="text-cyan-400/50 text-[10px] uppercase tracking-widest">
           Interactions: Active on Tap/Swipe
         </div>
       </div>
       
-      <div class="flex-1 w-full h-full bg-black/50 rounded-lg border border-white/5 relative overflow-hidden">
+      <div class="flex-1 w-full h-full bg-black/60 rounded-lg border border-white/5 relative overflow-hidden">
         <canvas id="lab-interactive-canvas" class="absolute top-0 left-0 w-full h-full cursor-crosshair"></canvas>
       </div>
     </div>
@@ -255,17 +250,17 @@
     <div class="interactive-element cyber-glass cyber-border-pulse w-72 h-full rounded-xl p-4 flex flex-col justify-between overflow-hidden">
       <div class="flex flex-col gap-4">
         
-        <div class="border-b border-teal-500/20 pb-3 flex justify-between items-center">
+        <div class="border-b border-pink-500/20 pb-3 flex justify-between items-center">
           <div>
-            <h2 class="text-xs font-mono font-bold tracking-widest text-teal-400 uppercase">> DIAGNOSTICS</h2>
-            <span class="text-[9px] text-white/30 font-mono block mt-0.5">Performance tracking</span>
+            <h2 class="text-xs font-mono font-bold tracking-widest text-pink-400 uppercase">> ANALYTICS</h2>
+            <span class="text-[9px] text-white/30 font-mono block mt-0.5">Performance index</span>
           </div>
-          <button onclick="triggerSystemMatrixCrash()" class="text-[9px] font-bold border border-red-500/30 bg-red-950/20 text-red-400 px-2 py-0.5 rounded tracking-wider uppercase hover:bg-red-500/20 transition">Crash Test</button>
+          <button onclick="triggerSystemMatrixCrash()" class="text-[9px] font-bold border border-cyan-500/30 bg-cyan-950/20 text-cyan-400 px-2 py-0.5 rounded tracking-wider uppercase hover:bg-cyan-500/20 transition">Pulse Test</button>
         </div>
 
         <div class="flex flex-col gap-1 bg-black/40 border border-white/5 p-3 rounded-lg font-mono">
-          <span class="text-[9px] text-white/30 uppercase tracking-wider">System Operational Uptime</span>
-          <div id="hud-runtime-clock" class="text-xl font-bold tracking-widest text-teal-300">00:00:00</div>
+          <span class="text-[9px] text-white/30 uppercase tracking-wider">Matrix Session Timer</span>
+          <div id="hud-runtime-clock" class="text-xl font-bold tracking-widest text-pink-400">00:00:00</div>
         </div>
 
         <div class="flex flex-col gap-3 bg-black/30 border border-white/5 p-3 rounded-lg font-mono text-[10px]">
@@ -273,43 +268,43 @@
           
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-[9px]">
-              <span class="text-white/50 uppercase">Matrix Fade Decay:</span>
-              <span id="lbl-lbl-1" class="text-teal-300 font-bold">0.96</span>
+              <span class="text-white/50 uppercase">Matrix Decay Rate:</span>
+              <span id="lbl-lbl-1" class="text-pink-300 font-bold">0.96</span>
             </div>
-            <input type="range" id="sl-matrix-decay" min="85" max="99" value="96" class="w-full accent-teal-400 cursor-pointer" oninput="document.getElementById('lbl-lbl-1').innerText=(this.value/100).toFixed(2)">
+            <input type="range" id="sl-matrix-decay" min="85" max="99" value="96" class="w-full accent-pink-500 cursor-pointer" oninput="document.getElementById('lbl-lbl-1').innerText=(this.value/100).toFixed(2)">
           </div>
 
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-[9px]">
-              <span class="text-white/50 uppercase">3D Space Velocity:</span>
-              <span id="lbl-lbl-2" class="text-teal-300 font-bold">1.5</span>
+              <span class="text-white/50 uppercase">Quantum Speed:</span>
+              <span id="lbl-lbl-2" class="text-pink-300 font-bold">1.5</span>
             </div>
-            <input type="range" id="sl-warp-velocity" min="1" max="50" value="15" class="w-full accent-teal-400 cursor-pointer" oninput="document.getElementById('lbl-lbl-2').innerText=(this.value/10).toFixed(1)">
+            <input type="range" id="sl-warp-velocity" min="1" max="50" value="15" class="w-full accent-pink-500 cursor-pointer" oninput="document.getElementById('lbl-lbl-2').innerText=(this.value/10).toFixed(1)">
           </div>
 
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-[9px]">
-              <span class="text-white/50 uppercase">Particle Bloom Size:</span>
-              <span id="lbl-lbl-3" class="text-teal-300 font-bold">0.12</span>
+              <span class="text-white/50 uppercase">Visual Particle Size:</span>
+              <span id="lbl-lbl-3" class="text-pink-300 font-bold">0.12</span>
             </div>
-            <input type="range" id="sl-visual-bloom" min="2" max="40" value="12" class="w-full accent-teal-400 cursor-pointer" oninput="document.getElementById('lbl-lbl-3').innerText=(this.value/100).toFixed(2); modifyBloomOpacity()">
+            <input type="range" id="sl-visual-bloom" min="2" max="40" value="12" class="w-full accent-pink-500 cursor-pointer" oninput="document.getElementById('lbl-lbl-3').innerText=(this.value/100).toFixed(2); modifyBloomOpacity()">
           </div>
         </div>
 
         <div class="flex flex-col gap-2 bg-black/30 border border-white/5 p-3 rounded-lg font-mono">
           <div class="flex justify-between items-center text-[9px]">
-            <span class="text-indigo-400 font-bold uppercase tracking-wider">// Persistent Memory Vault</span>
-            <button onclick="downloadVaultData()" class="text-[8px] bg-indigo-950/40 border border-indigo-500/30 px-1.5 py-0.5 rounded text-indigo-300 uppercase font-bold hover:bg-indigo-500/20 transition">Export</button>
+            <span class="text-cyan-400 font-bold uppercase tracking-wider">// Zarir Vault Manifest</span>
+            <button onclick="downloadVaultData()" class="text-[8px] bg-cyan-950/40 border border-cyan-500/30 px-1.5 py-0.5 rounded text-cyan-300 uppercase font-bold hover:bg-cyan-500/20 transition">Save</button>
           </div>
-          <textarea id="vault-in" oninput="saveVault()" class="w-full h-16 bg-black/50 border border-white/10 rounded p-2 text-[10px] focus:outline-none text-indigo-200 resize-none font-mono" placeholder="Drop encryption codes or data manifests here..."></textarea>
+          <textarea id="vault-in" oninput="saveVault()" class="w-full h-16 bg-black/50 border border-white/10 rounded p-2 text-[10px] focus:outline-none text-cyan-200 resize-none font-mono" placeholder="Store custom manifests or logs directly on device memory..."></textarea>
         </div>
 
       </div>
 
       <div class="flex flex-col gap-1 border-t border-white/5 pt-2 mt-2">
         <div class="flex justify-between font-mono text-[9px] text-white/30 uppercase tracking-widest">
-          <span>Workspace Terminal</span>
-          <span class="text-teal-400/50 font-bold">Client Pure</span>
+          <span>Secure Matrix Console</span>
+          <span class="text-pink-400/50 font-bold">Verified</span>
         </div>
       </div>
     </div>
@@ -339,7 +334,7 @@
         
         oscillatorNode.start();
         oscillatorNode.stop(ctx.currentTime + specificLength);
-        writeTelemetryLogLine(`Wave frequency emission: ${frequency}Hz [${shapeForm.toUpperCase()}]`);
+        writeTelemetryLogLine(`Wave emission: ${frequency}Hz [${shapeForm.toUpperCase()}]`);
       } catch (err) {}
     }
 
@@ -352,8 +347,8 @@
         if (baselineAmbientHumNode) {
           baselineAmbientHumNode.stop();
           baselineAmbientHumNode = null;
-          toggleBtn.innerText = "Start Ambient Hum";
-          writeTelemetryLogLine("Ambient synthetic drone halted.");
+          toggleBtn.innerText = "Start Cosmic Drone";
+          writeTelemetryLogLine("Ambient frequency cycle terminated.");
         } else {
           const osc1 = ctx.createOscillator();
           const osc2 = ctx.createOscillator();
@@ -361,14 +356,14 @@
           const masterGain = ctx.createGain();
 
           osc1.type = 'sawtooth';
-          osc1.frequency.value = 55; 
+          osc1.frequency.value = 65.41; // C2 musical string tone
           osc2.type = 'sine';
-          osc2.frequency.value = 55.4; 
+          osc2.frequency.value = 65.81; // Detuned beat pairing
 
           lowpassFilter.type = 'lowpass';
-          lowpassFilter.frequency.value = 140; 
+          lowpassFilter.frequency.value = 150; 
 
-          masterGain.gain.value = 0.03;
+          masterGain.gain.value = 0.035;
 
           osc1.connect(lowpassFilter);
           osc2.connect(lowpassFilter);
@@ -379,16 +374,16 @@
           osc2.start();
           
           baselineAmbientHumNode = { stop: function() { osc1.stop(); osc2.stop(); } };
-          toggleBtn.innerText = "Halt Ambient Hum";
-          writeTelemetryLogLine("Sub-bass environment acoustics active.");
+          toggleBtn.innerText = "Halt Cosmic Drone";
+          writeTelemetryLogLine("Ambient drone frequencies successfully mapped.");
         }
-        triggerHapticWave(800, 'sine', 0.04);
+        triggerHapticWave(880, 'sine', 0.04);
       } catch (e) {}
     }
 
     function executeAudioUIExplosion() {
-      triggerHapticWave(130, 'sawtooth', 0.5);
-      setTimeout(() => triggerHapticWave(320, 'square', 0.15), 80);
+      triggerHapticWave(140, 'sawtooth', 0.5);
+      setTimeout(() => triggerHapticWave(340, 'square', 0.15), 80);
     }
   </script>
 
@@ -398,7 +393,7 @@
     
     let activeMatrixColumns = [];
     let isMatrixRainActive = true;
-    const cypherCharactersPool = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZCORE_AETHER_LAB_HEX_0x8C_ALPHA_VECTORS".split("");
+    const cypherCharactersPool = "ZARIR_LAB_0123456789ALPHA_HEX_VECTOR_EXP_MATRIX_0x9F_FLOW".split("");
 
     function setupMatrixCanvasDimensions() {
       matrixCanvasRef.width = window.innerWidth;
@@ -419,10 +414,10 @@
       }
       
       const multiplierValue = parseFloat(document.getElementById('sl-matrix-decay').value / 100);
-      matrixCanvasCtx.fillStyle = `rgba(3, 5, 10, ${1 - multiplierValue})`;
+      matrixCanvasCtx.fillStyle = `rgba(5, 3, 8, ${1 - multiplierValue})`;
       matrixCanvasCtx.fillRect(0, 0, matrixCanvasRef.width, matrixCanvasRef.height);
 
-      matrixCanvasCtx.fillStyle = "#00fff0";
+      matrixCanvasCtx.fillStyle = "#ff007f";
       matrixCanvasCtx.font = "11px monospace";
 
       for (let i = 0; i < activeMatrixColumns.length; i++) {
@@ -431,7 +426,7 @@
         const coordinateY = activeMatrixColumns[i] * 14;
 
         if(Math.random() > 0.98) matrixCanvasCtx.fillStyle = "#ffffff";
-        else matrixCanvasCtx.fillStyle = "#00fff0";
+        else matrixCanvasCtx.fillStyle = "#ff007f";
 
         matrixCanvasCtx.fillText(textSymbol, coordinateX, coordinateY);
 
@@ -444,8 +439,8 @@
 
     function toggleMatrixRainOverlay() {
       isMatrixRainActive = !isMatrixRainActive;
-      writeTelemetryLogLine(`Matrix streaming overlay: ${isMatrixRainActive ? "ENGAGED" : "SHUTDOWN"}`);
-      triggerHapticWave(540, 'sine', 0.03);
+      writeTelemetryLogLine(`Matrix overlay grid: ${isMatrixRainActive ? "ONLINE" : "OFFLINE"}`);
+      triggerHapticWave(520, 'sine', 0.03);
     }
   </script>
 
@@ -454,7 +449,7 @@
     const labCtx = labCanvas.getContext('2d');
     
     let labParticlesArray = [];
-    let mouseVector = { x: null, y: null, radius: 100 };
+    let mouseVector = { x: null, y: null, radius: 110 };
 
     function resizeLabCanvas() {
       labCanvas.width = labCanvas.parentElement.clientWidth;
@@ -470,10 +465,10 @@
         this.baseX = x;
         this.baseY = y;
         this.size = Math.random() * 2 + 1;
-        this.density = (Math.random() * 30) + 12;
+        this.density = (Math.random() * 32) + 14;
       }
       draw() {
-        labCtx.fillStyle = 'rgba(0, 255, 240, 0.75)';
+        labCtx.fillStyle = 'rgba(255, 0, 127, 0.8)';
         labCtx.beginPath();
         labCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         labCtx.closePath();
@@ -526,7 +521,7 @@
           let distance = Math.sqrt(dx * dx + dy * dy);
 
           if (distance < 28) {
-            labCtx.strokeStyle = `rgba(0, 255, 240, ${0.25 - (distance / 28)})`;
+            labCtx.strokeStyle = `rgba(0, 255, 240, ${0.28 - (distance / 28)})`;
             labCtx.lineWidth = 0.8;
             labCtx.beginPath();
             labCtx.moveTo(labParticlesArray[a].x, labParticlesArray[a].y);
@@ -548,7 +543,6 @@
     }
     animateLabCanvasLoop();
 
-    // Unified Mobile Tablet Event Observers
     function getCanvasCoordinates(e) {
       const rect = labCanvas.getBoundingClientRect();
       if(e.touches && e.touches[0]) {
@@ -573,7 +567,7 @@
     labCanvas.addEventListener('touchend', handleInteractionLeave);
     labCanvas.addEventListener('touchstart', (e) => {
       handleInteractionMove(e);
-      triggerHapticWave(300, 'sine', 0.02);
+      triggerHapticWave(340, 'sine', 0.02);
     });
   </script>
 
@@ -590,8 +584,8 @@
     const arrayParticlePositions = new Float32Array(starCloudParticlesCount * 3);
     const arrayParticleColors = new Float32Array(starCloudParticlesCount * 3);
 
-    const basePrimaryThemeColor = new THREE.Color('#00fff0');
-    const accentSecondaryThemeColor = new THREE.Color('#bc3bf4');
+    const basePrimaryThemeColor = new THREE.Color('#ff007f');
+    const accentSecondaryThemeColor = new THREE.Color('#00fff0');
 
     for (let i = 0; i < starCloudParticlesCount * 3; i += 3) {
       const sphericalRadius = 18 + Math.random() * 25;
@@ -624,7 +618,6 @@
     threeSceneInstance.add(starPoints);
     camera3DInstance.position.z = 35;
 
-    // Vector Modulator Core Parameters
     let particleVelocity = 0.02;
     let targetVelocity = 0.02;
     let colorWavelengthShift = 0;
@@ -635,13 +628,13 @@
       triggerHapticWave(600, 'sine', 0.03);
       if (vectorType === 'speed') {
         targetVelocity = targetVelocity === 0.02 ? 0.15 : 0.02;
-        writeTelemetryLogLine(`Space particle acceleration: ${targetVelocity === 0.02 ? 'STANDARD' : 'MAX_BURST'}`);
+        writeTelemetryLogLine(`Velocity metrics toggled: ${targetVelocity === 0.02 ? 'NOMINAL' : 'BURST'}`);
       } else if (vectorType === 'color') {
         colorWavelengthShift = (colorWavelengthShift + 1) % 4;
-        writeTelemetryLogLine(`Wavelength color spectrum index: 0x0${colorWavelengthShift}`);
+        writeTelemetryLogLine(`Color modulation index shifted: 0x0${colorWavelengthShift}`);
       } else if (vectorType === 'warp') {
         warpTrajectoryActive = !warpTrajectoryActive;
-        writeTelemetryLogLine(`Z-axis dimensional trajectory: ${warpTrajectoryActive ? 'WARP_ENGAGED' : 'STABLE'}`);
+        writeTelemetryLogLine(`Dimension warp alignment: ${warpTrajectoryActive ? 'ACTIVE' : 'STABLE'}`);
       }
     }
 
@@ -663,8 +656,8 @@
 
     function triggerSystemMatrixCrash() {
       triggerHapticWave(90, 'sawtooth', 0.7);
-      writeTelemetryLogLine("CRITICAL FAULT TEST: Simulating compositor pipeline drop.");
-      document.body.style.filter = "invert(1) hue-rotate(180deg) contrast(1.5)";
+      writeTelemetryLogLine("CRITICAL ALERT: Testing interface inversion pulses.");
+      document.body.style.filter = "invert(1) contrast(1.4)";
       setTimeout(() => { document.body.style.filter = "none"; }, 400);
     }
 
@@ -688,13 +681,11 @@
 
       renderMatrixFrameTick();
 
-      // Adjust particle flow variables based on slider references
       const dynamicVelocityFactor = parseFloat(document.getElementById('sl-warp-velocity').value / 10);
       particleVelocity += (targetVelocity - particleVelocity) * 0.1;
       starPoints.rotation.y += particleVelocity * 0.2 * dynamicVelocityFactor;
       starPoints.rotation.x += particleVelocity * 0.1 * dynamicVelocityFactor;
 
-      // Color Spectrum Shifting Maps
       if (colorWavelengthShift > 0) {
         const colors = starGeometry.attributes.color.array;
         for (let i = 0; i < starCloudParticlesCount * 3; i += 3) {
@@ -705,7 +696,6 @@
         starGeometry.attributes.color.needsUpdate = true;
       }
 
-      // Deep Space Warp FOV Adjustments
       const targetWarp = warpTrajectoryActive ? 2.5 : 0;
       warpFactor += (targetWarp - warpFactor) * 0.05;
       if (warpFactor > 0.01) {
@@ -722,7 +712,6 @@
     }
     masterRenderLoopOrchestrator();
 
-    // Resize Observer
     window.addEventListener('resize', () => {
       camera3DInstance.aspect = window.innerWidth / window.innerHeight;
       camera3DInstance.updateProjectionMatrix();
@@ -738,7 +727,7 @@
       if(!data.trim()) return;
       const textBlob = new Blob([data], { type: 'text/plain' });
       const dl = document.createElement('a');
-      dl.download = 'aether_lab_manifest.txt';
+      dl.download = 'zarir_vault_manifest.txt';
       dl.href = window.URL.createObjectURL(textBlob);
       dl.style.display = 'none';
       document.body.appendChild(dl);
