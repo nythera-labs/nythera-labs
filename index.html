@@ -364,7 +364,7 @@
   </script>
 
   <script>
-    let activeTelegramBotToken = "";
+    let activeTelegramBotToken = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
     let isBotPollingActive = false;
     let fallbackOffsetPointerId = 0;
     let runtimeThreadTrackerId = null;
@@ -386,6 +386,8 @@
         document.getElementById('tg-token-input').value = storedToken;
         activeTelegramBotToken = storedToken;
         writeTelemetryLogLine("SECURITY: Verified active credentials token from internal secure store.");
+      } else {
+        document.getElementById('tg-token-input').value = activeTelegramBotToken;
       }
     }
 
@@ -410,7 +412,6 @@
       }
 
       if (isBotPollingActive) {
-        // Halt client loop
         isBotPollingActive = false;
         clearTimeout(runtimeThreadTrackerId);
         btn.innerText = "▶ ENGAGE BROWSER LOOP";
@@ -422,7 +423,6 @@
         writeTelemetryLogLine("ENGINE: Serverless browser long-polling pipeline channel halted.");
         triggerAudioWaveSignal(300, 'sine', 0.08);
       } else {
-        // Ignite serverless polling loops
         isBotPollingActive = true;
         btn.innerText = "■ TERMINATE BROWSER LOOP";
         btn.style.background = "rgba(239, 68, 68, 0.15)";
@@ -430,13 +430,14 @@
         indicator.innerText = "Live Polling Active";
         indicator.className = "text-emerald-400 font-bold uppercase animate-pulse";
         pulseDot.className = "h-1.5 w-1.5 bg-emerald-400 rounded-full shadow-[0_0_8px_currentColor] animate-ping";
-        writeTelemetryLogLine("ENGINE: Spawning serverless network fetch worker loops inside main browser thread...");
+        writeTelemetryLogLine("ENGINE: Spawning serverless network fetch proxy links...");
         triggerAudioWaveSignal(880, 'sine', 0.05);
         
         executeSovereignTelegramLongPoll();
       }
     }
 
+    // FIXED: Embedded Dropon raw proxy proxy parameters mapping to bypass CORS
     async function executeSovereignTelegramLongPoll() {
       if(!isBotPollingActive) return;
 
@@ -444,16 +445,15 @@
       const pollingIntervalSeconds = parseFloat(document.getElementById('sl-polling-delay').value / 10);
       
       try {
-        // Standard long-polling bot API request URL structure
-        const queryUri = `https://api.telegram.org/bot${activeTelegramBotToken}/getUpdates?offset=${fallbackOffsetPointerId + 1}&timeout=0`;
-        const initialFetchResponse = await fetch(queryUri);
+        const targetUrl = `https://api.telegram.org/bot${activeTelegramBotToken}/getUpdates?offset=${fallbackOffsetPointerId + 1}&timeout=0`;
+        const proxyUri = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
         
-        if (!initialFetchResponse.ok) throw new Error(`HTTP Status Error Context: ${initialFetchResponse.status}`);
+        const initialFetchResponse = await fetch(proxyUri);
+        if (!initialFetchResponse.ok) throw new Error(`HTTP Error Status: ${initialFetchResponse.status}`);
         
         const jsonPayloadPack = await initialFetchResponse.json();
         
         if(jsonPayloadPack.ok && jsonPayloadPack.result.length > 0) {
-          // Clear initial instructions placeholders on first catch
           if(ledger.innerText.includes("Awaiting update")) ledger.innerHTML = "";
 
           for(let updateItem of jsonPayloadPack.result) {
@@ -467,28 +467,26 @@
               logCapturedUpdateToLedger(senderUser, incomingMsgText, "INBOUND_STRING");
               triggerAudioWaveSignal(600, 'sine', 0.03);
 
-              // Route the chat string straight into Pollinations AI free processing engine
               await processAndTransmitAiResponsePayload(chatId, senderUser, incomingMsgText);
             }
           }
         }
       } catch(exceptionErr) {
-        console.error("[CRITICAL] Long-poll sequence exception drop:", exceptionErr.message);
+        console.error("[CRITICAL] Long-poll exception caught:", exceptionErr.message);
         writeTelemetryLogLine(`NETWORK_ERROR: Pipe block encountered. Retrying connection context...`);
       }
 
-      // Schedule next fetch block execution thread safely based on input interval configurations
       runtimeThreadTrackerId = setTimeout(executeSovereignTelegramLongPoll, pollingIntervalSeconds * 1000);
     }
 
+    // FIXED: Swapped Telegram dispatch commands to proxy-wrapped GET paths
     async function processAndTransmitAiResponsePayload(chatId, userNameString, messageTextString) {
       const customIdentityName = document.getElementById('cfg-bot-name').value.trim();
       const customSystemPrompt = document.getElementById('cfg-system-prompt').value.trim();
 
       try {
-        writeTelemetryLogLine(`AI_MODEL: Querying network text inference engines for user response arrays...`);
+        writeTelemetryLogLine(`AI_MODEL: Querying text inference engine for response text blocks...`);
         
-        // Wrap context prompt matrices cleanly
         const combinedContextPayload = `${customSystemPrompt}\nUser (${userNameString}): ${messageTextString}\n${customIdentityName}:`;
         const aiModelQueryResponse = await fetch(`https://text.pollinations.ai/${encodeURIComponent(combinedContextPayload)}`);
         
@@ -497,22 +495,16 @@
 
         logCapturedUpdateToLedger(customIdentityName, parsedAiResponseText, "OUTBOUND_TRANSMISSION");
 
-        // Forward the generated AI text string straight back across Telegram Bot network API endpoints
-        const telegramDeliveryUri = `https://api.telegram.org/bot${activeTelegramBotToken}/sendMessage`;
-        await fetch(telegramDeliveryUri, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: parsedAiResponseText
-          })
-        });
-
-        writeTelemetryLogLine(`TRANSMIT: Dispatched response confirmation blocks over current wire pipeline.`);
+        // Form full GET query string to route data smoothly across proxy barriers
+        const targetTelegramUrl = `https://api.telegram.org/bot${activeTelegramBotToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(parsedAiResponseText)}`;
+        const wrappedProxyUri = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetTelegramUrl)}`;
+        
+        await fetch(wrappedProxyUri);
+        writeTelemetryLogLine(`TRANSMIT: Dispatched response confirmation blocks over wire proxy links.`);
         triggerAudioWaveSignal(1100, 'sine', 0.04);
 
       } catch(aiErr) {
-        writeTelemetryLogLine("ERROR: Response parsing matrix broke during model synthesis.");
+        writeTelemetryLogLine("ERROR: Response tracking matrix failed during query execution.");
       }
     }
 
@@ -596,6 +588,7 @@
       logContainer.scrollTop = logContainer.scrollHeight;
     }
 
+    // Adjust particle size parameters live from configuration slider arrays
     function modifyBloomOpacity() {
       const bloomVal = parseFloat(document.getElementById('sl-led-pwm').value / 100);
       clusterMaterial.size = 0.05 + (bloomVal * 0.6);
@@ -638,7 +631,6 @@
     function masterUnifiedRenderLoopEngine() {
       requestAnimationFrame(masterUnifiedRenderLoopEngine);
 
-      // Animation ticks
       renderHexMatrixFrameTick();
 
       const adjustableSpeedMultiplier = parseFloat(document.getElementById('sl-refresh-frequency').value / 10);
