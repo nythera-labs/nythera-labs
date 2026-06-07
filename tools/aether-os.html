@@ -3,156 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether OS Emulator</title>
+    <title>Aether OS - Ultimate Edition</title>
     <style>
-        /* CSS INTERFACE GRAPHICS */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background: #000; }
-
-        .screen {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            display: none;
-            z-index: 10;
-        }
+        /* CORE SYSTEM STYLES */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background: #000; color: #fff; }
+        
+        .screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 10; }
         .screen.active { display: flex; }
 
-        /* Step 1: Booting Sequence Graphics */
-        #boot-screen { background: #07070f; flex-direction: column; justify-content: center; align-items: center; color: #fff; }
+        /* BOOT & LOGIN (Legacy Retained) */
+        #boot-screen { background: #07070f; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
         .logo { font-size: 4rem; font-weight: bold; margin-bottom: 1.5rem; color: #00d2ff; text-shadow: 0 0 20px rgba(0,210,255,0.4); }
         .spinner { border: 4px solid rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: #00d2ff; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Step 2: Authentication Window Styles */
         #login-screen {
             background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.75)), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920') no-repeat center center/cover;
-            justify-content: center; align-items: center;
+            justify-content: center; align-items: center; z-index: 9000;
         }
-        .login-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); text-align: center; width: 320px; color: white; }
+        .login-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); text-align: center; width: 320px; }
         .avatar { width: 80px; height: 80px; background: #00d2ff; border-radius: 50%; margin: 0 auto 1rem; }
         #password-input { width: 100%; padding: 0.75rem; border-radius: 8px; border: none; background: rgba(255,255,255,0.15); color: #fff; text-align: center; margin-top: 1rem; outline: none; }
         .login-card button { width: 100%; padding: 0.75rem; margin-top: 0.5rem; border: none; border-radius: 8px; background: #00d2ff; color: #000; font-weight: bold; cursor: pointer; }
 
-        /* Step 3: Desktop Environment Workspace */
+        /* DESKTOP ENVIRONMENT */
         #desktop-screen {
             background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920') no-repeat center center/cover;
-            flex-direction: column; justify-content: space-between;
+            flex-direction: column; overflow: hidden;
         }
-        .desktop-icons { padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
-        .icon { width: 80px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px 4px #000; }
+        
+        .desktop-icons { padding: 1rem; display: flex; flex-direction: column; flex-wrap: wrap; gap: 1.5rem; height: calc(100% - 60px); align-content: flex-start; }
+        .icon { width: 75px; text-align: center; cursor: pointer; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); padding: 5px; border-radius: 5px; transition: background 0.2s; }
+        .icon:hover { background: rgba(255,255,255,0.1); }
         .icon-img { font-size: 2.5rem; margin-bottom: 0.25rem; }
-        .icon span { font-size: 0.85rem; }
+        .icon span { font-size: 0.8rem; }
 
-        /* Bottom Fixed Dock/Taskbar */
-        .taskbar {
-            width: 100%; height: 50px;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 1rem;
-            z-index: 100;
+        /* WINDOW MANAGER */
+        .window {
+            position: absolute; top: 10vh; left: 15vw; width: 600px; height: 400px;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+            display: none; flex-direction: column; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); resize: both; min-width: 300px; min-height: 200px;
         }
-        .start-btn { background: #00d2ff; border: none; padding: 0.5rem 1rem; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .system-tray { color: #fff; font-size: 0.85rem; }
+        .window.maximized { top: 0 !important; left: 0 !important; width: 100% !important; height: calc(100% - 60px) !important; border-radius: 0; resize: none; }
+        
+        .title-bar {
+            height: 35px; background: rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; padding: 0 10px; cursor: default;
+        }
+        .title-text { font-size: 0.85rem; display: flex; align-items: center; gap: 8px; pointer-events: none; }
+        .window-controls { display: flex; gap: 5px; }
+        .control-btn { width: 30px; height: 25px; display: flex; justify-content: center; align-items: center; border-radius: 4px; cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
+        .control-btn:hover { background: rgba(255,255,255,0.1); }
+        .control-btn.close:hover { background: #e81123; color: white; }
+        
+        .window-content { flex: 1; padding: 0; overflow: auto; background: rgba(0,0,0,0.2); position: relative; }
+        
+        /* APP SPECIFICS */
+        textarea.notepad { width: 100%; height: 100%; background: #1e1e1e; color: #d4d4d4; border: none; padding: 10px; outline: none; font-family: 'Consolas', monospace; resize: none; }
+        .terminal { width: 100%; height: 100%; background: #000; color: #00ff00; font-family: 'Consolas', monospace; padding: 10px; overflow-y: auto; }
+        .calculator { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; padding: 10px; height: 100%; background: #202020; }
+        .calc-display { grid-column: span 4; background: #111; color: white; text-align: right; font-size: 2rem; padding: 10px; border-radius: 5px; }
+        .calc-btn { background: #333; border: none; color: white; font-size: 1.2rem; border-radius: 5px; cursor: pointer; }
+        .calc-btn:hover { background: #444; }
+        .calc-btn.op { background: #00d2ff; color: #000; }
+
+        /* WINDOWS 11 TASKBAR */
+        .taskbar {
+            position: absolute; bottom: 0; width: 100%; height: 60px;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 1rem; z-index: 1000;
+        }
+        .taskbar-center { display: flex; gap: 10px; position: absolute; left: 50%; transform: translateX(-50%); }
+        .taskbar-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; cursor: pointer; transition: 0.2s; position: relative; }
+        .taskbar-icon:hover { background: rgba(255,255,255,0.1); }
+        .taskbar-icon.open::after { content: ''; position: absolute; bottom: 2px; width: 6px; height: 3px; background: #00d2ff; border-radius: 2px; }
+        
+        .start-btn { background: none; border: none; font-size: 1.8rem; color: #00d2ff; cursor: pointer; transition: transform 0.2s; }
+        .start-btn:hover { transform: scale(1.1); }
+        .system-tray { display: flex; gap: 15px; align-items: center; font-size: 0.85rem; }
+        
+        /* START MENU */
+        #start-menu {
+            position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
+            width: 400px; height: 500px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: none; flex-direction: column; z-index: 999; padding: 20px;
+        }
+        #start-menu.active { display: flex; }
+        .search-bar { width: 100%; padding: 10px; border-radius: 6px; border: none; background: rgba(255,255,255,0.1); color: white; margin-bottom: 20px; outline: none; }
+        .start-apps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; }
+
+        /* CONTEXT MENU */
+        #context-menu {
+            position: absolute; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 5px 0; width: 200px;
+            display: none; flex-direction: column; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .context-item { padding: 8px 15px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .context-item:hover { background: rgba(255,255,255,0.1); }
+        .context-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 5px 0; }
     </style>
 </head>
 <body>
 
     <div id="boot-screen" class="screen active">
-        <div class="boot-container">
-            <div class="logo">Æ</div>
-            <div class="spinner"></div>
-            <p id="boot-status">Reading /tools/ configuration data...</p>
-        </div>
+        <div class="logo">Æ</div>
+        <div class="spinner"></div>
+        <p id="boot-status">Loading OS Kernel...</p>
     </div>
 
     <div id="login-screen" class="screen">
         <div class="login-card">
             <div class="avatar"></div>
-            <h2>Aether Desktop</h2>
+            <h2>Aether Workspace</h2>
             <form id="login-form">
-                <input type="password" id="password-input" placeholder="Press Enter to Open" autofocus>
-                <button type="submit">Unlock System</button>
+                <input type="password" id="password-input" placeholder="Press Enter to login" autofocus>
+                <button type="submit">Unlock</button>
             </form>
         </div>
     </div>
 
-    <div id="desktop-screen" class="screen">
+    <div id="desktop-screen" class="screen" oncontextmenu="return false;">
+        
         <div class="desktop-icons">
-            <div class="icon" onclick="alert('System operating smoothly from inside the /tools/ folder.')">
-                <div class="icon-img">⚙️</div>
-                <span>Tool Diagnostic</span>
+            <div class="icon" onclick="openApp('app-terminal')"><div class="icon-img">💻</div><span>Terminal</span></div>
+            <div class="icon" onclick="openApp('app-gallery')"><div class="icon-img">🖼️</div><span>Gallery</span></div>
+            <div class="icon" onclick="openApp('app-notepad')"><div class="icon-img">📝</div><span>Notepad</span></div>
+        </div>
+
+        <div class="window" id="app-terminal">
+            <div class="title-bar">
+                <div class="title-text">💻 Root Terminal</div>
+                <div class="window-controls">
+                    <div class="control-btn" onclick="minWindow('app-terminal')">🗕</div>
+                    <div class="control-btn" onclick="maxWindow('app-terminal')">🗖</div>
+                    <div class="control-btn close" onclick="closeApp('app-terminal')">🗙</div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="terminal">
+                    Aether OS Terminal v1.0.4<br>
+                    root@aether-os:~# System diagnostic running...<br>
+                    root@aether-os:~# Mount point /tools/ validated.<br>
+                    root@aether-os:~# <span style="animation: blink 1s step-end infinite;">_</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="window" id="app-notepad" style="top: 15vh; left: 20vw;">
+            <div class="title-bar">
+                <div class="title-text">📝 Notepad</div>
+                <div class="window-controls">
+                    <div class="control-btn" onclick="minWindow('app-notepad')">🗕</div>
+                    <div class="control-btn" onclick="maxWindow('app-notepad')">🗖</div>
+                    <div class="control-btn close" onclick="closeApp('app-notepad')">🗙</div>
+                </div>
+            </div>
+            <div class="window-content">
+                <textarea class="notepad" spellcheck="false">Drafting code blocks and thoughts here...</textarea>
+            </div>
+        </div>
+
+        <div class="window" id="app-calc" style="width: 320px; height: 450px;">
+            <div class="title-bar">
+                <div class="title-text">🧮 Calculator</div>
+                <div class="window-controls">
+                    <div class="control-btn" onclick="minWindow('app-calc')">🗕</div>
+                    <div class="control-btn close" onclick="closeApp('app-calc')">🗙</div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="calculator">
+                    <div class="calc-display">0</div>
+                    <button class="calc-btn">7</button><button class="calc-btn">8</button><button class="calc-btn">9</button><button class="calc-btn op">÷</button>
+                    <button class="calc-btn">4</button><button class="calc-btn">5</button><button class="calc-btn">6</button><button class="calc-btn op">×</button>
+                    <button class="calc-btn">1</button><button class="calc-btn">2</button><button class="calc-btn">3</button><button class="calc-btn op">-</button>
+                    <button class="calc-btn">C</button><button class="calc-btn">0</button><button class="calc-btn op">=</button><button class="calc-btn op">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="window" id="app-gallery">
+            <div class="title-bar">
+                <div class="title-text">🖼️ RAW Image Viewer</div>
+                <div class="window-controls">
+                    <div class="control-btn" onclick="minWindow('app-gallery')">🗕</div>
+                    <div class="control-btn" onclick="maxWindow('app-gallery')">🗖</div>
+                    <div class="control-btn close" onclick="closeApp('app-gallery')">🗙</div>
+                </div>
+            </div>
+            <div class="window-content" style="display: flex; justify-content: center; align-items: center; background: #111; color: gray;">
+                <p>Loading 185 MB High-Res Image Data...</p>
+            </div>
+        </div>
+
+        <div id="context-menu">
+            <div class="context-item" onclick="location.reload()">🔄 Refresh</div>
+            <div class="context-divider"></div>
+            <div class="context-item">📁 New Folder</div>
+            <div class="context-item" onclick="openApp('app-notepad')">📝 New Text Document</div>
+            <div class="context-divider"></div>
+            <div class="context-item">⚙️ Personalize</div>
+        </div>
+
+        <div id="start-menu">
+            <input type="text" class="search-bar" placeholder="Type here to search">
+            <h4 style="margin-bottom: 15px; font-size: 0.9rem;">Pinned</h4>
+            <div class="start-apps">
+                <div class="icon" onclick="openApp('app-calc')"><div class="icon-img">🧮</div><span>Calculator</span></div>
+                <div class="icon" onclick="openApp('app-terminal')"><div class="icon-img">💻</div><span>Terminal</span></div>
+                <div class="icon" onclick="openApp('app-gallery')"><div class="icon-img">🖼️</div><span>Gallery</span></div>
+                <div class="icon" onclick="openApp('app-notepad')"><div class="icon-img">📝</div><span>Notepad</span></div>
+                <div class="icon" onclick="alert('Feature in development.')"><div class="icon-img">🔒</div><span>Hash Tool</span></div>
             </div>
         </div>
 
         <div class="taskbar">
-            <button class="start-btn" onclick="window.location.href='../index.html'">↩ Return to Lab</button>
-            <div class="system-tray" id="live-clock">00:00 PM</div>
+            <div style="width: 100px;"></div> <div class="taskbar-center">
+                <button class="start-btn" id="start-btn">⊞</button>
+                <div class="taskbar-icon" id="tb-terminal" onclick="openApp('app-terminal')">💻</div>
+                <div class="taskbar-icon" id="tb-gallery" onclick="openApp('app-gallery')">🖼️</div>
+                <div class="taskbar-icon" id="tb-notepad" onclick="openApp('app-notepad')">📝</div>
+                <div class="taskbar-icon" id="tb-calc" onclick="openApp('app-calc')">🧮</div>
+            </div>
+
+            <div class="system-tray">
+                <span>🌐</span>
+                <span>🔊</span>
+                <div id="live-clock" style="text-align: right; line-height: 1.2;">
+                    <div id="time">00:00 PM</div>
+                    <div id="date" style="font-size: 0.75rem;">1/1/2026</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Use native browser oscillators to construct an elegant chord on boot
+        // --- 1. BOOT & AUDIO SYNTH ---
         function playBootSound() {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             if (!AudioContext) return;
             const ctx = new AudioContext();
-            const notes = [261.63, 329.63, 392.00, 523.25]; // Synthesized chord sequence
-            
+            const notes = [261.63, 329.63, 392.00, 523.25]; // Boot Chord
             notes.forEach((freq, index) => {
                 const osc = ctx.createOscillator();
                 const gainNode = ctx.createGain();
-                
-                osc.type = 'sine';
-                osc.frequency.value = freq;
-                
+                osc.type = 'sine'; osc.frequency.value = freq;
                 const startTime = ctx.currentTime + (index * 0.12);
                 gainNode.gain.setValueAtTime(0, startTime);
                 gainNode.gain.linearRampToValueAtTime(0.12, startTime + 0.05);
                 gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + 1.0);
-                
-                osc.connect(gainNode);
-                gainNode.connect(ctx.destination);
-                osc.start(startTime);
-                osc.stop(startTime + 1.0);
+                osc.connect(gainNode); gainNode.connect(ctx.destination);
+                osc.start(startTime); osc.stop(startTime + 1.0);
             });
         }
 
-        // Initialize state tracking loops
         window.addEventListener('DOMContentLoaded', () => {
             const statusText = document.getElementById('boot-status');
-            
-            setTimeout(() => { statusText.innerText = "Allocating sandbox threads..."; }, 1200);
-            setTimeout(() => { statusText.innerText = "Mounting unified Aether workspace..."; }, 2400);
-            
+            setTimeout(() => statusText.innerText = "Initializing Window Manager...", 1000);
             setTimeout(() => {
                 playBootSound();
                 document.getElementById('boot-screen').classList.remove('active');
                 document.getElementById('login-screen').classList.add('active');
-            }, 3600);
+            }, 2500);
         });
 
-        // Handle successful screen authorization transitions
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('desktop-screen').classList.add('active');
-            initClock();
+            initClock(); setupWindows();
         });
 
-        // Background loop engine tracking the status clock
+        // --- 2. CLOCK & TRAY ---
         function initClock() {
-            const clockElement = document.getElementById('live-clock');
             setInterval(() => {
                 const now = new Date();
-                let hours = now.getHours();
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12 || 12;
-                clockElement.innerText = `${hours}:${minutes} ${ampm}`;
+                let hrs = now.getHours(), mins = now.getMinutes().toString().padStart(2, '0');
+                let ampm = hrs >= 12 ? 'PM' : 'AM';
+                document.getElementById('time').innerText = `${hrs % 12 || 12}:${mins} ${ampm}`;
+                document.getElementById('date').innerText = `${now.getMonth()+1}/${now.getDate()}/${now.getFullYear()}`;
             }, 1000);
         }
+
+        // --- 3. WINDOW MANAGER (Drag & Focus) ---
+        let zIndexCounter = 100;
+        function setupWindows() {
+            document.querySelectorAll('.window').forEach(win => {
+                const titleBar = win.querySelector('.title-bar');
+                let isDown = false, startX, startY, initX, initY;
+
+                // Bring to front on click
+                win.addEventListener('mousedown', () => { win.style.zIndex = ++zIndexCounter; });
+
+                titleBar.addEventListener('mousedown', (e) => {
+                    if(e.target.classList.contains('control-btn')) return; // Ignore window buttons
+                    isDown = true;
+                    startX = e.clientX; startY = e.clientY;
+                    initX = win.offsetLeft; initY = win.offsetTop;
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDown || win.classList.contains('maximized')) return;
+                    win.style.left = `${initX + (e.clientX - startX)}px`;
+                    win.style.top = `${initY + (e.clientY - startY)}px`;
+                });
+
+                document.addEventListener('mouseup', () => isDown = false);
+            });
+        }
+
+        // App Controls
+        function openApp(id) {
+            const win = document.getElementById(id);
+            win.style.display = 'flex';
+            win.style.zIndex = ++zIndexCounter;
+            document.getElementById('start-menu').classList.remove('active');
+            
+            // Taskbar dot
+            const taskbarId = id.replace('app-', 'tb-');
+            const tbIcon = document.getElementById(taskbarId);
+            if(tbIcon) tbIcon.classList.add('open');
+        }
+
+        function closeApp(id) {
+            document.getElementById(id).style.display = 'none';
+            const taskbarId = id.replace('app-', 'tb-');
+            const tbIcon = document.getElementById(taskbarId);
+            if(tbIcon) tbIcon.classList.remove('open');
+        }
+
+        function maxWindow(id) {
+            document.getElementById(id).classList.toggle('maximized');
+        }
+
+        function minWindow(id) {
+            document.getElementById(id).style.display = 'none';
+            // It remains 'open' on taskbar, clicking taskbar icon would reopen it (simplified logic)
+        }
+
+        // --- 4. START MENU & CONTEXT MENU ---
+        const startBtn = document.getElementById('start-btn');
+        const startMenu = document.getElementById('start-menu');
+        const contextMenu = document.getElementById('context-menu');
+        const desktop = document.getElementById('desktop-screen');
+
+        startBtn.addEventListener('click', () => {
+            startMenu.classList.toggle('active');
+            startMenu.style.zIndex = ++zIndexCounter;
+        });
+
+        // Right-Click logic
+        desktop.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            contextMenu.style.display = 'flex';
+            contextMenu.style.left = `${e.clientX}px`;
+            contextMenu.style.top = `${e.clientY}px`;
+            contextMenu.style.zIndex = ++zIndexCounter;
+        });
+
+        // Hide menus when clicking elsewhere
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#start-menu') && e.target !== startBtn) {
+                startMenu.classList.remove('active');
+            }
+            if (!e.target.closest('#context-menu')) {
+                contextMenu.style.display = 'none';
+            }
+        });
+
     </script>
 </body>
 </html>
