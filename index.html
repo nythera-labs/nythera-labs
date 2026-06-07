@@ -1,235 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether Lab - Utility Hub</title>
-    <style>
-        /* Modern UI Design System with CSS Variables */
-        :root {
-            --bg-primary: #f8f9fa;
-            --bg-sidebar: #ffffff;
-            --bg-card: #ffffff;
-            --text-main: #212529;
-            --text-muted: #6c757d;
-            --accent: #4f46e5;
-            --accent-hover: #4338ca;
-            --border: #e9ecef;
-            --radius: 8px;
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #0f172a;
-            --bg-sidebar: #1e293b;
-            --bg-card: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #6366f1;
-            --accent-hover: #4f46e5;
-            --border: #334155;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { display: flex; height: 100vh; background-color: var(--bg-primary); color: var(--text-main); transition: background 0.2s; }
-
-        /* Sidebar Navigation Layout */
-        aside { width: 280px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .brand-zone { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .brand-title { font-size: 1.25rem; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
-        .search-box { padding: 12px; border-bottom: 1px solid var(--border); }
-        .search-box input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-main); border-radius: var(--radius); outline: none; }
-        .tools-menu { flex: 1; overflow-y: auto; padding: 10px; list-style: none; }
-        .menu-item { padding: 10px 12px; border-radius: var(--radius); cursor: pointer; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; display: flex; justify-content: space-between; }
-        .menu-item:hover, .menu-item.active { background-color: var(--bg-primary); color: var(--text-main); }
-        .menu-item.active { border-left: 4px solid var(--accent); color: var(--accent); }
-        .category-tag { font-size: 0.7rem; background: var(--border); padding: 2px 6px; border-radius: 4px; font-weight: bold; height: fit-content; }
-
-        /* Main Workspace Panel */
-        main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .top-navbar { height: 65px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: flex-end; padding: 0 24px; background: var(--bg-sidebar); }
-        .workspace { flex: 1; padding: 32px; overflow-y: auto; }
-        
-        /* Shared Tool Utility Elements */
-        .tool-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; max-width: 700px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .tool-title { font-size: 1.5rem; margin-bottom: 16px; }
-        textarea, input[type="text"], input[type="number"] { width: 100%; padding: 12px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-main); border-radius: var(--radius); font-size: 1rem; margin-bottom: 12px; resize: vertical; outline: none; }
-        button { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: var(--radius); font-weight: 600; cursor: pointer; }
-        button:hover { background: var(--accent-hover); }
-        .output-box { background: var(--bg-primary); padding: 14px; border-radius: var(--radius); border: 1px dashed var(--border); margin-top: 16px; font-family: monospace; word-break: break-all; min-height: 40px; }
-        
-        /* Specific Layouts (e.g. Calculator) */
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 320px; }
-        .theme-btn { background: none; color: var(--text-main); border: 1px solid var(--border); padding: 6px 12px; }
-        .theme-btn:hover { background: var(--bg-primary); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Aether OS // The Sovereign Forge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    body, html { 
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      background: #02040a; color: #00ffcc; 
+      font-family: 'Courier New', Courier, monospace;
+      overflow-x: hidden;
+    }
+    #canvas-3d { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+    .interface-master { position: relative; width: 100%; height: 100%; z-index: 10; box-sizing: border-box; }
+    .cyber-glass { 
+      background: rgba(4, 8, 20, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 255, 204, 0.15); 
+      box-shadow: 0 0 30px rgba(0, 255, 204, 0.02), inset 0 0 15px rgba(0, 255, 204, 0.02);
+    }
+    .crt-monitor::after {
+      content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      z-index: 999; background-size: 100% 4px; pointer-events: none; opacity: 0.4;
+    }
+    .utility-card {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .utility-card:hover {
+      border-color: rgba(0, 255, 204, 0.45);
+      background: rgba(0, 255, 204, 0.04);
+      transform: translateY(-1px);
+    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 255, 204, 0.3); border-radius: 4px; }
+  </style>
 </head>
-<body>
+<body class="crt-monitor h-screen w-screen xl:overflow-hidden select-none">
 
-    <!-- Left Navigation Bar -->
-    <aside>
-        <div class="brand-zone">
-            <span class="brand-title">Aether Lab</span>
+  <canvas id="canvas-3d"></canvas>
+
+  <div class="interface-master p-3 sm:p-4 flex flex-col xl:flex-row gap-4 h-full w-full">
+    
+    <div class="cyber-glass w-full xl:w-96 shrink-0 rounded-xl p-4 flex flex-col justify-between gap-4 pointer-events-auto overflow-hidden">
+      <div class="flex flex-col gap-3 h-full overflow-hidden">
+        <div class="border-b border-teal-500/20 pb-2">
+          <h1 class="text-xl font-black tracking-wider text-teal-400">AETHER OS</h1>
+          <span class="text-[9px] font-mono text-white/30 uppercase tracking-widest block mt-0.5">> Sovereign Search & Forge Registry</span>
         </div>
-        <div class="search-box">
-            <input type="text" id="toolSearch" placeholder="Search tools..." oninput="filterTools()">
+
+        <div class="relative bg-black/40 rounded-lg border border-teal-500/30 p-2 flex flex-col gap-1">
+          <div class="flex justify-between items-center text-[9px] text-teal-400 font-bold uppercase tracking-wider">
+            <span>// Global Registry Scraper</span>
+            <span id="search-match-counter" class="text-purple-400">105 / 105 active</span>
+          </div>
+          <input type="text" id="global-search-input" oninput="executeRegistrySearchLookup()" class="w-full bg-black/60 border border-white/10 font-mono text-xs p-2 rounded text-white focus:outline-none focus:border-teal-400 mt-1" placeholder="Type pattern code string to scan tools..." />
         </div>
-        <ul class="tools-menu" id="menuList"></ul>
-    </aside>
 
-    <!-- Right Interaction Layer -->
-    <main>
-        <header class="top-navbar">
-            <button class="theme-btn" onclick="toggleTheme()">Toggle Dark Mode</button>
-        </header>
-        <section class="workspace" id="mainWorkspace"></section>
-    </main>
+        <div class="flex-1 flex flex-col bg-black/50 border border-white/5 rounded-xl p-2 overflow-hidden min-h-[220px]">
+          <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider border-b border-white/5 pb-1 mb-2 text-white/40 px-1">
+            <span>Matched Utility Nodes</span>
+            <span>Index Identity Map</span>
+          </div>
+          <div id="registry-tools-list-container" class="flex-1 overflow-y-auto space-y-1.5 pr-1">
+            </div>
+        </div>
+      </div>
 
-    <script>
-        // --- 1. CORE MULTI-TOOL REGISTRY CONFIGURATION ---
-        // To scale to 100+ tools, simply add a new object schema block to this array.
-        const toolsRegistry = [
-            {
-                id: 'sha256',
-                name: 'SHA-256 Converter',
-                category: 'Crypto',
-                render: () => `
-                    <div class="tool-card">
-                        <h2 class="tool-title">SHA-256 Hash Converter</h2>
-                        <textarea id="shaInput" rows="4" placeholder="Enter clear text string to compute hash..."></textarea>
-                        <button onclick="toolsLogic.sha256.compute()">Generate Secure Hash</button>
-                        <div class="output-box" id="shaOutput">Hash payload will output here...</div>
-                    </div>`
-            },
-            {
-                id: 'calculator',
-                name: 'Simple Calculator',
-                category: 'Math',
-                render: () => `
-                    <div class="tool-card">
-                        <h2 class="tool-title">Standard Calculator</h2>
-                        <input type="text" id="calcDisplay" readonly placeholder="0" style="text-align: right; font-size: 1.5rem;">
-                        <div class="calc-grid">
-                            <button onclick="toolsLogic.calculator.press('7')">7</button>
-                            <button onclick="toolsLogic.calculator.press('8')">8</button>
-                            <button onclick="toolsLogic.calculator.press('9')">9</button>
-                            <button onclick="toolsLogic.calculator.press('/')">/</button>
-                            <button onclick="toolsLogic.calculator.press('4')">4</button>
-                            <button onclick="toolsLogic.calculator.press('5')">5</button>
-                            <button onclick="toolsLogic.calculator.press('6')">6</button>
-                            <button onclick="toolsLogic.calculator.press('*')">*</button>
-                            <button onclick="toolsLogic.calculator.press('1')">1</button>
-                            <button onclick="toolsLogic.calculator.press('2')">2</button>
-                            <button onclick="toolsLogic.calculator.press('3')">3</button>
-                            <button onclick="toolsLogic.calculator.press('-')">-</button>
-                            <button onclick="toolsLogic.calculator.clear()">C</button>
-                            <button onclick="toolsLogic.calculator.press('0')">0</button>
-                            <button onclick="toolsLogic.calculator.calculate()">=</button>
-                            <button onclick="toolsLogic.calculator.press('+')">+</button>
-                        </div>
-                    </div>`
-            },
-            {
-                id: 'wordcount',
-                name: 'Text Metrics',
-                category: 'Text',
-                render: () => `
-                    <div class="tool-card">
-                        <h2 class="tool-title">Text Counter Metrics</h2>
-                        <textarea id="textInput" rows="5" placeholder="Type or paste your analytical paragraphs here..." oninput="toolsLogic.wordcount.analyze()"></textarea>
-                        <div class="output-box" id="metricsOutput">Words: 0 | Characters: 0 | Lines: 0</div>
-                    </div>`
-            }
-        ];
+      <div class="h-28 flex flex-col bg-black/60 border border-white/5 rounded-xl p-2.5 font-mono text-[9px] overflow-hidden shrink-0">
+        <span class="text-teal-400/60 block border-b border-white/5 pb-1 mb-1 font-bold uppercase tracking-wider">// Local Core Execution Feed</span>
+        <div id="system-terminal-feed" class="flex-1 overflow-y-auto space-y-0.5 text-white/40 leading-normal pr-1 select-text">
+          <div>[INIT] Web OS Search Registry environment mounted.</div>
+          <div>[READY] 105 structural developer tool records compiled to arrays.</div>
+        </div>
+      </div>
+    </div>
 
-        // --- 2. INDEPENDENT TOOL EXECUTION LOGIC ---
-        const toolsLogic = {
-            sha256: {
-                async compute() {
-                    const text = document.getElementById('shaInput').value;
-                    const msgBuffer = new TextEncoder().encode(text);
-                    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-                    const hashArray = Array.from(new Uint8Array(hashBuffer));
-                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                    document.getElementById('shaOutput').innerText = hashHex || 'Empty input string.';
-                }
-            },
-            calculator: {
-                press(val) { document.getElementById('calcDisplay').value += val; },
-                clear() { document.getElementById('calcDisplay').value = ''; },
-                calculate() {
-                    try {
-                        const expr = document.getElementById('calcDisplay').value;
-                        // Basic filtering for mathematical syntax security evaluation
-                        if(/^[0-9.+\-*/]*$/.test(expr)) {
-                            document.getElementById('calcDisplay').value = Function(`"use strict"; return (${expr})`)();
-                        } else { alert('Invalid Expression'); }
-                    } catch(e) { document.getElementById('calcDisplay').value = 'Error'; }
-                }
-            },
-            wordcount: {
-                analyze() {
-                    const text = document.getElementById('textInput').value;
-                    const chars = text.length;
-                    const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-                    const lines = text.split('\n').filter(Boolean).length;
-                    document.getElementById('metricsOutput').innerText = `Words: ${words} | Characters: ${chars} | Lines: ${lines}`;
-                }
-            }
-        };
+    <div class="flex-1 h-[500px] xl:h-full flex flex-col pointer-events-auto overflow-hidden">
+      <div class="cyber-glass flex-1 rounded-xl p-4 flex flex-col gap-4 overflow-hidden">
+        
+        <div class="flex justify-between items-center border-b border-white/5 pb-2 font-mono text-xs select-none shrink-0">
+          <div class="flex items-center gap-2 text-teal-400 font-bold tracking-wider">
+            <span class="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-ping"></span>
+            <span>WORKSPACE_VIRTUAL_SANDBOX // ANALYZER_MATRIX.IO</span>
+          </div>
+          <div class="text-teal-500/40 text-[10px] uppercase tracking-widest hidden sm:block">
+            Decentralized Engine Compute Frame
+          </div>
+        </div>
 
-        // --- 3. PLATFORM SYSTEM ENGINE ---
-        let activeToolId = 'sha256';
+        <div id="active-tool-workspace" class="flex-1 w-full bg-black/60 rounded-xl border border-white/5 p-4 flex flex-col justify-between items-center text-center font-mono overflow-y-auto">
+          <div class="my-auto max-w-md space-y-3">
+            <div class="text-teal-400 font-black text-sm tracking-widest uppercase animate-pulse">// Sovereign Forge Console Standby</div>
+            <p class="text-xs text-white/40 leading-relaxed">
+              Use the fuzzy search node array in the left column to filter across the library entries. Click any computational tool to load its processing frame straight into the main memory array.
+            </p>
+            <div class="inline-block bg-teal-950/20 border border-teal-500/20 p-2 rounded text-[11px] text-teal-300">
+              Query Index Range: 105 Functional Micro-Utilities Encoded
+            </div>
+          </div>
+        </div>
 
-        function initApp() {
-            renderMenu(toolsRegistry);
-            loadTool(activeToolId);
-            // Default check for OS system scheme dark preference
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.body.setAttribute('data-theme', 'dark');
-            }
-        }
+        <div class="flex justify-between items-center border-t border-white/5 pt-2 font-mono text-[9px] text-white/30 tracking-widest shrink-0">
+          <div class="flex gap-4">
+            <span>UPTIME: <span id="hud-runtime-clock" class="text-teal-400">00:00:00</span></span>
+            <span class="hidden sm:inline">CACHE_INTEGRITY: 100% NOMINAL</span>
+          </div>
+          <div class="text-teal-400/50 font-bold uppercase">Sovereign_Compute_Grid_Ready</div>
+        </div>
 
-        function renderMenu(items) {
-            const menu = document.getElementById('menuList');
-            menu.innerHTML = items.map(tool => `
-                <li class="menu-item ${tool.id === activeToolId ? 'active' : ''}" id="item-${tool.id}" onclick="loadTool('${tool.id}')">
-                    <span>${tool.name}</span>
-                    <span class="category-tag">${tool.category}</span>
-                </li>
-            `).join('');
-        }
+      </div>
+    </div>
 
-        function loadTool(id) {
-            const tool = toolsRegistry.find(t => t.id === id);
-            if (!tool) return;
+  </div>
+
+  <script>
+    const TOOLS_REGISTRY = [
+      // CATEGORY 01: BINARY & FIRMWARE FORGE (21 Tools)
+      { id: "bin-01", category: "Binary Forge", name: "Hexadecimal Array Dumper", desc: "Transforms text/files into standard multi-column hex data structures natively." },
+      { id: "bin-02", category: "Binary Forge", name: "Bitwise XOR Stream Masker", desc: "Applies mask shifting sequences over plain byte streams using key parameters." },
+      { id: "bin-03", category: "Binary Forge", name: "Byte-Inversion Array Flipper", desc: "Inverts raw binary payloads to convert between Big-Endian and Little-Endian bounds." },
+      { id: "bin-04", category: "Binary Forge", name: "SHA-256 Checksum Validator", desc: "Computes hardware-accelerated local checksum integrity check matrices." },
+      { id: "bin-05", category: "Binary Forge", name: "ELF Header Metadata Scraper", desc: "Extracts executable header sections from binary system targets." },
+      { id: "bin-06", category: "Binary Forge", name: "Bitwise Shift Left (SLL) Register", desc: "Executes fast mathematical array transformations via left data shifts." },
+      { id: "bin-07", category: "Binary Forge", name: "Bitwise Shift Right (SRL) Register", desc: "Performs low-level payload array scaling via right data shifts." },
+      { id: "bin-08", category: "Binary Forge", name: "ASCII to Hex Token Mapper", desc: "Converts plain character string layouts into clean paired hex arrays." },
+      { id: "bin-09", category: "Binary Forge", name: "Hex to Binary Stream Unpacker", desc: "Reverses hexadecimal structural codes back to raw binary chains." },
+      { id: "bin-10", category: "Binary Forge", name: "Intel HEX Firmware Validator", desc: "Scans microcontroller memory layouts to detect block validation drops." },
+      { id: "bin-11", category: "Binary Forge", name: "Motorola S-Record Parse Key", desc: "Extracts target addressing records from structured firmware blocks." },
+      { id: "bin-12", category: "Binary Forge", name: "Binary Stream Padding Injector", desc: "Appends explicit null bit blocks to balance data payload thresholds." },
+      { id: "bin-13", category: "Binary Forge", name: "MIME-Type Payload Matcher", desc: "Identifies file format descriptors by reading byte sequences." },
+      { id: "bin-14", category: "Binary Forge", name: "CRC-32 Polynomial Compiler", desc: "Generates quick cyclic redundancy parameters inside local cache cells." },
+      { id: "bin-15", category: "Binary Forge", name: "Byte Weight Pattern Visualizer", desc: "Maps code density variations across dense application binaries." },
+      { id: "bin-16", category: "Binary Forge", name: "Null-Byte Strip Array Shield", desc: "Removes empty memory fragments to optimize file payloads." },
+      { id: "bin-17", category: "Binary Forge", name: "Structured Payload Patch Modder", desc: "Injects runtime bytes directly over precise index offset marks." },
+      { id: "bin-18", category: "Binary Forge", name: "LEB120 WASM Compressed Parser", desc: "Decodes variable-length integer fields used in WebAssembly binaries." },
+      { id: "bin-19", category: "Binary Forge", name: "Sign-Extension Bit Calibrator", desc: "Balances negative values across variable registers during data transformations." },
+      { id: "bin-20", category: "Binary Forge", name: "Hexadecimal String Diff Comparator", desc: "Highlights exact modification marks between separate system payloads." },
+      { id: "bin-21", category: "Binary Forge", name: "Binary Boundary Alignment Check", desc: "Verifies memory boundary alignment states to prevent layout breaks." },
+
+      // CATEGORY 02: MULTI-SPECTRAL MEDIA DISSECTOR (21 Tools)
+      { id: "med-01", category: "Media Dissector", name: "Multi-Channel RGB Parade Scope", desc: "Extracts individual Red, Green, and Blue brightness distributions." },
+      { id: "med-02", category: "Media Dissector", name: "EXIF Metadata Scraper Engine", desc: "Pulls embedded hardware profiles and location logs from photo assets." },
+      { id: "med-03", category: "Media Dissector", name: "32-Bit HDR Exposure Stacker", desc: "Combines variable image arrays into high-capacity dynamic matrices." },
+      { id: "med-04", category: "Media Dissector", name: "WebGL Spatial Edge-Detection Tracer", desc: "Applies high-contrast convolution filters over live viewport objects." },
+      { id: "med-05", category: "Media Dissector", name: "3D Color Lookup Table (LUT) Compiler", desc: "Maps color grading vectors across client-side photo assets." },
+      { id: "med-06", category: "Media Dissector", name: "Luminance Vector Histogram Compiler", desc: "Plots overall white exposure allocations to detect color clipping." },
+      { id: "med-07", category: "Media Dissector", name: "YUV Color Matrix Interpolator", desc: "Converts compressed standard broadcast structures to RGB coordinate maps." },
+      { id: "med-08", category: "Media Dissector", name: "Bayer Grid Demosaicing Module", desc: "Reconstructs uncompressed raw sensor outputs inside the web browser." },
+      { id: "med-09", category: "Media Dissector", name: "Chroma Subsampling Analyzer", desc: "Measures color compression thresholds across media asset arrays." },
+      { id: "med-10", category: "Media Dissector", name: "Uncompressed Image Size Calculator", desc: "Estimates raw video bit loads based on width, height, and color depths." },
+      { id: "med-11", category: "Media Dissector", name: "Gamma Curve Correction Profiler", desc: "Calibrates mid-tone display distribution parameters dynamically." },
+      { id: "med-12", category: "Media Dissector", name: "PNG Chunk Data Decomposition Array", desc: "Scans structured text blocks embedded inside portable web graphics." },
+      { id: "med-13", category: "Media Dissector", name: "ICC Profile Header Extraction Core", desc: "Parses target workspace parameters to maintain color matching accuracy." },
+      { id: "med-14", category: "Media Dissector", name: "Perceptual Hash Image Comparator", desc: "Generates visual identity signatures to detect duplicate asset files." },
+      { id: "med-15", category: "Media Dissector", name: "Alpha Channel Density Mapping Grid", desc: "Isolates and traces background transparency variations inside client memory." },
+      { id: "med-16", category: "Media Dissector", name: "Bit-Depth Downsampling Array", desc: "Reduces heavy 32-bit float matrix arrays to 8-bit visual layouts." },
+      { id: "med-17", category: "Media Dissector", name: "Spatial Convolution Sharpness Matrix", desc: "Enhances image detail metrics using local edge amplification filters." },
+      { id: "med-18", category: "Media Dissector", name: "Procedural Noise Isolation Grid", desc: "Measures high-frequency sensor noise across flat color exposures." },
+      { id: "med-19", category: "Media Dissector", name: "JPEG Quantization Table Extraction", desc: "Pulls internal balance metrics from file headers to assess asset clarity." },
+      { id: "med-20", category: "Media Dissector", name: "Anamorphic Aspect Squeeze Profiler", desc: "Corrects lens compression ratios to maintain proper layout scaling." },
+      { id: "med-21", category: "Media Dissector", name: "Pixel-By-Pixel Dynamic Value Scraper", desc: "Extracts precise RGBA properties from live mouse coordinate marks." },
+
+      // CATEGORY 03: PACKET & NETWORK BEACON MATRIX (21 Tools)
+      { id: "net-01", category: "Network Matrix", name: "CORS Proxy Network Fetch Link", desc: "Routes network queries through transparent nodes to bypass cross-origin blocks." },
+      { id: "net-02", category: "Network Matrix", name: "Adaptive Loop Cooldown Sequencer", desc: "Monitors transaction drops to dynamically scale down polling loops." },
+      { id: "net-03", category: "Network Matrix", name: "Telegram Bot API Long-Poll Link", desc: "Intercepts update items from the Telegram network inside the client tab." },
+      { id: "net-04", category: "Network Matrix", name: "HTML Response Shield Filter Gate", desc: "Screens response headers to drop proxy faults before JSON parsing." },
+      { id: "net-05", category: "Network Matrix", name: "WebSocket Frame Traffic Interceptor", desc: "Logs live text streams across open persistent socket pipelines." },
+      { id: "net-06", category: "Network Matrix", name: "HTTP Request Header Composer Deck", desc: "Builds custom parameter fields to test target security vectors." },
+      { id: "net-07", category: "Network Matrix", name: "REST Endpoint Validation Scanner", desc: "Evaluates API responses by monitoring server handshake returns." },
+      { id: "net-08", category: "Network Matrix", name: "Network Transit Latency Clock", desc: "Measures request-to-response elapsed times with microsecond precision." },
+      { id: "net-09", category: "Network Matrix", name: "URL Encoding Sequence Sanitizer", desc: "Converts text characters into clean query-string URI formats." },
+      { id: "net-10", category: "Network Matrix", name: "Query Parameter Array Dissector", desc: "Extracts key-value property structures from long URL strings." },
+      { id: "net-11", category: "Network Matrix", name: "SSE EventSource Stream Receiver", desc: "Binds real-time text listener streams to server-sent event loops." },
+      { id: "net-12", category: "Network Matrix", name: "Automated Packet Retry Circuit Breaker", desc: "Safely breaks connection pipes during total endpoint dropouts." },
+      { id: "net-13", category: "Network Matrix", name: "JSON-RPC Payload Array Compiler", desc: "Structures remote execution calls according to systematic JSON rules." },
+      { id: "net-14", category: "Network Matrix", name: "GraphQL Query String Minifier", desc: "Strips whitespace from request definitions to optimize payload sizing." },
+      { id: "net-15", category: "Network Matrix", name: "JWT Token Signature Payload Decoder", desc: "Extracts internal data tracking layers from web auth tokens." },
+      { id: "net-16", category: "Network Matrix", name: "IP Address Subnet Range Validator", desc: "Checks if target server destinations sit inside designated address blocks." },
+      { id: "net-17", category: "Network Matrix", name: "DNS Pointer Record Lookup Link", desc: "Resolves addressing properties through open public nameserver structures." },
+      { id: "net-18", category: "Network Matrix", name: "TLS Cipher Suite Spec Inspector", desc: "Identifies security layer parameters supported by your active browser tab." },
+      { id: "net-19", category: "Network Matrix", name: "HTTP Cookie Parameter Flag Trace", desc: "Monitors security properties (Secure, SameSite) across cookie arrays." },
+      { id: "net-20", category: "Network Matrix", name: "Keep-Alive Heartbeat Pipeline Pulse", desc: "Fires small timed text tokens to maintain active network routes." },
+      { id: "net-21", category: "Network Matrix", name: "Fetch Stream Controller Interrupt", desc: "Aborts large downloading file streams instantly via signal overrides." },
+
+      // CATEGORY 04: CRYPTOGRAPHIC ARRAY COMMAND (21 Tools)
+      { id: "cry-01", category: "Crypto Command", name: "SubtleCrypto SHA-256 Digest Module", desc: "Generates 256-bit hash arrays directly inside the native browser shell." },
+      { id: "cry-02", category: "Crypto Command", name: "Base64 Byte-Stream Encoding Engine", desc: "Converts binary arrays into safe text tokens using native btoa functions." },
+      { id: "cry-03", category: "Crypto Command", name: "SubtleCrypto AES-GCM Key Generator", desc: "Compiles balanced symmetric secret strings inside encrypted browser RAM." },
+      { id: "cry-04", category: "Crypto Command", name: "HMAC Authentication Token Signer", desc: "Appends validation hashes over text streams using key arrays." },
+      { id: "cry-05", category: "Crypto Command", name: "PBKDF2 Password Entropy Stretching", desc: "Strengthens baseline text keys through high-iteration hashing loops." },
+      { id: "cry-06", category: "Crypto Command", name: "MD5 Verification Block Compiler", desc: "Generates quick legacy 128-bit file checksum comparisons." },
+      { id: "cry-07", category: "Crypto Command", name: "SHA-1 System Signature Generator", desc: "Produces 160-bit secure tokens to maintain compatibility with legacy networks." },
+      { id: "cry-08", category: "Crypto Command", name: "SHA-512 High-Capacity Hashing Block", desc: "Compiles deep 512-bit text validation signatures inside client memory." },
+      { id: "cry-09", category: "Crypto Command", name: "Cryptographically Secure Random IV Core", desc: "Produces random vector bit tracks using native browser crypto modules." },
+      { id: "cry-10", category: "Crypto Command", name: "RSA Keypair Generation Parameter Grid", desc: "Structures public/private asymmetric keys within local sandbox fields." },
+      { id: "cry-11", category: "Crypto Command", name: "BIP-39 Mnemonic Seed Word Generator", desc: "Maps secure numbers to standard word list registries." },
+      { id: "cry-12", category: "Crypto Command", name: "Caesar Cipher Rot13 Shift Matrix", desc: "Rotates text strings 13 spaces to perform simple testing transformations." },
+      { id: "cry-13", category: "Crypto Command", name: "Vigenere Cipher Polyalphabetic Modder", desc: "Encrypts plain character arrays using variable text key phrases." },
+      { id: "cry-14", category: "Crypto Command", name: "Hexadecimal String to ArrayBuffer Vector", desc: "Converts structured hex text lines into hardware-ready byte blocks." },
+      { id: "cry-15", category: "Crypto Command", name: "ArrayBuffer Back To Hex Text Stream", desc: "Unpacks machine-level byte arrays back into clear readable hex grids." },
+      { id: "cry-16", category: "Crypto Command", name: "UUID v4 Unique Identifier Compiler", desc: "Generates clean 36-character globally unique ID codes natively." },
+      { id: "cry-17", category: "Crypto Command", name: "Data Salt Block Injection Sequencer", desc: "Blends custom random components into passwords to block tracking logs." },
+      { id: "cry-18", category: "Crypto Command", name: "Scrypt Cryptographic Matrix Estimator", desc: "Calculates local RAM requirements based on cost variable inputs." },
+      { id: "cry-19", category: "Crypto Command", name: "ASN.1 Explicit Key Structure Parser", desc: "Decodes security framework structures inside standard certificate files." },
+      { id: "cry-20", category: "Crypto Command", name: "PKCS#8 Encrypted Key Export Wrapper", desc: "Formats raw public key pairs into standardized, secure text files." },
+      { id: "cry-21", category: "Crypto Command", name: "Constant-Time String Diff Shield", desc: "Compares text lines using fixed-duration tracks to block timing hacks." },
+
+      // CATEGORY 05: KINETIC VECTOR SIMULATOR (21 Tools)
+      { id: "kin-01", category: "Kinetic Vector", name: "Inverse-Square Force Impulse Vector", desc: "Calculates gravitational deflection pulls across coordinates." },
+      { id: "kin-02", category: "Kinetic Vector", name: "Friction Track Decay Scale Plotter", desc: "Applies fractional deceleration boundaries over particle momentum vectors." },
+      { id: "kin-03", category: "Kinetic Vector", name: "Web Audio Carrier Waveform Oscillator", desc: "Generates custom frequency signals using native sound processing pipelines." },
+      { id: "kin-04", category: "Kinetic Vector", name: "Shannon Entropy Data Compression Matrix", desc: "Analyzes text structures character-by-character to measure file efficiency limits." },
+      { id: "kin-05", category: "Kinetic Vector", name: "RegEx Data Tokenizer Engine", desc: "Extracts matched text parameters using regular expressions." },
+      { id: "kin-06", category: "Kinetic Vector", name: "Angular Loop Velocity Tracker", desc: "Measures directional momentum variations inside circle paths." },
+      { id: "kin-07", category: "Kinetic Vector", name: "Elastic Boundary Collision Calibrator", desc: "Simulates momentum conservation ratios when objects hit display borders." },
+      { id: "kin-08", category: "Kinetic Vector", name: "Verlet Integration Position Predictor", desc: "Calculates complex physics trajectories based on acceleration arrays." },
+      { id: "kin-09", category: "Kinetic Vector", name: "Hooke's Law Spring Tension Simulator", desc: "Computes restorative vector loops linking independent grid nodes." },
+      { id: "kin-10", category: "Kinetic Vector", name: "2D Vector Dot-Product Angular Matrix", desc: "Calculates alignment metrics between separate intersecting movement paths." },
+      { id: "kin-11", category: "Kinetic Vector", name: "Cross-Product Orthogonal Vector Finder", desc: "Determines normal vector profiles relative to flat coordinate planes." },
+      { id: "kin-12", category: "Kinetic Vector", name: "Eulerian Fluid Particle Drift Grid", desc: "Simulates smoke or wave distribution tracks on canvas displays." },
+      { id: "kin-13", category: "Kinetic Vector", name: "Boids Swarm Flocking Behavior Model", desc: "Manages trace alignment, clustering, and separation vectors across particle clusters." },
+      { id: "kin-14", category: "Kinetic Vector", name: "Perlin Gradient Noise Field Generator", desc: "Produces natural coordinate wave variations completely algorithmically." },
+      { id: "kin-15", category: "Kinetic Vector", name: "Raycasting Workspace Barrier Intersect", desc: "Traces straight line paths across vector obstacles to calculate hit marks." },
+      { id: "kin-16", category: "Kinetic Vector", name: "Bezier Curve Spline Point Calculator", desc: "Plots smooth curved trajectories across fixed control coordinate nodes." },
+      { id: "kin-17", category: "Kinetic Vector", name: "Rigid-Body Angular Inertia Estimator", desc: "Computes rotation resistance limits based on scale and weight inputs." },
+      { id: "kin-18", category: "Kinetic Vector", name: "PID Loop Automated Tracking Regulator", desc: "Minimizes positioning error metrics across variable tracking paths." },
+      { id: "kin-19", category: "Kinetic Vector", name: "Fast Fourier Transform Visual Scope", desc: "Decomposes complex audio wave streams into distinct frequency bars." },
+      { id: "kin-20", category: "Kinetic Vector", name: "Decibel Signal Envelope Gain Plotter", desc: "Manages attack, decay, sustain, and release steps across audio signals." },
+      { id: "kin-21", category: "Kinetic Vector", name: "Acoustic Pink Noise Filter Core", desc: "Produces equal energy per octave noise signals inside the Web Audio API framework." }
+    ];
+  </script>
+
+  <script>
+    // System Diagnostics Feed Orchestration
+    function logToSystemTerminal(msg) {
+      const logger = document.getElementById('system-terminal-feed');
+      if (!logger) return;
+      const logDiv = document.createElement('div');
+      logDiv.innerText = `[LOG] ${msg}`;
+      logger.appendChild(logDiv);
+      if (logger.children.length > 30) logger.removeChild(logger.firstChild);
+      logger.scrollTop = logger.scrollHeight;
+    }
+
+    // Dynamic Haptic Feedback Audio Engine Node
+    let hapticAudioCtxRef = null;
+    function playAudioHapticFeedback(frequencyValue, waveformType, lengthTime = 0.08) {
+      try {
+        const ctx = hapticAudioCtxRef || new (window.AudioContext || window.webkitAudioContext)();
+        if(!hapticAudioCtxRef) hapticAudioCtxRef = ctx;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = waveformType;
+        osc.frequency.setValueAtTime(frequencyValue, ctx.currentTime);
+        gain.gain.setValueAtTime(0.008, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + lengthTime);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + lengthTime);
+      } catch(e) {}
+    }
+
+    // Mount & Populate the Unified 105 Utilities Directory View Tree
+    function populateRegistryToolsTree(targetToolsetsList) {
+      const listContainer = document.getElementById('registry-tools-list-container');
+      if(!listContainer) return;
+
+      listContainer.innerHTML = "";
+
+      if(targetToolsetsList.length === 0) {
+        listContainer.innerHTML = `<div class="text-white/20 text-center py-8 font-mono text-[11px]">> 0 registry records match query parameters.</div>`;
+        return;
+      }
+
+      targetToolsetsList.forEach(toolItem => {
+        // Form category colors metrics tokens on layout lists
+        let badgeThemeColor = "text-teal-400 border-teal-500/20 bg-teal-500/5";
+        if(toolItem.id.startsWith('med')) badgeThemeColor = "text-amber-400 border-amber-500/20 bg-amber-500/5";
+        if(toolItem.id.startsWith('net')) badgeThemeColor = "text-emerald-400 border-emerald-500/20 bg-emerald-500/5";
+        if(toolItem.id.startsWith('cry')) badgeThemeColor = "text-purple-400 border-purple-500/20 bg-purple-500/5";
+        if(toolItem.id.startsWith('kin')) badgeThemeColor = "text-blue-400 border-blue-500/20 bg-blue-500/5";
+
+        const rowCard = document.createElement('div');
+        rowCard.className = "utility-card p-2 rounded-lg border border-white/5 bg-black/20 flex flex-col gap-1 cursor-pointer transition-all duration-150 select-none";
+        rowCard.onclick = () => loadActiveModuleWorkspaceView(toolItem.id);
+        rowCard.innerHTML = `
+          <div class="flex justify-between items-center text-[9px] font-bold">
+            <span class="px-1.5 py-0.5 rounded border ${badgeThemeColor} tracking-wider font-mono text-[8px] uppercase">${toolItem.category}</span>
+            <span class="text-white/30 font-mono">IDX:${toolItem.id.toUpperCase()}</span>
+          </div>
+          <h2 class="text-white/90 text-xs font-mono font-bold tracking-wide mt-0.5">${toolItem.name}</h2>
+          <p class="text-[10px] text-white/40 font-mono leading-normal line-clamp-1">${toolItem.desc}</p>
+        `;
+        listContainer.appendChild(rowCard);
+      });
+    }
+
+    // HIGH-PERFORMANCE REAL-TIME SEARCH MATRIX QUERY ENGINE
+    function executeRegistrySearchLookup() {
+      const rawQuery = document.getElementById('global-search-input').value.trim().toLowerCase();
+      const matchCounter = document.getElementById('search-match-counter');
+      
+      // Filter across parameters array structures instantly
+      const matchedTools = TOOLS_REGISTRY.filter(item => {
+        return item.name.toLowerCase().includes(rawQuery) || 
+               item.category.toLowerCase().includes(rawQuery) || 
+               item.desc.toLowerCase().includes(rawQuery) ||
+               item.id.toLowerCase().includes(rawQuery);
+      });
+
+      // Update counters & UI lists natively
+      matchCounter.innerText = `${matchedTools.length} / 105 active`;
+      populateRegistryToolsTree(matchedTools);
+
+      // Play soft real-time dynamic search haptic clicks
+      playAudioHapticFeedback(1200 + (matchedTools.length * 2), 'sine', 0.01);
+      
+      if(rawQuery.length > 0) {
+        logToSystemTerminal(`FILTER: Compiled search parameters. Scanned index maps, isolated ${matchedTools.length} tools.`);
+      }
+    }
+
+    // INTERACTIVE ROUTING GRID MODULE: Loads custom templates dynamically into RAM
+    function loadActiveModuleWorkspaceView(toolUniqueId) {
+      const activeToolRecord = TOOLS_REGISTRY.find(t => t.id === toolUniqueId);
+      const targetWorkspace = document.getElementById('active-tool-workspace');
+      if(!activeToolRecord || !targetWorkspace) return;
+
+      playAudioHapticFeedback(720, 'triangle', 0.05);
+      logToSystemTerminal(`WORKSPACE: Loading targeted identity vector matrix module ID: [${toolUniqueId.toUpperCase()}]`);
+
+      let moduleWorkspaceHTML = "";
+
+      // Sector 01 Case Handler: Hex dumper framework layouts injection mapping
+      if(toolUniqueId === 'bin-01') {
+        moduleWorkspaceHTML = `
+          <div class="w-full text-left font-mono text-xs space-y-3 h-full flex flex-col justify-between">
+            <div class="border-b border-white/5 pb-2 text-teal-400 font-bold uppercase tracking-wider">// Tool Registry Framework View // ${activeToolRecord.name}</div>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <input type="text" id="internal-hex-txt-input" value="Aether_Lab_Sovereign_Hex_Dissector_2026_SecureCore" class="flex-1 bg-black/60 border border-teal-500/30 p-2 rounded text-teal-300 focus:outline-none font-mono" />
+              <button onclick="runLocalHexDumpTransformation()" class="bg-teal-950/40 border border-teal-500/40 text-[10px] px-4 rounded font-bold uppercase text-teal-200 tracking-wider hover:bg-teal-500/20 transition">Dump Array</button>
+            </div>
+            <div class="flex-1 bg-black/40 border border-white/5 rounded-lg p-3 overflow-y-auto font-mono text-[11px] text-teal-300/80 break-all leading-relaxed select-text shadow-inner" id="internal-hex-dump-viewport">
+              Click the dump trigger node button to translate values into structured hex offsets arrays.
+            </div>
+          </div>
+        `;
+      } 
+      // Sector 02 Case Handler: 32-bit exposure stacking layouts injection mapping
+      else if(toolUniqueId === 'med-03') {
+        moduleWorkspaceHTML = `
+          <div class="w-full text-left font-mono text-xs space-y-3 h-full flex flex-col">
+            <div class="border-b border-white/5 pb-2 text-amber-400 font-bold uppercase tracking-wider">// Tool Registry Framework View // ${activeToolRecord.name}</div>
+            <p class="text-white/40 text-[11px]">Simulates manual RAW bracketing processing. Drag values to mix stacked sensor metadata exposures cleanly into local browser memory fields.</p>
+            <div class="bg-black/30 border border-white/5 p-3 rounded-lg flex flex-col gap-3 mt-1">
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between font-mono text-[10px] text-white/50"><span>Base RAW Exposure Stack Vol:</span><span id="lbl-ev-1" class="text-amber-400 font-bold">185 MB</span></div>
+                <input type="range" min="10" max="500" value="185" class="w-full accent-amber-500 cursor-pointer" oninput="document.getElementById('lbl-ev-1').innerText=this.value+' MB'; playAudioHapticFeedback(1400, 'sine', 0.01);">
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between font-mono text-[10px] text-white/50"><span>HDR Dynamic Blend Range:</span><span id="lbl-ev-2" class="text-amber-400 font-bold">32-bit Floating</span></div>
+                <input type="range" min="8" max="32" value="32" class="w-full accent-amber-500 cursor-pointer" oninput="document.getElementById('lbl-ev-2').innerText=this.value+'-bit Floating'; playAudioHapticFeedback(1200, 'sine', 0.01);">
+              </div>
+            </div>
+            <button onclick="logToSystemTerminal('ASSET_ENGINE: Stacking algorithms executed cleanly across local data.'); playAudioHapticFeedback(880, 'sine', 0.06);" class="w-full bg-amber-950/30 border border-amber-500/40 text-amber-300 py-2.5 rounded font-bold uppercase tracking-widest text-[10px] mt-auto">⚡ INTERPOLATE HDR EXPOSURE ARRAYS</button>
+          </div>
+        `;
+      }
+      // General Dynamic View Template Generation Core for remaining registry item sets
+      else {
+        let textThemeColor = "text-teal-400";
+        if(toolUniqueId.startsWith('med')) textThemeColor = "text-amber-400";
+        if(toolUniqueId.startsWith('net')) textThemeColor = "text-emerald-400";
+        if(toolUniqueId.startsWith('cry')) textThemeColor = "text-purple-400";
+        if(toolUniqueId.startsWith('kin')) textThemeColor = "text-blue-400";
+
+        moduleWorkspaceHTML = `
+          <div class="w-full text-left font-mono text-xs space-y-4 h-full flex flex-col justify-between">
+            <div class="border-b border-white/5 pb-2 ${textThemeColor} font-bold uppercase tracking-wider">// Core Sandbox Mounting Matrix Registry</div>
             
-            // Toggle side panel active selector states
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            const targetItem = document.getElementById(`item-${id}`);
-            if(targetItem) targetItem.classList.add('active');
-            
-            activeToolId = id;
-            document.getElementById('mainWorkspace').innerHTML = tool.render();
-        }
+            <div class="flex-1 bg-black/40 border border-white/5 p-4 rounded-xl flex flex-col justify-center items-center text-center gap-3">
+              <div class="h-10 w-10 border border-white/10 rounded-lg bg-black/40 flex items-center justify-center text-[11px] font-bold ${textThemeColor} shadow-md uppercase tracking-widest">${toolUniqueId.split('-')[0]}</div>
+              <div class="space-y-1">
+                <h3 class="text-white text-sm font-bold tracking-wide">${activeToolRecord.name}</h3>
+                <span class="text-[9px] text-white/30 block uppercase tracking-widest">Registry ID Mapping node: ${activeToolRecord.id.toUpperCase()}</span>
+              </div>
+              <p class="text-[11px] text-white/50 max-w-sm leading-relaxed">${activeToolRecord.desc}</p>
+            </div>
 
-        function filterTools() {
-            const query = document.getElementById('toolSearch').value.toLowerCase();
-            const filtered = toolsRegistry.filter(t => 
-                t.name.toLowerCase().includes(query) || t.category.toLowerCase().includes(query)
-            );
-            renderMenu(filtered);
-        }
+            <div class="flex gap-2 font-mono text-[10px]">
+              <button onclick="logToSystemTerminal('SYSTEM: Localized diagnostic compilation sequence triggered for loop values.'); playAudioHapticFeedback(900, 'sine', 0.03);" class="flex-1 bg-black/60 border border-white/10 py-2 rounded font-bold uppercase tracking-wider text-white/60 hover:bg-white/10 transition">Run Sandbox Check</button>
+              <button onclick="logToSystemTerminal('ENGINE: Hooked utility node registers into browser memory.'); playAudioHapticFeedback(1100, 'sine', 0.04);" class="flex-1 bg-teal-950/20 border border-teal-500/30 py-2 rounded font-bold uppercase tracking-wider text-teal-300 hover:bg-teal-500/20 transition">Mount Array Hooks</button>
+            </div>
+          </div>
+        `;
+      }
 
-        function toggleTheme() {
-            const currentTheme = document.body.getAttribute('data-theme');
-            if (currentTheme === 'dark') {
-                document.body.removeAttribute('data-theme');
-            } else {
-                document.body.setAttribute('data-theme', 'dark');
-            }
-        }
+      // Inject compiled viewport layout parameters back into layout elements
+      targetWorkspace.innerHTML = moduleWorkspaceHTML;
+      targetWorkspace.className = "flex-1 w-full bg-black/60 rounded-xl border border-white/5 p-4 flex flex-col justify-between items-stretch text-left font-mono overflow-y-auto";
+    }
 
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
+    // SECTOR HELPER EXECUTION ROUTINE: Processes raw texts into hexadecimal maps locally
+    function runLocalHexDumpTransformation() {
+      const textValue = document.getElementById('internal-hex-txt-input').value;
+      const targetDiv = document.getElementById('internal-hex-dump-viewport');
+      
+      let hexOutputArray = [];
+      for(let i=0; i<textValue.length; i++) {
+        hexOutputArray.push(textValue.charCodeAt(i).toString(16).toUpperCase().padStart(2,'0'));
+      }
+      
+      targetDiv.innerHTML = `<div class="text-teal-400 font-bold mb-1">// SERIALIZED HEX STREAM DATA OUTPUT (${textValue.length} Bytes)</div>
+                             <div class="text-white/80 select-text selection:bg-teal-500/40 leading-relaxed font-mono text-[11px]">${hexOutputArray.join(' ')}</div>`;
+      logToSystemTerminal(`HEX_DISSECTOR: Parsed string payload structure directly inside client storage blocks.`);
+      playAudioHapticFeedback(1300, 'sine', 0.03);
+    }
+  </script>
+
+  <script>
+    const container3DElement = document.getElementById('canvas-3d');
+    const threeSceneInstance = new THREE.Scene();
+    const camera3DInstance = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const webGlRendererInstance = new THREE.WebGLRenderer({ canvas: container3DElement, alpha: true, antialias: true });
+    
+    webGlRendererInstance.setSize(window.innerWidth, window.innerHeight);
+    webGlRendererInstance.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const particleSystemNodeCount = 400;
+    const arrayParticlePositions = new Float32Array(particleSystemNodeCount * 3);
+    const arrayParticleColors = new Float32Array(particleSystemNodeCount * 3);
+
+    const basePrimaryThemeColor = new THREE.Color('#00ffcc');
+    const accentSecondaryThemeColor = new THREE.Color('#a855f7');
+
+    for (let i = 0; i < particleSystemNodeCount * 3; i += 3) {
+      arrayParticlePositions[i] = (Math.random() - 0.5) * 45;
+      arrayParticlePositions[i + 1] = (Math.random() - 0.5) * 45;
+      arrayParticlePositions[i + 2] = (Math.random() - 0.5) * 45;
+
+      const blendColor = basePrimaryThemeColor.clone().lerp(accentSecondaryThemeColor, Math.random());
+      arrayParticleColors[i] = blendColor.r;
+      arrayParticleColors[i + 1] = blendColor.g;
+      arrayParticleColors[i + 2] = blendColor.b;
+    }
+
+    const clusterGeometry = new THREE.BufferGeometry();
+    clusterGeometry.setAttribute('position', new THREE.BufferAttribute(arrayParticlePositions, 3));
+    clusterGeometry.setAttribute('color', new THREE.BufferAttribute(arrayParticleColors, 3));
+
+    const clusterMaterial = new THREE.PointsMaterial({
+      size: 0.18, vertexColors: true, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending
+    });
+
+    const nodePoints = new THREE.Points(clusterGeometry, clusterMaterial);
+    threeSceneInstance.add(nodePoints);
+    camera3DInstance.position.z = 25;
+
+    function masterThreeGeoRenderLoop() {
+      requestAnimationFrame(masterThreeGeoRenderLoop);
+      nodePoints.rotation.y += 0.0005;
+      nodePoints.rotation.x += 0.0002;
+      webGlRendererInstance.render(threeSceneInstance, camera3DInstance);
+    }
+    masterThreeGeoRenderLoop();
+
+    window.addEventListener('resize', () => {
+      camera3DInstance.aspect = window.innerWidth / window.innerHeight;
+      camera3DInstance.updateProjectionMatrix();
+      webGlRendererInstance.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Uptime metrics timer watch tracker loop
+    let startTimeReference = Date.now();
+    setInterval(() => {
+      const timerDisplay = document.getElementById('hud-runtime-clock');
+      if (!timerDisplay) return;
+      const distance = Date.now() - startTimeReference;
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+      timerDisplay.innerText = `${hours}:${minutes}:${seconds}`;
+    }, 1000);
+
+    // Bootstrap initial data maps loading sequences onto sidebar display grids
+    populateRegistryToolsTree(TOOLS_REGISTRY);
+  </script>
 </body>
 </html>
