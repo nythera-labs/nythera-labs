@@ -1,0 +1,56 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+body, html { width: 100%; height: 100%; overflow: hidden; background: #000; }
+
+.screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    z-index: 10;
+}
+
+.screen.operational-state { display: flex; }
+
+/* Boot Configurations */
+#boot-screen { background: #05050a; flex-direction: column; justify-content: center; align-items: center; color: #fff; }
+.boot-container { text-align: center; }
+.logo { font-size: 4rem; font-weight: bold; margin-bottom: 1.5rem; color: #00d2ff; text-shadow: 0 0 20px rgba(0,210,255,0.5); }
+.spinner { border: 4px solid rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: #00d2ff; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Login Screen Layout */
+#login-screen {
+    background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920') no-repeat center center/cover;
+    justify-content: center; align-items: center;
+}
+.login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(16px); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2); text-align: center; width: 320px; color: white; }
+.avatar { width: 80px; height: 80px; background: #00d2ff; border-radius: 50%; margin: 0 auto 1rem; }
+#password-input { width: 100%; padding: 0.75rem; border-radius: 8px; border: none; background: rgba(255,255,255,0.2); color: #fff; text-align: center; margin-top: 1rem; outline: none; }
+#password-input::placeholder { color: rgba(255,255,255,0.6); }
+.login-card button { width: 100%; padding: 0.75rem; margin-top: 0.5rem; border: none; border-radius: 8px; background: #00d2ff; color: #000; font-weight: bold; cursor: pointer; }
+#login-error { color: #ff6b6b; font-size: 0.8rem; margin-top: 1rem; display: none; }
+
+/* Desktop Workspace Configuration */
+#desktop-screen {
+    background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920') no-repeat center center/cover;
+    flex-direction: column; justify-content: space-between;
+}
+.desktop-icons { padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+.icon { width: 80px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px 4px #000; }
+.icon-img { font-size: 2.5rem; margin-bottom: 0.25rem; }
+.icon span { font-size: 0.85rem; }
+
+/* Windows-style Taskbar */
+.taskbar {
+    width: 100%; height: 50px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: space-between; padding: 0 1rem;
+    z-index: 100;
+}
+.start-btn { background: #00d2ff; border: none; padding: 0.5rem 1rem; border-radius: 4px; font-weight: bold; cursor: pointer; }
+.running-apps { flex: 1; margin-left: 1rem; display: flex; }
+.active-tab { background: rgba(255,255,255,0.15); color: #fff; padding: 0.4rem 1rem; border-radius: 4px; font-size: 0.85rem; border-bottom: 2px solid #00d2ff; }
+.system-tray { color: #fff; font-size: 0.85rem; }
