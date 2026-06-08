@@ -1,197 +1,47 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ক্যাডেট মিশন কোচিং সেন্টার // Class 5 Hub</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body { font-family: 'SolaimanLipi', Arial, sans-serif; background-color: #f8fafc; }
-    .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-    .notice-scroll { animation: marquee 25s linear infinite; }
-    @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-  </style>
-</head>
-<body class="text-zinc-800 antialiased selection:bg-red-500 selection:text-white">
+function renderMasterNoticeBoard() {
+  const container = document.getElementById('notice-board-target');
+  if (!container) return;
+  container.innerHTML = "";
 
-  <div class="fixed bottom-6 right-6 z-50 hover:scale-110 transition duration-200">
-    <a href="https://wa.me/+8801713599468" target="_blank" aria-label="Chat on WhatsApp">
-      <div class="bg-emerald-500 p-3.5 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl">
-        <i class="fa-brands fa-whatsapp"></i>
-      </div>
-    </a>
-  </div>
+  // 1. Sort notices to ensure urgent ones appear at the absolute top
+  const sortedNotices = [...CMCC_NOTICES].sort((a, b) => {
+    if (a.type === 'urgent' && b.type !== 'urgent') return -1;
+    if (a.type !== 'urgent' && b.type === 'urgent') return 1;
+    return 0;
+  });
 
-  <header class="glass-nav sticky top-0 z-40 border-b border-zinc-200/80 shadow-sm transition-all">
-    <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
-      <a href="/" class="flex items-center gap-3">
-        <div class="h-12 w-12 bg-red-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-md tracking-tighter">CM</div>
-        <div>
-          <h2 class="text-base font-black text-zinc-900 leading-tight">ক্যাডেট মিশন</h2>
-          <p class="text-[11px] font-bold text-red-600 tracking-widest uppercase">Coaching Center</p>
-        </div>
-      </a>
-      
-      <nav class="hidden lg:flex items-center gap-6 text-xs font-bold text-zinc-600 uppercase tracking-wider">
-        <a href="/" class="text-red-600 transition">Home</a>
-        <a href="/program" class="hover:text-red-600 transition">Program</a>
-        <a href="/admission" class="hover:text-red-600 transition">Online Admission</a>
-        <a href="/branch" class="hover:text-red-600 transition">Branch</a>
-        <a href="/result" class="hover:text-red-600 transition">Result</a>
-        <a href="/notice" class="hover:text-red-600 transition">Notice</a>
-        <a href="/connect-with-us" class="hover:text-red-600 transition">Contact</a>
-      </nav>
-
-      <div class="bg-zinc-100 border border-zinc-200 px-3 py-1 rounded-md text-[11px] font-mono font-bold text-zinc-500 hidden sm:block">
-        CLASS 5 BATCH PORTAL
-      </div>
-    </div>
-  </header>
-
-  <div class="bg-red-600 text-white py-2.5 overflow-hidden border-b border-red-700 font-medium text-xs shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 relative flex items-center">
-      <span class="bg-zinc-900 px-2 py-0.5 rounded font-bold text-[10px] uppercase tracking-widest shrink-0 z-10 mr-4 shadow-sm">Notice //</span>
-      <div class="w-full overflow-hidden relative h-4">
-        <div class="notice-scroll absolute whitespace-nowrap font-sans">
-          Cadet Mission Coaching Center. Be Active, Be Creative. || পঞ্চম শ্রেণী বৃত্তি ব্যাচ + অ্যাডভান্স ক্যাডেট ব্যাচ ভর্তি চলছে!
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <section class="relative bg-zinc-900 py-24 px-4 overflow-hidden border-b border-zinc-800 text-center sm:text-left">
-    <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1200');"></div>
-    <div class="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-      <div class="max-w-xl space-y-4">
-        <span class="bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold font-mono">Official Class 5 Workspace</span>
-        <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">পঞ্চম শ্রেণী বৃত্তি ব্যাচ <br><span class="text-red-500 font-light">&</span> অ্যাডভান্স ক্যাডেট ব্যাচ</h1>
-        <p class="text-zinc-400 text-sm leading-relaxed font-sans font-light">প্রতিটি শিশু অনন্য মেধার অধিকারী। আপনাদের আস্থা আর বিশ্বাসের শতভাগ প্রতিফলন ঘটিয়ে আপনার সন্তানকে সেরা মেধাবী হিসাবে গড়ে তুলতে আমাদের অভিজ্ঞ শিক্ষক মণ্ডলী সদা সচেষ্ট।</p>
-      </div>
-      <div class="bg-zinc-950/60 backdrop-blur-md p-6 rounded-2xl border border-zinc-800/80 w-full max-w-sm shrink-0 shadow-2xl text-left font-mono text-xs text-zinc-400">
-        <div class="border-b border-zinc-800 pb-2 mb-3 text-zinc-200 font-bold tracking-wider">// LOCAL TELEMETRY STATUS</div>
-        <div class="space-y-1.5 text-[11px]">
-          <div>• NODE SOURCE: <span class="text-teal-400 font-bold">MYMENSINGH // BD</span></div>
-          <div>• REGISTRY LIVE ID: <span class="text-purple-400 font-bold">40304 AUDITS</span></div>
-          <div>• VISITOR ENGINE: <span id="local-counter-view" class="text-emerald-400 font-bold">00000</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <main class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+  // 2. Loop through and dynamically generate clean, neutral UI blocks
+  sortedNotices.forEach(notice => {
+    const isUrgent = notice.type === 'urgent';
     
-    <div class="lg:col-span-1 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm flex flex-col justify-between">
-      <div class="space-y-4">
-        <div class="h-48 w-full bg-zinc-100 rounded-xl overflow-hidden border border-zinc-200 relative">
-          <div class="absolute inset-0 flex items-center justify-center text-zinc-400 text-xs">// Director Asset Photo Frame //</div>
+    const noticeCard = document.createElement('div');
+    noticeCard.className = `p-4 mb-3 rounded-xl border transition-all duration-200 ${
+      isUrgent 
+        ? 'bg-red-50/60 border-red-200/80 shadow-sm' 
+        : 'bg-zinc-50/50 border-zinc-200 hover:bg-zinc-50'
+    }`;
+
+    // Generate attachment button layout if a PDF or download link is present
+    const downloadButton = notice.attachment 
+      ? `<a href="${notice.attachment}" download class="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold bg-zinc-900 text-white px-2.5 py-1 rounded hover:bg-zinc-800 transition mt-2">
+          <i class="fa fa-download"></i> DOWNLOAD ATTACHMENT
+         </a>`
+      : '';
+
+    noticeCard.innerHTML = `
+      <div class="flex flex-col gap-1">
+        <div class="flex justify-between items-center text-[10px] font-mono">
+          <span class="text-zinc-400 font-medium">${notice.date}</span>
+          <span class="px-2 py-0.5 rounded-md font-bold uppercase tracking-wider text-[9px] ${
+            isUrgent ? 'bg-red-200 text-red-800' : 'bg-zinc-200 text-zinc-600'
+          }">${notice.type}</span>
         </div>
-        <div class="space-y-1">
-          <h3 class="text-base font-black text-zinc-900">আশেক মাহমোদ</h3>
-          <p class="text-xs font-bold text-red-600">পরিচালক, ক্যাডেট মিশন কোচিং সেন্টার</p>
-        </div>
-        <p class="text-zinc-600 text-xs leading-relaxed text-justify">
-          আসসালামু আলাইকুম। আপনাকে স্বাগতম, আপনার আগ্রহ এবং আমাদের প্রতি আন্তরিকতার জন্য এই শিক্ষা সংক্রান্ত পাতায়। আপনার সময় উপযোগী সিদ্ধান্তই আপনার সন্তানের ভবিষ্যৎ নির্ধারণ করে, তার সাথে সঠিক পথ প্রদর্শক যুক্ত হলে আগামীর মেধাবী প্রজন্ম আশা করি খুব বেশি দূরে নয়।
-        </p>
+        <h3 class="text-xs font-bold ${isUrgent ? 'text-red-700' : 'text-zinc-800'} tracking-wide mt-1">${notice.title}</h3>
+        <p class="text-[11px] text-zinc-600 leading-relaxed font-sans mt-1.5 text-justify">${notice.content}</p>
+        ${downloadButton}
       </div>
-      <div class="pt-4 border-t border-zinc-100 mt-6 flex justify-between text-[10px] text-zinc-400 font-mono">
-        <span>BRANCH: MAIN_NODE</span>
-        <span>STATUS: ACTIVE_PERM</span>
-      </div>
-    </div>
-
-    <div class="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col">
-      <div class="bg-zinc-900 text-zinc-200 px-5 py-4 flex justify-between items-center shrink-0 border-b border-zinc-800">
-        <span class="font-mono text-xs font-bold uppercase tracking-wider text-red-500"><i class="fa fa-file-text mr-2"></i> Recent Notice Board</span>
-        <span class="text-[10px] text-zinc-500 font-mono">CLASS_5_LOGS</span>
-      </div>
-      
-      <div id="notice-board-target" class="flex-1 p-2 overflow-y-auto max-h-[420px] divide-y divide-zinc-100">
-        </div>
-    </div>
-
-  </main>
-
-  <section class="bg-zinc-100 border-t border-zinc-200/80 py-12 px-4">
-    <div class="max-w-7xl mx-auto space-y-8">
-      <div class="text-center max-w-md mx-auto space-y-2">
-        <h2 class="text-xl font-black text-zinc-900 tracking-tight">আমাদের শাখাসমূহ (Our Branches)</h2>
-        <p class="text-xs text-zinc-500 font-light">ময়মনসিংহ বিভাগের এবং দেশের বিভিন্ন প্রান্তের সক্রিয় শাখা নেটওয়ার্ক।</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-2">
-          <span class="text-red-600 font-bold uppercase text-[10px] tracking-wider">// Main Head Node</span>
-          <h3 class="text-zinc-900 font-bold text-sm">মেইন ব্রাঞ্চ, ময়মনসিংহ</h3>
-          <p class="text-zinc-500 text-[11px]">১ নং বাউন্ডারি রোড, ময়মনসিংহ<br>Phone: 01713-599468, 01973-599511</p>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-2">
-          <span class="text-zinc-400 font-bold uppercase text-[10px] tracking-wider">// Sub Node 02</span>
-          <h3 class="text-zinc-900 font-bold text-sm">ঈশ্বরগঞ্জ শাখা</h3>
-          <p class="text-zinc-500 text-[11px]">কালীবাড়ি রোড, ঈশ্বরগঞ্জ<br>Phone: 01721-299921</p>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-2">
-          <span class="text-zinc-400 font-bold uppercase text-[10px] tracking-wider">// Sub Node 03</span>
-          <h3 class="text-zinc-900 font-bold text-sm">নেত্রকোনা শাখা</h3>
-          <p class="text-zinc-500 text-[11px]">মোক্তারপাড়া, নেত্রকোনা<br>Phone: 01973-599512, 01619-067555</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="bg-zinc-900 border-t border-zinc-800 py-8 text-center text-zinc-500 text-xs font-mono">
-    <div class="max-w-7xl mx-auto px-4 space-y-2">
-      <div class="text-zinc-400 font-bold tracking-widest uppercase">© CMCC // Cadet Mission Coaching Center</div>
-      <p class="text-[10px] text-zinc-600 tracking-wide">All rights reserved. Designed & Re-Engineered For Serverless Static Platforms.</p>
-    </div>
-  </footer>
-
-  <script>
-    // 1. Unified Local Content Database
-    const CLASS5_NOTICES = [
-      { date: "26 Dec 2025", title: "আরো কিছু সর্বশেষ সাধারণ জ্ঞান-2026", path: "/notice/aro-kichu" },
-      { date: "26 Dec 2025", title: "আইডিয়াল কর্তৃক প্রকাশিত সর্বশেষ সাধারণ জ্ঞান -2026", path: "/notice/ideal-gk" },
-      { date: "03 Jan 2025", title: "আইডিয়াল কর্তৃক প্রকাশিত সর্বশেষ সাধারণ জ্ঞান", path: "/notice/ideal-old" },
-      { date: "26 Dec 2024", title: "ক্যাডেট ভিত্তিক মডেল পরীক্ষা -14 এর ফলাফল (বালক)-2024", path: "/notice/m14-boys" },
-      { date: "26 Dec 2024", title: "ক্যাডেট ভিত্তিক মডেল পরীক্ষা -14 এর ফলাফল (বালিকা)-2024", path: "/notice/m14-girls" }
-    ];
-
-    // 2. Client Side Mount Render Execution Loops
-    function renderServerlessNoticeBoard() {
-      const container = document.getElementById('notice-board-target');
-      if(!container) return;
-      container.innerHTML = "";
-
-      CLASS5_NOTICES.forEach(item => {
-        const row = document.createElement('a');
-        row.href = item.path;
-        row.className = "flex justify-between items-center p-3.5 hover:bg-zinc-50 rounded-xl transition group font-sans";
-        row.innerHTML = `
-          <div class="space-y-1 pr-4">
-            <span class="text-[10px] text-zinc-400 font-mono font-medium block"><i class="fa fa-calendar mr-1"></i> ${item.date}</span>
-            <span class="text-xs font-semibold text-zinc-700 group-hover:text-red-600 transition tracking-wide block">${item.title}</span>
-          </div>
-          <i class="fa fa-chevron-right text-[10px] text-zinc-300 group-hover:text-red-500 group-hover:translate-x-1 transition shrink-0"></i>
-        `;
-        container.appendChild(row);
-      });
-    }
-
-    // 3. Client Side Offline Counter (Replaces broken backend database hits safely)
-    function runLocalMetricsAuditor() {
-      let currentAuditCount = parseInt(localStorage.getItem('cmcc_audit_metrics')) || 40304;
-      currentAuditCount++;
-      localStorage.setItem('cmcc_audit_metrics', currentAuditCount);
-      
-      const display = document.getElementById('local-counter-view');
-      if(display) display.innerText = currentAuditCount.toString().padStart(5, '0');
-    }
-
-    // Ignite subsystems on engine startup
-    window.onload = () => {
-      renderServerlessNoticeBoard();
-      runLocalMetricsAuditor();
-    };
-  </script>
-</body>
-</html>
+    `;
+    
+    container.appendChild(noticeCard);
+  });
+}
