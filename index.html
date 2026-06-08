@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="bn" class="scroll-smooth scroll-pt-24">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>ক্যাডেট মিশন কোচিং সেন্টার // পঞ্চম শ্রেণী স্পেশাল পোর্টাল</title>
+  <title>ক্যাডেট মিশন কোচিং সেন্টার // পঞ্চম শ্রেণী ஸ்பেশাল পোর্টাল</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,58 +26,58 @@
   </script>
 
   <style>
-    body { font-family: 'Hind Siliguri', 'Inter', sans-serif; background-color: #fcfcfd; }
-    .marquee-stream { animation: slide-left 25s linear infinite; }
+    body { font-family: 'Hind Siliguri', 'Inter', sans-serif; background-color: #f8fafc; }
+    .marquee-stream { animation: slide-left 30s linear infinite; }
     @keyframes slide-left { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     
     .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(76, 29, 149, 0.15); border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(76, 29, 149, 0.3); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(76, 29, 149, 0.2); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(76, 29, 149, 0.4); }
     
-    .fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
-<body class="text-zinc-800 antialiased selection:bg-brandCrimson selection:text-white scroll-smooth">
+<body class="text-zinc-800 antialiased selection:bg-brandCrimson selection:text-white">
 
-  <div class="fixed bottom-6 right-6 z-50 transition-transform duration-300 hover:scale-110 shadow-xl rounded-full">
+  <div class="fixed bottom-6 right-6 z-50 transition-transform duration-300 hover:scale-110 shadow-xl rounded-full group">
     <a href="https://wa.me/+8801713599468" target="_blank" aria-label="Connect on WhatsApp">
-      <div class="bg-emerald-500 p-4 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl border border-white/10">
+      <div class="bg-emerald-500 p-4 rounded-full shadow-lg flex items-center justify-center text-white text-2xl border border-white/20 group-hover:bg-emerald-400 transition-colors">
         <i class="fa-brands fa-whatsapp"></i>
       </div>
     </a>
   </div>
 
-  <div id="mobile-menu-overlay" class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300 flex justify-end">
-    <div class="w-72 h-full bg-white p-6 shadow-2xl flex flex-col justify-between border-l border-zinc-100">
+  <div id="mobile-menu-overlay" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300 flex justify-end">
+    <div id="mobile-menu-panel" class="w-72 h-full bg-white p-6 shadow-2xl flex flex-col justify-between border-l border-zinc-100 transform translate-x-full transition-transform duration-300">
       <div class="space-y-6">
         <div class="flex justify-between items-center border-b border-zinc-100 pb-4">
-          <span class="font-bold text-xs font-mono uppercase text-zinc-400 tracking-widest">// Navigation</span>
-          <button onclick="toggleMobileMenuEngine(false)" class="h-8 w-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-200 transition">
-            <i class="fa-solid fa-times text-xs"></i>
+          <span class="font-bold text-xs font-mono uppercase text-zinc-400 tracking-widest">// Navigation Menu</span>
+          <button onclick="toggleMobileMenuEngine(false)" class="h-8 w-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-red-100 hover:text-red-600 transition">
+            <i class="fa-solid fa-times text-sm"></i>
           </button>
         </div>
-        <nav class="flex flex-col gap-4 text-sm font-semibold text-zinc-600">
-          <a href="#" onclick="toggleMobileMenuEngine(false)" class="text-brandCrimson">Home</a>
-          <a href="#result-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition">ফলাফল পোর্টাল</a>
-          <a href="#notice-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition">নোটিশ বোর্ড</a>
-          <a href="#batches-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition">কোর্সসমূহ</a>
-          <a href="#video-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition">ভিডিও ক্লাস</a>
-          <a href="#branch-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition">শাখা সমূহ</a>
+        <nav class="flex flex-col gap-4 text-sm font-bold text-zinc-600">
+          <a href="#" onclick="toggleMobileMenuEngine(false)" class="text-brandCrimson flex items-center gap-3"><i class="fa-solid fa-house w-4"></i> Home</a>
+          <a href="#result-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition flex items-center gap-3"><i class="fa-solid fa-square-poll-vertical w-4 text-red-500"></i> রেজাল্ট পোর্টাল</a>
+          <a href="#notice-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition flex items-center gap-3"><i class="fa-solid fa-bell w-4"></i> নোটিশ বোর্ড</a>
+          <a href="#batches-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition flex items-center gap-3"><i class="fa-solid fa-graduation-cap w-4"></i> কোর্সসমূহ</a>
+          <a href="#video-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition flex items-center gap-3"><i class="fa-brands fa-youtube w-4"></i> ভিডিও ক্লাস</a>
+          <a href="#branch-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition flex items-center gap-3"><i class="fa-solid fa-map-location-dot w-4"></i> শাখা সমূহ</a>
         </nav>
       </div>
       <div class="text-[10px] text-zinc-400 font-mono border-t border-zinc-100 pt-4">
-        CMCC SYSTEM CORE v1.0
+        CMCC SYSTEM CORE v1.2 // LIVE
       </div>
     </div>
   </div>
 
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-zinc-200 shadow-sm">
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-zinc-200 shadow-sm transition-all">
     <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
       
-      <a href="/" class="flex items-center gap-2.5 group">
-        <div class="h-14 w-14 shrink-0 relative flex items-center justify-center bg-white rounded-full border border-zinc-200 shadow-sm p-1 transition-transform group-hover:scale-102">
+      <a href="/" class="flex items-center gap-3 group">
+        <div class="h-14 w-14 shrink-0 relative flex items-center justify-center bg-white rounded-full border border-zinc-200 shadow-sm p-1 transition-transform group-hover:scale-105 duration-300">
           <svg viewBox="0 0 100 100" class="w-full h-full">
             <circle cx="50" cy="50" r="46" fill="none" stroke="#4c1d95" stroke-width="2.5"/>
             <path d="M25,60 C35,25 65,25 75,60 C65,75 35,75 25,60 Z" fill="#facc15" opacity="0.3"/>
@@ -87,18 +87,18 @@
           </svg>
         </div>
         <div>
-          <h2 class="text-base font-black text-zinc-900 tracking-tight leading-tight">ক্যাডেট মিশন কোচিং সেন্টার</h2>
+          <h2 class="text-base font-black text-zinc-900 tracking-tight leading-tight group-hover:text-brandPurple transition-colors">ক্যাডেট মিশন কোচিং সেন্টার</h2>
           <p class="text-[10px] font-mono font-bold tracking-widest text-brandCrimson uppercase mt-0.5">Class 5 Exclusive Hub</p>
         </div>
       </a>
       
       <nav class="hidden lg:flex items-center gap-6 text-xs font-bold text-zinc-500 uppercase tracking-wider">
         <a href="#" class="text-brandCrimson transition">Home</a>
-        <a href="#result-section" class="text-purple-700 hover:text-brandCrimson transition font-black"><i class="fa-solid fa-square-poll-vertical mr-1"></i> রেজাল্ট সার্চ পোর্টাল</a>
-        <a href="#notice-section" class="hover:text-brandPurple transition">নোটিশ বোর্ড</a>
-        <a href="#batches-section" class="hover:text-brandPurple transition">কোর্সসমূহ</a>
-        <a href="#video-section" class="hover:text-brandPurple transition">ভিডিও ক্লাস</a>
-        <a href="#branch-section" class="hover:text-brandPurple transition">শাখা সমূহ</a>
+        <a href="#result-section" class="text-purple-700 hover:text-brandCrimson transition font-black"><i class="fa-solid fa-square-poll-vertical mr-1"></i> রেজাল্ট পোর্টাল</a>
+        <a href="#notice-section" class="hover:text-brandPurple transition">নোটিশ</a>
+        <a href="#batches-section" class="hover:text-brandPurple transition">কোর্স</a>
+        <a href="#video-section" class="hover:text-brandPurple transition">ভিডিও</a>
+        <a href="#branch-section" class="hover:text-brandPurple transition">শাখা</a>
       </nav>
 
       <button onclick="toggleMobileMenuEngine(true)" class="lg:hidden flex flex-col gap-1.5 p-2 px-2.5 rounded-xl border border-zinc-200 hover:bg-zinc-50 transition" aria-label="Open Navigation Menu">
@@ -111,243 +111,264 @@
 
   <div class="bg-brandPurple text-zinc-100 py-2.5 overflow-hidden border-b border-purple-950 font-medium text-xs shadow-inner">
     <div class="max-w-7xl mx-auto px-4 flex items-center">
-      <span class="bg-brandCrimson text-white px-2.5 py-0.5 rounded font-black text-[9px] uppercase tracking-widest shrink-0 z-10 mr-4 shadow-md">জরুরী ফ্ল্যাশ //</span>
+      <span class="bg-brandCrimson text-white px-2.5 py-0.5 rounded font-black text-[9px] uppercase tracking-widest shrink-0 z-10 mr-4 shadow-md flex items-center gap-1.5">
+        <i class="fa-solid fa-bolt"></i> ফ্ল্যাশ
+      </span>
       <div class="w-full overflow-hidden relative h-4">
-        <div class="marquee-stream absolute whitespace-nowrap font-sans text-white/95">
+        <div class="marquee-stream absolute whitespace-nowrap font-sans text-white/95 tracking-wide">
           ক্যাডেট মিশন কোচিং সেন্টার—পঞ্চম শ্রেণীর স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট এর সময়সূচী নোটিশ বোর্ডে প্রকাশ করা হয়েছে। আগামী ১২ই জুনের মধ্যে প্রবেশপত্র সংগ্রহ করতে বলা হলো।
         </div>
       </div>
     </div>
   </div>
 
-  <section class="relative bg-zinc-950 py-16 px-4 overflow-hidden border-b border-zinc-800">
+  <section class="relative bg-zinc-950 py-20 px-4 overflow-hidden border-b border-zinc-800">
     <div class="absolute inset-0 bg-cover bg-center opacity-15 mix-blend-overlay" style="background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200');"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent z-0"></div>
+    
     <div class="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
-      
-      <div class="max-w-xl space-y-4 text-center lg:text-left">
-        <span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-mono font-bold mx-auto lg:mx-0">Class 5 Scholar Hub // 2026</span>
-        <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-          পঞ্চম শ্রেণী <span class="text-brandCrimson font-light">বৃত্তি ব্যাচ</span> এবং <br>অ্যাডভান্স ক্যাডেট ভর্তি প্রস্তুতি
+      <div class="max-w-xl space-y-5 text-center lg:text-left fade-in">
+        <span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-mono font-bold mx-auto lg:mx-0 shadow-sm backdrop-blur-sm inline-block">Class 5 Scholar Hub // 2026</span>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
+          পঞ্চম শ্রেণী <span class="text-brandCrimson font-light">বৃত্তি ব্যাচ</span> এবং <br>অ্যাডভান্স ক্যাডেট প্রস্তুতি
         </h1>
-        <p class="text-zinc-400 text-xs sm:text-sm leading-relaxed font-light">
+        <p class="text-zinc-400 text-sm leading-relaxed font-light max-w-lg mx-auto lg:mx-0">
           ৫ম শ্রেণীর শিক্ষার্থীদের ক্যাডেট কলেজ ভর্তি পরীক্ষা ও বৃত্তি পরীক্ষার জন্য ময়মনসিংহ বিভাগের শ্রেষ্ঠ নির্ভরযোগ্য ডিজিটাল লার্নিং অ্যান্ড ট্র্যাকিং হাব।
         </p>
+        <div class="pt-2 flex justify-center lg:justify-start gap-3">
+          <a href="#result-section" class="bg-brandCrimson hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-lg text-xs uppercase tracking-wider transition shadow-lg shadow-red-900/20">
+            Check Results
+          </a>
+          <a href="#notice-section" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-2.5 px-6 rounded-lg text-xs uppercase tracking-wider transition backdrop-blur-sm">
+            View Notices
+          </a>
+        </div>
       </div>
 
-      <div class="bg-zinc-900/80 backdrop-blur-md p-5 rounded-2xl border border-zinc-800/80 w-full max-w-sm shrink-0 shadow-2xl font-mono text-xs text-zinc-400 mx-auto lg:mx-0">
-        <div class="border-b border-zinc-800 pb-2 mb-3 text-zinc-200 font-black tracking-wider uppercase flex justify-between items-center">
+      <div class="bg-zinc-900/80 backdrop-blur-md p-6 rounded-2xl border border-zinc-800/80 w-full max-w-sm shrink-0 shadow-2xl font-mono text-xs text-zinc-400 mx-auto lg:mx-0 fade-in" style="animation-delay: 0.1s;">
+        <div class="border-b border-zinc-800 pb-3 mb-4 text-zinc-200 font-black tracking-wider uppercase flex justify-between items-center">
           <span>// Operational Metrics</span>
-          <span class="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-ping"></span>
+          <span class="h-2 w-2 bg-emerald-400 rounded-full animate-ping shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
         </div>
-        <div class="space-y-2 text-[11px] leading-relaxed">
-          <div class="flex justify-between"><span>• MODULE INDEX:</span> <span class="text-purple-400 font-bold">CLASS_05_ONLY</span></div>
-          <div class="flex justify-between"><span>• DATABASE PIPE:</span> <span class="text-teal-400 font-bold">SERVERLESS_RAM</span></div>
-          <div class="flex justify-between"><span>• SYSTEM AUDITS:</span> <span id="visitor-audits-view" class="text-emerald-400 font-bold">40304</span></div>
+        <div class="space-y-3 text-[11px] leading-relaxed">
+          <div class="flex justify-between items-center bg-zinc-950/50 px-3 py-2 rounded-lg border border-zinc-800">
+            <span>• MODULE INDEX:</span> <span class="text-purple-400 font-bold">CLASS_05_ONLY</span>
+          </div>
+          <div class="flex justify-between items-center bg-zinc-950/50 px-3 py-2 rounded-lg border border-zinc-800">
+            <span>• DATABASE PIPE:</span> <span class="text-teal-400 font-bold">SERVERLESS_RAM</span>
+          </div>
+          <div class="flex justify-between items-center bg-zinc-950/50 px-3 py-2 rounded-lg border border-zinc-800">
+            <span>• SYSTEM AUDITS:</span> <span id="visitor-audits-view" class="text-emerald-400 font-black text-sm">40304</span>
+          </div>
         </div>
       </div>
-
     </div>
   </section>
 
-  <section id="result-section" class="max-w-7xl mx-auto px-4 py-12">
-    <div class="w-full bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
+  <section id="result-section" class="max-w-7xl mx-auto px-4 py-16">
+    <div class="w-full bg-white rounded-3xl border border-zinc-200 shadow-xl overflow-hidden flex flex-col md:flex-row">
       
-      <div class="w-full md:w-80 bg-zinc-50 border-r border-zinc-200 p-6 shrink-0 flex flex-col justify-between gap-6">
-        <div class="space-y-4">
+      <div class="w-full md:w-80 bg-zinc-50 border-r border-zinc-200 p-6 sm:p-8 shrink-0 flex flex-col justify-between gap-6 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-bl-full -z-0"></div>
+        <div class="space-y-5 relative z-10">
           <div class="flex items-center gap-2 font-mono text-xs font-black text-purple-900 uppercase">
-            <i class="fa-solid fa-square-poll-vertical text-brandCrimson"></i>
-            <span>Result Framework v1.0</span>
+            <i class="fa-solid fa-square-poll-vertical text-brandCrimson text-lg"></i>
+            <span>Result Engine v1.2</span>
           </div>
-          <div class="space-y-1">
-            <h3 class="text-base font-black text-zinc-900 leading-tight">ফলাফল অনুসন্ধান ইঞ্জিন</h3>
-            <p class="text-zinc-500 text-xs">পঞ্চম শ্রেণীর বৃত্তিভিত্তিকরেজিস্ট্রেশন নম্বর টাইপ করে সাবমিট করুন বা এন্টার চাপুন।</p>
+          <div class="space-y-1.5">
+            <h3 class="text-xl font-black text-zinc-900 leading-tight">ফলাফল অনুসন্ধান</h3>
+            <p class="text-zinc-500 text-xs leading-relaxed">পঞ্চম শ্রেণীর বৃত্তিভিত্তিক মডেল পরীক্ষার মেধা তালিকা ও মার্কশিট জেনারেটর।</p>
           </div>
           
-          <div class="space-y-2 pt-2">
+          <div class="space-y-2 pt-4">
             <label class="text-[11px] font-mono font-bold text-zinc-400 uppercase tracking-wider block">রেজিস্ট্রেশন নম্বর দিন</label>
-            <div class="relative rounded-xl bg-white border border-zinc-300 p-1 flex items-center shadow-sm focus-within:border-brandCrimson transition-colors">
-              <input type="text" id="reg-search-input" placeholder="উদাঃ 59205, 59216..." class="w-full bg-transparent text-xs p-2.5 font-mono text-zinc-800 font-bold focus:outline-none" />
-              <button onclick="executeResultLookupQuery()" class="bg-brandCrimson hover:bg-red-700 text-white font-bold p-2 px-3.5 rounded-lg text-xs transition shadow-md">
+            <div class="relative rounded-xl bg-white border-2 border-zinc-200 p-1 flex items-center shadow-sm focus-within:border-brandCrimson transition-colors group">
+              <input type="number" id="reg-search-input" placeholder="উদাঃ 59205" class="w-full bg-transparent text-sm p-2.5 font-mono text-zinc-800 font-bold focus:outline-none" />
+              <button onclick="executeResultLookupQuery()" class="bg-zinc-900 group-focus-within:bg-brandCrimson text-white font-bold p-2.5 px-4 rounded-lg text-xs transition-colors shadow-md">
                 <i class="fa-solid fa-magnifying-glass"></i>
               </button>
             </div>
           </div>
         </div>
 
-        <div class="text-[10px] text-zinc-400 font-mono leading-relaxed border-t border-zinc-200 pt-4">
-          • FILTER: CLASS 5 EXCLUSIVE<br>
+        <div class="text-[10px] text-zinc-400 font-mono leading-relaxed border-t border-zinc-200 pt-4 relative z-10">
+          • SYSTEM STATUS: <span class="text-emerald-500 font-bold">ONLINE</span><br>
           • DATA WEIGHT: MAP_TOP_20_ACTIVE
         </div>
       </div>
 
-      <div class="flex-1 p-6 flex flex-col justify-center bg-zinc-50/20 minimum-height-[240px]" id="result-display-viewport">
-        <div class="text-center py-12 font-sans text-zinc-400 max-w-sm mx-auto space-y-2">
-          <i class="fa-solid fa-sheet-plastic text-3xl text-zinc-300 block mb-2"></i>
-          <h4 class="text-xs font-bold text-zinc-700 uppercase tracking-wider">Awaiting Search Request</h4>
-          <p class="text-[11px] text-zinc-500 leading-relaxed font-light">৫ ডিজিটের ক্লাস ৫ রেজিস্ট্রেশন নম্বরটি ইনপুট দিয়ে সাবমিট আইকনে ক্লিক করুন অথবা কীবোর্ডের এন্টার বাটন চাপুন।</p>
+      <div class="flex-1 p-6 sm:p-10 flex flex-col justify-center bg-zinc-50/20 min-h-[300px]" id="result-display-viewport">
+        <div class="text-center font-sans text-zinc-400 max-w-sm mx-auto space-y-3">
+          <div class="h-16 w-16 bg-zinc-100 rounded-2xl flex items-center justify-center mx-auto text-zinc-300 mb-2 border border-zinc-200 shadow-sm">
+            <i class="fa-solid fa-fingerprint text-2xl"></i>
+          </div>
+          <h4 class="text-xs font-bold text-zinc-700 uppercase tracking-wider">Awaiting Verification</h4>
+          <p class="text-[11px] text-zinc-500 leading-relaxed font-light">বাম পাশের বক্সে ৫ ডিজিটের ক্লাস ৫ রেজিস্ট্রেশন নম্বরটি ইনপুট দিয়ে সার্চ আইকনে ক্লিক করুন অথবা কীবোর্ডের <kbd class="bg-zinc-200 px-1 py-0.5 rounded text-zinc-600 font-mono text-[9px]">Enter</kbd> চাপুন।</p>
         </div>
       </div>
 
     </div>
   </section>
 
-  <section id="notice-section" class="max-w-7xl mx-auto px-4 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <section id="notice-section" class="max-w-7xl mx-auto px-4 pb-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
     
-    <div class="lg:col-span-1 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm flex flex-col justify-between">
-      <div class="space-y-4">
+    <div class="lg:col-span-1 bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+      <div class="space-y-5">
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 flex justify-between items-center font-mono text-[11px] text-zinc-400">
           <span>// EXECUTIVE_DESK</span>
-          <span class="text-brandCrimson font-bold">VERIFIED</span>
+          <span class="text-brandCrimson font-bold flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full bg-brandCrimson animate-pulse"></span> VERIFIED</span>
         </div>
-        <div class="space-y-0.5">
-          <h3 class="text-base font-black text-zinc-900">আশেক মাহমোদ</h3>
-          <p class="text-xs font-bold text-purple-900">পরিচালক, ক্যাডেট মিশন কোচিং সেন্টার</p>
+        <div class="space-y-1">
+          <h3 class="text-lg font-black text-zinc-900">আশেক মাহমোদ</h3>
+          <p class="text-xs font-bold text-brandPurple">পরিচালক, ক্যাডেট মিশন কোচিং সেন্টার</p>
         </div>
-        <div class="text-zinc-600 text-xs leading-relaxed text-justify space-y-2 border-t border-zinc-100 pt-3">
+        <div class="text-zinc-600 text-xs leading-relaxed text-justify space-y-2 border-t border-zinc-100 pt-4 font-sans">
           <p>সুপ্রিয় সুধী, আসসালামু আলাইকুম। “ক্যাডেট মিশন” বিশ্বাস করে প্রতিটি শিশু অনন্য মেধার অধিকারী। তাদের সুপ্ত মেধা বিকাশের গুরু দায়িত্ব যখন আপনারা আমাদের হাতে তুলে দেন তখন তা সফলভাবে পালন করা আমাদের পরম কর্তব্য ও দায়িত্বে পরিণত হয়।</p>
           <p>আপনার সন্তানের সময়োপযোগী সিদ্ধান্ত ও সঠিক পথপ্রদর্শক নির্বাচনই আগামীর লক্ষ্য অর্জনে সহায়তা করবে। আমাদের অভিজ্ঞ শিক্ষক প্যানেল সর্বদা শিক্ষার্থীদের সর্বোচ্চ গাইডলাইন দিতে সচেষ্ট।</p>
         </div>
       </div>
-      <div class="pt-4 border-t border-zinc-100 mt-6 flex justify-between text-[10px] text-zinc-400 font-mono">
+      <div class="bg-zinc-50 rounded-xl p-3 mt-6 flex justify-between items-center text-[10px] text-zinc-500 font-mono border border-zinc-100">
         <span>ESTD // 2018</span>
-        <span>MYMENSINGH // BD</span>
+        <span class="font-bold text-zinc-700">MYMENSINGH // BD</span>
       </div>
     </div>
 
-    <div class="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col">
-      <div class="bg-cadetTeal text-zinc-100 px-5 py-4 flex justify-between items-center shrink-0 border-b border-zinc-800">
-        <div class="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-red-400">
-          <i class="fa fa-file-text"></i>
-          <span>Class 5 Group Notices & Updates</span>
+    <div class="lg:col-span-2 bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col">
+      <div class="bg-cadetTeal text-zinc-100 px-6 py-4 flex justify-between items-center shrink-0 border-b border-zinc-800">
+        <div class="flex items-center gap-3 font-mono text-xs font-bold uppercase tracking-wider text-red-400">
+          <div class="h-8 w-8 rounded-lg bg-black/30 flex items-center justify-center border border-white/10"><i class="fa fa-bullhorn text-sm"></i></div>
+          <span>Class 5 Notices & Updates</span>
         </div>
-        <span class="text-[10px] font-mono text-zinc-400">Registry Counter: <span id="local-audit-counter" class="text-white font-bold">40304</span></span>
+        <span class="text-[10px] font-mono text-zinc-400 bg-black/20 px-2.5 py-1 rounded-md border border-white/10">Logs: <span id="local-audit-counter" class="text-white font-bold">40304</span></span>
       </div>
 
-      <div class="bg-zinc-50 border-b border-zinc-200 px-4 flex gap-1 font-mono text-[11px] font-bold text-zinc-500 overflow-x-auto shrink-0 custom-scrollbar">
-        <button onclick="filterNoticeDisplay('all')" id="tab-all" class="px-3 py-3 border-b-2 border-brandCrimson text-brandCrimson transition shrink-0 uppercase tracking-wider outline-none">ALL RECORDS</button>
-        <button onclick="filterNoticeDisplay('urgent')" id="tab-urgent" class="px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0 uppercase tracking-wider outline-none">URGENT ANNOUNCEMENTS</button>
-        <button onclick="filterNoticeDisplay('routine')" id="tab-routine" class="px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0 uppercase tracking-wider outline-none">ROUTINES & SCHEDULES</button>
+      <div class="bg-zinc-50 border-b border-zinc-200 px-2 flex gap-1 font-mono text-[11px] font-bold text-zinc-500 overflow-x-auto shrink-0 custom-scrollbar">
+        <button onclick="filterNoticeDisplay('all')" id="tab-all" class="px-4 py-3.5 border-b-2 border-brandCrimson text-brandCrimson transition shrink-0 uppercase tracking-wider outline-none">ALL RECORDS</button>
+        <button onclick="filterNoticeDisplay('urgent')" id="tab-urgent" class="px-4 py-3.5 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0 uppercase tracking-wider outline-none">URGENT</button>
+        <button onclick="filterNoticeDisplay('routine')" id="tab-routine" class="px-4 py-3.5 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0 uppercase tracking-wider outline-none">ROUTINES & EXAMS</button>
       </div>
 
-      <div id="notice-board-target" class="flex-1 p-4 overflow-y-auto max-h-[400px] divide-y divide-zinc-100 custom-scrollbar">
+      <div id="notice-board-target" class="flex-1 p-2 overflow-y-auto max-h-[400px] divide-y divide-zinc-100 custom-scrollbar bg-white">
         </div>
     </div>
 
   </section>
 
-  <section id="batches-section" class="bg-zinc-50 border-t border-zinc-200 py-12 px-4">
+  <section id="batches-section" class="bg-zinc-50 border-t border-zinc-200 py-16 px-4">
+    <div class="max-w-7xl mx-auto space-y-10">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-black text-zinc-900 uppercase tracking-wide">আমাদের পঞ্চম শ্রেণীর কোর্সসমূহ</h2>
+        <p class="text-xs text-zinc-400 font-mono uppercase tracking-widest bg-white border border-zinc-200 inline-block px-3 py-1 rounded-full shadow-sm">Class 5 Academic Segmentation</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-4 transition-all hover:-translate-y-1 hover:shadow-lg duration-300 group">
+          <div class="space-y-3">
+            <div class="h-12 w-12 bg-purple-50 text-brandPurple rounded-2xl flex items-center justify-center font-black text-lg mx-auto group-hover:scale-110 transition-transform"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h3 class="text-sm font-black text-zinc-900">বৃত্তি ব্যাচ</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed font-light">প্রাথমিক বৃত্তি পরীক্ষার পূর্ণাঙ্গ সিলেবাস কমপ্লিশন ও হাই-স্পিড সাজেশন্স শিট সমাধান কোর্স।</p>
+          </div>
+          <span class="bg-purple-50 text-brandPurple rounded-xl py-1.5 text-[10px] font-mono font-bold border border-purple-100">SCHOLARSHIP_TRACK</span>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-4 transition-all hover:-translate-y-1 hover:shadow-lg duration-300 group">
+          <div class="space-y-3">
+            <div class="h-12 w-12 bg-red-50 text-brandCrimson rounded-2xl flex items-center justify-center font-black text-lg mx-auto group-hover:scale-110 transition-transform"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3 class="text-sm font-black text-zinc-900">অ্যাডভান্স ক্যাডেট ব্যাচ</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed font-light">ক্যাডেট কলেজ সমূহে ভর্তি পরীক্ষার প্রথম ধাপের জন্য গণিত, ইংরেজি, বাংলা ও আইকিউ এডভান্সড কোর্স।</p>
+          </div>
+          <span class="bg-red-50 text-brandCrimson rounded-xl py-1.5 text-[10px] font-mono font-bold border border-red-100">CADET_ADVANCED</span>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-4 transition-all hover:-translate-y-1 hover:shadow-lg duration-300 group">
+          <div class="space-y-3">
+            <div class="h-12 w-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center font-black text-lg mx-auto group-hover:scale-110 transition-transform"><i class="fa-solid fa-book-open"></i></div>
+            <h3 class="text-sm font-black text-zinc-900">বাংলা মাধ্যম কোর্স</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed font-light">জাতীয় শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড (NCTB) নির্ধারিত পঞ্চম শ্রেণীর মূল পাঠ্যক্রমের চুলচেরা বিশ্লেষণ।</p>
+          </div>
+          <span class="bg-emerald-50 text-emerald-700 rounded-xl py-1.5 text-[10px] font-mono font-bold border border-emerald-100">BANGLA_MEDIUM</span>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-4 transition-all hover:-translate-y-1 hover:shadow-lg duration-300 group">
+          <div class="space-y-3">
+            <div class="h-12 w-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-black text-lg mx-auto group-hover:scale-110 transition-transform"><i class="fa-solid fa-language"></i></div>
+            <h3 class="text-sm font-black text-zinc-900">English Version Core</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed font-light">Specialized textbooks analytics tailored for English version cadet college candidates.</p>
+          </div>
+          <span class="bg-blue-50 text-blue-700 rounded-xl py-1.5 text-[10px] font-mono font-bold border border-blue-100">ENGLISH_VERSION</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="video-section" class="max-w-7xl mx-auto px-4 py-16 space-y-8">
+    <div class="text-center space-y-2">
+      <h2 class="text-2xl font-black text-zinc-900 tracking-tight uppercase">Class 5 Video Lectures</h2>
+      <p class="text-xs text-zinc-400 font-mono bg-zinc-100 inline-block px-3 py-1 rounded-full">OFFICIAL VIDEO STREAM CHANNELS</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="aspect-video rounded-3xl bg-zinc-900 overflow-hidden border border-zinc-200 shadow-lg group relative">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/6BcntkNSjNc" title="Cadet Mission Class 5 Math" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="relative z-10"></iframe>
+      </div>
+      <div class="aspect-video rounded-3xl bg-zinc-900 overflow-hidden border border-zinc-200 shadow-lg group relative">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/yxKqtOztL-o" title="Cadet Mission Class 5 GK" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="relative z-10"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section id="branch-section" class="bg-zinc-100 border-t border-zinc-200 py-16 px-4">
     <div class="max-w-7xl mx-auto space-y-8">
-      <div class="text-center space-y-1">
-        <h2 class="text-xl font-black text-zinc-900 uppercase tracking-wide">আমাদের পঞ্চম শ্রেণীর কোর্সসমূহ</h2>
-        <p class="text-xs text-zinc-400 font-mono uppercase tracking-widest">Class 5 Academic Segmentation</p>
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-black text-zinc-900 tracking-tight">আমাদের অ্যাক্টিভ শাখাসমূহ</h2>
+        <p class="text-xs text-zinc-400 font-mono uppercase tracking-widest bg-white border border-zinc-200 inline-block px-3 py-1 rounded-full shadow-sm">Campus Indexes Location Map</p>
       </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3 transition-transform hover:-translate-y-0.5 duration-200">
-          <div class="space-y-2">
-            <div class="h-10 w-10 bg-purple-50 text-purple-700 rounded-xl flex items-center justify-center font-black text-xs mx-auto"><i class="fa-solid fa-graduation-cap"></i></div>
-            <h3 class="text-sm font-bold text-zinc-800">বৃত্তি ব্যাচ</h3>
-            <p class="text-[11px] text-zinc-500 leading-relaxed">প্রাথমিক বৃত্তি পরীক্ষার পূর্ণাঙ্গ সিলেবাস কমপ্লিশন ও হাই-স্পিড সাজেশন্স শিট সমাধান কোর্স।</p>
-          </div>
-          <span class="bg-purple-50 text-purple-700 rounded-lg py-1 text-[9px] font-mono font-bold">SCHOLARSHIP_TRACK</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 font-mono text-xs">
+        <div class="bg-white p-6 rounded-3xl border border-zinc-200 space-y-1.5 shadow-sm hover:shadow-md transition-shadow">
+          <span class="text-brandCrimson font-bold uppercase text-[10px] bg-red-50 px-2 py-0.5 rounded">// Head Branch</span>
+          <h3 class="text-zinc-900 font-black text-sm font-sans pt-1">মেইন ব্রাঞ্চ, ময়মনসিংহ</h3>
+          <p class="text-zinc-500 text-xs font-sans leading-relaxed pt-1">১ নং বাউন্ডারি রোড, ময়মনসিংহ<br>Phone: <span class="font-mono text-zinc-600">01713-599468, 01973-599511</span></p>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3 transition-transform hover:-translate-y-0.5 duration-200">
-          <div class="space-y-2">
-            <div class="h-10 w-10 bg-red-50 text-red-700 rounded-xl flex items-center justify-center font-black text-xs mx-auto"><i class="fa-solid fa-shield-halved"></i></div>
-            <h3 class="text-sm font-bold text-zinc-800">অ্যাডভান্স ক্যাডেট ব্যাচ</h3>
-            <p class="text-[11px] text-zinc-500 leading-relaxed">ক্যাডেট কলেজ সমূহে ভর্তি পরীক্ষার প্রথম ধাপের জন্য গণিত, ইংরেজি, বাংলা ও আইকিউ এডভান্সড কোর্স।</p>
-          </div>
-          <span class="bg-red-50 text-red-700 rounded-lg py-1 text-[9px] font-mono font-bold">CADET_ADVANCED</span>
+        <div class="bg-white p-6 rounded-3xl border border-zinc-200 space-y-1.5 shadow-sm hover:shadow-md transition-shadow">
+          <span class="text-purple-600 font-bold uppercase text-[10px] bg-purple-50 px-2 py-0.5 rounded">// Sub Node 02</span>
+          <h3 class="text-zinc-900 font-black text-sm font-sans pt-1">ঈশ্বরগঞ্জ শাখা</h3>
+          <p class="text-zinc-500 text-xs font-sans leading-relaxed pt-1">কালীবাড়ি রোড, ঈশ্বরগঞ্জ<br>Phone: <span class="font-mono text-zinc-600">01721-299921</span></p>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3 transition-transform hover:-translate-y-0.5 duration-200">
-          <div class="space-y-2">
-            <div class="h-10 w-10 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center font-black text-xs mx-auto"><i class="fa-solid fa-book-open"></i></div>
-            <h3 class="text-sm font-bold text-zinc-800">বাংলা মাধ্যম কোর্স</h3>
-            <p class="text-[11px] text-zinc-500 leading-relaxed">জাতীয় শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড (NCTB) নির্ধারিত পঞ্চম শ্রেণীর মূল পাঠ্যক্রমের চুলচেরা বিশ্লেষণ।</p>
-          </div>
-          <span class="bg-emerald-50 text-emerald-700 rounded-lg py-1 text-[9px] font-mono font-bold">BANGLA_MEDIUM</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3 transition-transform hover:-translate-y-0.5 duration-200">
-          <div class="space-y-2">
-            <div class="h-10 w-10 bg-blue-50 text-blue-700 rounded-xl flex items-center justify-center font-black text-xs mx-auto"><i class="fa-solid fa-language"></i></div>
-            <h3 class="text-sm font-bold text-zinc-800">English Version Core</h3>
-            <p class="text-[11px] text-zinc-500 leading-relaxed">Specialized textbooks analytics tailored for English version cadet college candidates.</p>
-          </div>
-          <span class="bg-blue-50 text-blue-700 rounded-lg py-1 text-[9px] font-mono font-bold">ENGLISH_VERSION</span>
+        <div class="bg-white p-6 rounded-3xl border border-zinc-200 space-y-1.5 shadow-sm hover:shadow-md transition-shadow">
+          <span class="text-purple-600 font-bold uppercase text-[10px] bg-purple-50 px-2 py-0.5 rounded">// Sub Node 03</span>
+          <h3 class="text-zinc-900 font-black text-sm font-sans pt-1">নেত্রকোনা শাখা</h3>
+          <p class="text-zinc-500 text-xs font-sans leading-relaxed pt-1">মোক্তারপাড়া, নেত্রকোনা<br>Phone: <span class="font-mono text-zinc-600">01973-599512, 01619-067555</span></p>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="video-section" class="max-w-7xl mx-auto px-4 py-12 space-y-6">
-    <div class="text-center space-y-1">
-      <h2 class="text-xl font-black text-zinc-900 tracking-tight uppercase">Class 5 Video Lectures</h2>
-      <p class="text-xs text-zinc-400 font-mono">OFFICIAL VIDEO STREAM CHANNELS</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="aspect-video rounded-2xl bg-zinc-900 overflow-hidden border border-zinc-200 shadow-md">
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/6BcntkNSjNc" title="Cadet Mission Class 5 Math" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-      <div class="aspect-video rounded-2xl bg-zinc-900 overflow-hidden border border-zinc-200 shadow-md">
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/yxKqtOztL-o" title="Cadet Mission Class 5 GK" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-    </div>
-  </section>
-
-  <section id="branch-section" class="bg-zinc-100 border-t border-zinc-200 py-12 px-4">
-    <div class="max-w-7xl mx-auto space-y-6">
-      <div class="text-center space-y-1">
-        <h2 class="text-xl font-black text-zinc-900 tracking-tight">আমাদের অ্যাক্টিভ শাখাসমূহ</h2>
-        <p class="text-xs text-zinc-400 font-mono uppercase tracking-widest">Campus Indexes Location Map</p>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 font-mono text-xs">
-        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-1 shadow-sm">
-          <span class="text-brandCrimson font-bold uppercase text-[10px]">// Head Branch</span>
-          <h3 class="text-zinc-900 font-bold text-sm font-sans">মেইন ব্রাঞ্চ, ময়মনসিংহ</h3>
-          <p class="text-zinc-500 text-[11px] font-sans leading-relaxed">১ নং বাউন্ডারি রোড, ময়মনসিংহ<br>Phone: 01713-599468, 01973-599511</p>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-1 shadow-sm">
-          <span class="text-purple-600 font-bold uppercase text-[10px]">// Sub Node 02</span>
-          <h3 class="text-zinc-900 font-bold text-sm font-sans">ঈশ্বরগঞ্জ শাখা</h3>
-          <p class="text-zinc-500 text-[11px] font-sans leading-relaxed">কালীবাড়ি রোড, ঈশ্বরগঞ্জ<br>Phone: 01721-299921</p>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-1 shadow-sm">
-          <span class="text-purple-600 font-bold uppercase text-[10px]">// Sub Node 03</span>
-          <h3 class="text-zinc-900 font-bold text-sm font-sans">নেত্রকোনা শাখা</h3>
-          <p class="text-zinc-500 text-[11px] font-sans leading-relaxed">মোক্তারপাড়া, নেত্রকোনা<br>Phone: 01973-599512, 01619-067555</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="bg-cadetTeal py-12 font-mono text-xs text-zinc-400 border-t border-purple-950">
-    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 border-b border-zinc-800/60 pb-8 mb-6 text-center md:text-left">
-      <div class="space-y-2">
+  <footer class="bg-cadetTeal py-12 lg:py-16 font-mono text-xs text-zinc-400 border-t border-purple-950">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 border-b border-zinc-800/60 pb-10 mb-8 text-center sm:text-left">
+      <div class="space-y-3">
         <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Location Specs</h4>
         <p class="font-sans text-zinc-400 leading-relaxed text-xs">১ নং বাউন্ডারি রোড, ময়মনসিংহ</p>
       </div>
-      <div class="space-y-2">
+      <div class="space-y-3">
         <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Main Campus List</h4>
-        <p class="font-sans text-zinc-400 text-[11px] leading-relaxed">ময়মনসিংহ মেইন ব্রাঞ্চ | ঈশ্বরগঞ্জ শাখা | নেত্রকোনা শাখা | গৌরীপুর শাখা | সাতক্ষীরা শাখা</p>
-      </div>
-      <div class="space-y-2">
-        <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Urgent Hotline</h4>
-        <p class="text-zinc-400 font-sans text-xs">Phone: 01713-599468<br>Email: cadetmission247@gmail.com</p>
+        <p class="font-sans text-zinc-400 text-xs leading-relaxed">ময়মনসিংহ মেইন ব্রাঞ্চ <br> ঈশ্বরগঞ্জ শাখা <br> নেত্রকোনা শাখা <br> গৌরীপুর শাখা <br> সাতক্ষীরা শাখা</p>
       </div>
       <div class="space-y-3">
+        <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Urgent Hotline</h4>
+        <p class="text-zinc-400 font-sans text-xs space-y-1">
+          <span class="block">Phone: <a href="tel:01713599468" class="text-zinc-300 hover:text-white transition">01713-599468</a></span>
+          <span class="block">Email: <a href="mailto:cadetmission247@gmail.com" class="text-zinc-300 hover:text-white transition">cadetmission247@gmail.com</a></span>
+        </p>
+      </div>
+      <div class="space-y-4">
         <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Social Gateways</h4>
-        <div class="flex justify-center md:justify-start gap-4 text-base text-zinc-300">
-          <a href="https://www.facebook.com/profile.php?id=100057168742289" target="_blank" class="hover:text-brandCrimson transition"><i class="fa-brands fa-facebook"></i></a>
-          <a href="https://wa.me/+8801713599468" target="_blank" class="hover:text-emerald-400 transition"><i class="fa-brands fa-whatsapp"></i></a>
-          <a href="tel:01713599468" class="hover:text-white transition"><i class="fa-solid fa-phone"></i></a>
+        <div class="flex justify-center sm:justify-start gap-4 text-lg text-zinc-300">
+          <a href="https://www.facebook.com/profile.php?id=100057168742289" target="_blank" class="h-10 w-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brandCrimson hover:text-white hover:border-brandCrimson transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://wa.me/+8801713599468" target="_blank" class="h-10 w-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-colors"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
       </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] text-zinc-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-zinc-500">
       <span>© CMCC CLASS 5 DATA GRID. ALL RIGHTS RESERVED 2026.</span>
-      <span class="text-zinc-300 font-bold uppercase tracking-wider bg-zinc-900/60 px-3 py-1.5 rounded-xl border border-zinc-800/80 shadow-md">
-        Re-Engineered & Developed by <span class="text-brandCrimson font-black tracking-widest">Zaeem</span> // Powered by Aether Lab
+      <span class="text-zinc-300 font-bold uppercase tracking-wider bg-zinc-900/60 px-4 py-2 rounded-xl border border-zinc-800/80 shadow-md">
+        Re-Engineered & Developed by <span class="text-brandCrimson font-black tracking-widest text-[11px] ml-1">Zaeem</span> // Powered by Aether Lab
       </span>
     </div>
   </footer>
@@ -383,7 +404,7 @@
         id: "wa-notice-3", 
         cat: "urgent", 
         date: "07 June 2026", 
-        title: "স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট এর সময়সূচী ও প্রবেশপত্র সংগ্রহ সংক্রান্ত", 
+        title: "স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট এর সময়সূচী ও প্রবেশপত্র সংগ্রহ", 
         body: "আগামী ১৪/০৬/২০২৬-রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট শুরু হচ্ছে। প্রত্যেক স্কুলের সিলেবাস অনুযায়ী আলাদা আলাদা প্রশ্নে পরীক্ষা হবে। আগামী ১২ই জুন বৃহস্পতিবারের মধ্যে চলতি মাসের মাসিক বেতন ও মডেল ফি (৩০০/- টাকা) পরিশোধ করে অফিস হতে প্রবেশপত্র (Admit Card) সংগ্রহ করার জন্য বিশেষ নির্দেশ দেওয়া হলো। [স্কুল লিস্ট: ১. প্রিমিয়াম আইডিয়াল হাই স্কুল, ২. আফরোজ খান, ৩. ক্যান্টনমেন্ট পাবলিক, ৪. প্রগ্রেসিভ, ৫. মুকুল নিকেতন হাই স্কুল, ৬. গভঃ ল্যাবরেটরি]" 
       },
       { 
@@ -391,14 +412,14 @@
         cat: "urgent", 
         date: "05 June 2026", 
         title: "হোয়াটসঅ্যাপ গ্রুপ ব্যবহার সংক্রান্ত বিশেষ জরুরী নির্দেশনা", 
-        body: "সম্মানিত অভিভাবকবৃন্দ ও প্রিয় ছাত্র-ছাত্রীবৃন্দ, শিক্ষামূলক এই whatsapp গ্রুপটি অভিভাবক ও ছাত্রছাত্রীদের সুবিধার্থে খোলা হয়েছে, কিন্তু বেশ কিছুদিন ধরে লক্ষ্য করা যাচ্ছে যে, ছাত্র ও ছাত্রীরা অফিশিয়াল এই গ্রুপটিকে তাদের নিজস্ব কথোপকথন গ্রুপ বানিয়ে ফেলেছে, সেক্ষেত্রে গুরুত্বপূর্ণ অনেক নোটিশ অনেকেই খুঁজে পাচ্ছেন না। আপনাদের বিশেষ প্রয়োজনে কারো সাথে কথা বলতে হলে গ্রুপ থেকে নম্বর নিয়ে ফোন দিন, অন্যথায় এই গ্রুপটিকে 'only admin can message' এই অপশনে স্থানান্তর করা হবে।" 
+        body: "সম্মানিত অভিভাবকবৃন্দ ও প্রিয় ছাত্র-ছাত্রীবৃন্দ, শিক্ষামূলক এই whatsapp গ্রুপটি আপনাদের সুবিধার্থে খোলা হয়েছে। গ্রুপে অপ্রাসঙ্গিক কথোপকথন সম্পূর্ণ পরিহার করার নির্দেশ দেওয়া হলো, অন্যথায় এই গ্রুপটিকে 'only admin can message' অপশনে রূপান্তর করা হবে। বিশেষ প্রয়োজনে সরাসরি অফিস নাম্বারে ফোন দেওয়ার জন্য অনুরোধ করা হলো।" 
       },
       { 
         id: "wa-notice-1", 
         cat: "routine", 
         date: "01 June 2026", 
         title: "অর্ধবার্ষিক পরীক্ষা ও ঈদ পরবর্তী ক্লাস চালুর নোটিশ", 
-        body: "ঈদের আনন্দের পাশাপাশি, পড়াশোনায়-ও ফিরে আসতে হবে। অর্ধবার্ষিক পরীক্ষার খুব বেশি সময় আমাদের হাতে নেই, তাই আগামী ০২/০৬/২০২৬ (মঙ্গলবার) -থেকে পঞ্চম শ্রেণীর শিডিউল অনুযায়ী নির্দিষ্ট সময়ে ক্লাস অনুষ্ঠিত হবে। সকলকে নির্দিষ্ট সময়ে ক্লাসে উপস্থিত থাকতে বলা হলো।" 
+        body: "ঈদের ছুটির পর আগামী ০২/০৬/২০২৬ (মঙ্গলবার) থেকে পঞ্চম শ্রেণীর রুটিন অনুযায়ী নির্দিষ্ট সময়ে ক্লাস পুনরায় রেগুলার অনুষ্ঠিত হবে। অর্ধবার্ষিক পরীক্ষার খুব বেশি সময় আমাদের হাতে নেই, তাই সকল শিক্ষার্থীকে নিয়মিত ও যথাসময়ে ক্লাসে উপস্থিত থাকার জন্য নির্দেশ দেওয়া হলো।" 
       }
     ];
 
@@ -407,12 +428,19 @@
     // Mobile Responsive Menu Controller Shifting Layers
     function toggleMobileMenuEngine(shouldOpen) {
       const overlay = document.getElementById('mobile-menu-overlay');
-      if (!overlay) return;
+      const panel = document.getElementById('mobile-menu-panel');
+      if (!overlay || !panel) return;
+      
       if (shouldOpen) {
         overlay.classList.remove('hidden');
-        setTimeout(() => { overlay.classList.add('opacity-100'); }, 10);
+        // Small delay to allow display:block to apply before animating opacity
+        setTimeout(() => { 
+          overlay.classList.add('opacity-100'); 
+          panel.classList.remove('translate-x-full');
+        }, 10);
       } else {
         overlay.classList.remove('opacity-100');
+        panel.classList.add('translate-x-full');
         setTimeout(() => { overlay.classList.add('hidden'); }, 300);
       }
     }
@@ -428,65 +456,77 @@
         return;
       }
 
-      // Memory loop linear optimization query lookups
-      const match = CLASS5_EXAM_RESULTS_REGISTRY.find(student => student.reg === queryValue);
-
-      if (!match) {
-        viewport.innerHTML = `
-          <div class="text-center py-8 text-xs text-brandCrimson bg-red-50 border border-red-200/60 rounded-xl font-mono max-w-sm mx-auto fade-in">
-            <i class="fa-solid fa-triangle-exclamation mr-1 text-sm block mb-1"></i> [INDEX_NOT_FOUND] এই রেজিঃ নম্বরের কোনো রেকর্ড পঞ্চম শ্রেণীর ডেটাবেজে পাওয়া যায়নি।
-          </div>`;
-        return;
-      }
-
-      // Render score matrix transcript sheet matching your screenshot structure
+      // UX Polish: Simulated Database Scanning State
       viewport.innerHTML = `
-        <div class="w-full bg-white border border-purple-200 rounded-2xl p-5 shadow-sm font-sans space-y-4 max-w-xl mx-auto border-t-4 border-t-brandPurple fade-in">
-          <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-zinc-100 pb-3 gap-2">
-            <div>
-              <span class="text-[9px] font-mono font-black bg-purple-100 text-purple-800 px-2 py-0.5 rounded uppercase tracking-wider">CLASS_5_OFFICIAL_TRANSCRIPT</span>
-              <h4 class="text-sm font-black text-zinc-900 mt-1">${match.name}</h4>
-              <p class="text-[10px] text-zinc-400 font-mono">REGISTRATION INDEX: ${match.reg}</p>
-            </div>
-            <div class="text-left sm:text-right bg-zinc-50 border border-zinc-200 rounded-xl p-2 px-4">
-              <span class="text-[9px] text-zinc-400 font-mono block uppercase font-bold tracking-wider">TOTAL SCORE</span>
-              <span class="text-lg font-mono font-black text-emerald-600">${match.total} <span class="text-xs text-zinc-400 font-normal">/ 400</span></span>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs font-mono">
-            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl transition-all hover:bg-zinc-100/50">
-              <span class="text-zinc-400 block text-[9px] font-sans mb-0.5 font-bold">ইংরেজি</span>
-              <span class="text-zinc-800 font-black text-sm">${match.eng}</span>
-            </div>
-            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl transition-all hover:bg-zinc-100/50">
-              <span class="text-zinc-400 block text-[9px] font-sans mb-0.5 font-bold">বাংলা</span>
-              <span class="text-zinc-800 font-black text-sm">${match.ban}</span>
-            </div>
-            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl transition-all hover:bg-zinc-100/50">
-              <span class="text-zinc-400 block text-[9px] font-sans mb-0.5 font-bold">গণিত</span>
-              <span class="text-zinc-800 font-black text-sm">${match.math}</span>
-            </div>
-            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl transition-all hover:bg-zinc-100/50">
-              <span class="text-zinc-400 block text-[9px] font-sans mb-0.5 font-bold">বিজ্ঞান</span>
-              <span class="text-zinc-800 font-black text-sm">${match.sci}</span>
-            </div>
-            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl col-span-2 sm:col-span-1 transition-all hover:bg-zinc-100/50">
-              <span class="text-zinc-400 block text-[9px] font-sans mb-0.5 font-bold">বাওবি</span>
-              <span class="text-zinc-800 font-black text-sm">${match.bgs}</span>
-            </div>
-          </div>
+        <div class="text-center py-12 text-zinc-400 font-mono space-y-3">
+          <i class="fa-solid fa-circle-notch fa-spin text-3xl text-brandCrimson block"></i>
+          <p class="text-xs uppercase tracking-widest font-bold">Querying Class 5 Registry...</p>
         </div>
       `;
+
+      // Fake delay to simulate backend processing (looks cooler/more professional)
+      setTimeout(() => {
+        const match = CLASS5_EXAM_RESULTS_REGISTRY.find(student => student.reg === queryValue);
+
+        if (!match) {
+          viewport.innerHTML = `
+            <div class="text-center py-8 text-xs text-brandCrimson bg-red-50 border border-red-200/60 rounded-xl font-mono max-w-sm mx-auto fade-in shadow-sm">
+              <i class="fa-solid fa-triangle-exclamation mr-1 text-sm block mb-1"></i> [INDEX_NOT_FOUND]<br>এই রেজিঃ নম্বরের কোনো রেকর্ড পঞ্চম শ্রেণীর ডেটাবেজে পাওয়া যায়নি।
+            </div>`;
+          return;
+        }
+
+        // Render score matrix transcript sheet with staggered animation styling
+        viewport.innerHTML = `
+          <div class="w-full bg-white border border-purple-200 rounded-3xl p-6 md:p-8 shadow-lg font-sans space-y-6 max-w-xl mx-auto border-t-[6px] border-t-brandPurple fade-in relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 opacity-5 text-[150px]"><i class="fa-solid fa-graduation-cap"></i></div>
+            
+            <div class="flex flex-col sm:flex-row justify-between sm:items-end border-b border-zinc-100 pb-4 gap-3 relative z-10">
+              <div>
+                <span class="text-[9px] font-mono font-black bg-purple-100 text-brandPurple px-2.5 py-1 rounded uppercase tracking-widest inline-block mb-2">OFFICIAL TRANSCRIPT</span>
+                <h4 class="text-lg font-black text-zinc-900 leading-none">${match.name}</h4>
+                <p class="text-[10px] text-zinc-400 font-mono mt-1">REGISTRATION ID: ${match.reg}</p>
+              </div>
+              <div class="text-left sm:text-right bg-zinc-50 border border-zinc-200 rounded-2xl p-3 px-5 shadow-inner">
+                <span class="text-[9px] text-zinc-400 font-mono block uppercase font-bold tracking-widest mb-0.5">TOTAL SCORE</span>
+                <span class="text-2xl font-mono font-black text-emerald-600 leading-none">${match.total} <span class="text-xs text-zinc-400 font-normal">/ 400</span></span>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center text-xs font-mono relative z-10">
+              <div class="bg-zinc-50 border border-zinc-200 p-3 rounded-2xl transition-all hover:bg-white hover:border-purple-200 hover:shadow-md hover:-translate-y-0.5" style="animation: fadeIn 0.4s ease forwards 0.1s; opacity:0;">
+                <span class="text-zinc-400 block text-[10px] font-sans mb-1 font-bold">ইংরেজি</span>
+                <span class="text-zinc-800 font-black text-base">${match.eng}</span>
+              </div>
+              <div class="bg-zinc-50 border border-zinc-200 p-3 rounded-2xl transition-all hover:bg-white hover:border-purple-200 hover:shadow-md hover:-translate-y-0.5" style="animation: fadeIn 0.4s ease forwards 0.2s; opacity:0;">
+                <span class="text-zinc-400 block text-[10px] font-sans mb-1 font-bold">বাংলা</span>
+                <span class="text-zinc-800 font-black text-base">${match.ban}</span>
+              </div>
+              <div class="bg-zinc-50 border border-zinc-200 p-3 rounded-2xl transition-all hover:bg-white hover:border-purple-200 hover:shadow-md hover:-translate-y-0.5" style="animation: fadeIn 0.4s ease forwards 0.3s; opacity:0;">
+                <span class="text-zinc-400 block text-[10px] font-sans mb-1 font-bold">গণিত</span>
+                <span class="text-zinc-800 font-black text-base">${match.math}</span>
+              </div>
+              <div class="bg-zinc-50 border border-zinc-200 p-3 rounded-2xl transition-all hover:bg-white hover:border-purple-200 hover:shadow-md hover:-translate-y-0.5" style="animation: fadeIn 0.4s ease forwards 0.4s; opacity:0;">
+                <span class="text-zinc-400 block text-[10px] font-sans mb-1 font-bold">বিজ্ঞান</span>
+                <span class="text-zinc-800 font-black text-base">${match.sci}</span>
+              </div>
+              <div class="bg-zinc-50 border border-zinc-200 p-3 rounded-2xl col-span-2 sm:col-span-1 transition-all hover:bg-white hover:border-purple-200 hover:shadow-md hover:-translate-y-0.5" style="animation: fadeIn 0.4s ease forwards 0.5s; opacity:0;">
+                <span class="text-zinc-400 block text-[10px] font-sans mb-1 font-bold">বাওবি</span>
+                <span class="text-zinc-800 font-black text-base">${match.bgs}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }, 600); // 600ms fake delay
     }
 
     // Dynamic Notices List Filtering Subsystem
     function filterNoticeDisplay(cat) {
       currentNoticeFilterTag = cat;
-      document.querySelectorAll('[id^="tab-"]').forEach(b => b.className = "px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0 uppercase tracking-wider outline-none");
+      document.querySelectorAll('[id^="tab-"]').forEach(b => b.className = "px-4 py-3.5 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0 uppercase tracking-wider outline-none");
       
       const activeTab = document.getElementById(`tab-${cat}`);
-      if(activeTab) activeTab.className = "px-3 py-3 border-b-2 border-brandCrimson text-brandCrimson transition shrink-0 font-bold uppercase tracking-wider outline-none";
+      if(activeTab) activeTab.className = "px-4 py-3.5 border-b-2 border-brandCrimson text-brandCrimson transition shrink-0 font-bold uppercase tracking-wider outline-none";
       
       renderNoticesGrid();
     }
@@ -502,24 +542,24 @@
       });
 
       if(filtered.length === 0) {
-        container.innerHTML = `<div class="text-center py-10 font-sans text-xs text-zinc-400">বর্তমানে কোনো নোটিশ রেকর্ড পাওয়া যায়নি।</div>`;
+        container.innerHTML = `<div class="text-center py-12 font-sans text-xs text-zinc-400 bg-zinc-50 rounded-xl m-2 border border-dashed border-zinc-200">বর্তমানে এই ক্যাটাগরিতে কোনো নোটিশ নেই।</div>`;
         return;
       }
 
       filtered.forEach(n => {
         const row = document.createElement('div');
-        row.className = "py-4 flex justify-between items-start gap-4 hover:bg-zinc-50/40 px-2 rounded-xl transition group fade-in";
+        row.className = "py-4 px-4 flex justify-between items-start gap-4 hover:bg-zinc-50 rounded-2xl transition-colors group fade-in cursor-pointer";
         row.innerHTML = `
-          <div class="space-y-1 font-sans">
+          <div class="space-y-1.5 font-sans pr-2">
             <div class="flex items-center gap-2 text-[10px] font-mono font-bold">
               <span class="text-zinc-400"><i class="fa-regular fa-clock"></i> ${n.date}</span>
-              <span class="px-1.5 py-0.5 rounded text-[8px] uppercase ${n.cat === 'urgent' ? 'bg-red-100 text-brandCrimson' : 'bg-purple-100 text-brandPurple'}">${n.cat}</span>
+              <span class="px-2 py-0.5 rounded text-[8px] uppercase ${n.cat === 'urgent' ? 'bg-red-100 text-brandCrimson' : 'bg-purple-100 text-brandPurple'}">${n.cat}</span>
             </div>
-            <h4 class="text-xs font-bold text-zinc-800 group-hover:text-brandPurple transition-colors">${n.title}</h4>
-            <p class="text-[11px] text-zinc-500 font-light leading-relaxed text-justify max-w-2xl">${n.body}</p>
+            <h4 class="text-sm font-bold text-zinc-800 group-hover:text-brandPurple transition-colors leading-snug">${n.title}</h4>
+            <p class="text-xs text-zinc-500 font-light leading-relaxed text-justify max-w-3xl">${n.body}</p>
           </div>
-          <div class="h-6 w-6 rounded-full bg-zinc-50 border border-zinc-200/60 flex items-center justify-center text-[9px] text-zinc-400 group-hover:bg-purple-100 group-hover:text-brandPurple transition shrink-0 mt-1">
-            <i class="fa fa-chevron-right"></i>
+          <div class="h-8 w-8 rounded-full bg-white border border-zinc-200 shadow-sm flex items-center justify-center text-[10px] text-zinc-400 group-hover:bg-brandPurple group-hover:text-white group-hover:border-brandPurple transition-all shrink-0 mt-2">
+            <i class="fa fa-chevron-right transition-transform group-hover:translate-x-0.5"></i>
           </div>
         `;
         container.appendChild(row);
