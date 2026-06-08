@@ -2,195 +2,363 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aether Lab // TG Command Core</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Aether Lab // Telegram Core Node</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    body { background: #09090b; color: #f4f4f5; font-family: monospace; overflow-x: hidden; }
-    .glass-panel { background: rgba(24, 24, 27, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
-    .custom-scroll::-webkit-scrollbar { width: 4px; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    body { background-color: #09090b; color: #f4f4f5; font-family: 'Inter', monospace; overflow-x: hidden; }
+    .glass-panel {
+      background: rgba(24, 24, 27, 0.65);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+    
+    .fade-in-node { animation: nodeSpawn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes nodeSpawn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
-<body class="min-h-screen p-4 sm:p-8 selection:bg-blue-500/30">
+<body class="min-h-screen p-4 sm:p-8 antialiased selection:bg-blue-600/40 selection:text-white">
 
-  <header class="max-w-5xl mx-auto flex justify-between items-end border-b border-zinc-800 pb-4 mb-8">
-    <div>
-      <h1 class="text-xl font-bold tracking-widest text-zinc-100 uppercase flex items-center gap-3">
-        <i class="fa-brands fa-telegram text-blue-500 text-2xl"></i>
-        Aether Lab <span class="text-zinc-600">//</span> TG_Core
+  <div class="max-w-6xl mx-auto mb-4">
+    <a href="./index.html" class="inline-flex items-center gap-2 text-[10px] font-bold text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-widest bg-zinc-900/40 border border-zinc-800/80 px-3 py-1.5 rounded-lg">
+      <i class="fa-solid fa-arrow-left-long"></i> Back to Root Matrix
+    </a>
+  </div>
+
+  <header class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between sm:items-end border-b border-zinc-800 pb-4 mb-8 gap-4">
+    <div class="space-y-1">
+      <h1 class="text-lg font-black tracking-widest text-zinc-100 uppercase flex items-center gap-2.5">
+        <i class="fa-brands fa-telegram text-blue-500 text-xl"></i>
+        Aether Lab <span class="text-zinc-700 font-normal">//</span> TG Command Core
       </h1>
-      <p class="text-xs text-zinc-500 mt-1 uppercase tracking-wider">100% Client-Side Telegram API Bridge</p>
+      <p class="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Stateless Browser Execution Environment Running Automated Update Loops</p>
     </div>
-    <div class="text-[10px] text-zinc-500 text-right">
-      <span id="bot-status-indicator" class="text-zinc-600 font-bold uppercase"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Offline</span>
+    
+    <div class="flex items-center gap-3">
+      <div class="bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-xl text-[10px] font-mono font-bold flex items-center gap-2 text-zinc-400">
+        <span class="text-zinc-600 uppercase">Engine:</span>
+        <span id="engine-mode-view" class="text-purple-400">IDLE_STANDBY</span>
+      </div>
+      <div class="bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-xl text-[10px] font-mono font-bold flex items-center gap-2">
+        <span id="bot-status-indicator" class="text-zinc-500 uppercase font-black tracking-wider flex items-center gap-1.5">
+          <span class="h-1.5 w-1.5 rounded-full bg-zinc-700"></span> Offline Node
+        </span>
+      </div>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+    
     <div class="lg:col-span-1 space-y-6">
-      <div class="glass-panel p-5 rounded-xl space-y-4 shadow-lg">
+      
+      <div class="glass-panel p-5 rounded-2xl space-y-4 shadow-xl">
         <div class="flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-800 pb-2">
-          <i class="fa-solid fa-key text-blue-400"></i> API Handshake
+          <i class="fa-solid fa-key text-blue-400"></i> Secure Gateway Handshake
         </div>
-        <div class="space-y-2">
-          <label class="text-[10px] text-zinc-500 uppercase tracking-wider">Bot Token</label>
-          <input type="password" id="tg-token" value="8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 text-xs text-zinc-300 focus:outline-none focus:border-blue-500 transition font-mono" placeholder="HTTP API Token..." />
+        <div class="space-y-1.5">
+          <label class="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Encrypted Token Registry</label>
+          <div class="relative flex items-center bg-zinc-950 border border-zinc-800 rounded-xl p-1 focus-within:border-blue-500 transition-colors">
+            <input type="password" id="tg-token" value="8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs" class="w-full bg-transparent p-2 text-xs text-zinc-300 font-mono tracking-widest focus:outline-none placeholder:text-zinc-700" placeholder="Paste bot token payload..." />
+            <button onclick="toggleTokenMask()" class="text-zinc-600 hover:text-zinc-400 px-2 text-xs" aria-label="Toggle Mask View"><i id="mask-icon" class="fa-solid fa-eye"></i></button>
+          </div>
         </div>
-        <button onclick="authenticateBot()" class="w-full bg-zinc-800 hover:bg-blue-600 hover:text-white text-zinc-300 border border-zinc-700 hover:border-blue-500 font-bold py-2 rounded-lg text-xs uppercase transition-all tracking-wider shadow-md">
-          Verify Connection
+        <button onclick="authenticateBotNetwork()" class="w-full bg-zinc-900 hover:bg-blue-600 border border-zinc-800 hover:border-blue-500 text-zinc-300 hover:text-white font-bold py-2.5 rounded-xl text-xs uppercase transition-all duration-200 tracking-wider shadow-md">
+          Initialize Active Sync
         </button>
       </div>
 
-      <div class="glass-panel p-5 rounded-xl space-y-4 shadow-lg relative overflow-hidden">
-        <div id="tx-overlay" class="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex items-center justify-center text-xs text-zinc-500 uppercase tracking-widest font-bold">
-          <i class="fa-solid fa-lock mr-2"></i> Auth Required
+      <div class="glass-panel p-5 rounded-2xl space-y-4 shadow-xl relative overflow-hidden">
+        <div id="tx-lockout-overlay" class="absolute inset-0 bg-zinc-950/85 backdrop-blur-[2px] z-30 flex flex-col items-center justify-center text-center p-4">
+          <div class="h-10 w-10 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center text-zinc-600 mb-2"><i class="fa-solid fa-lock text-sm"></i></div>
+          <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest font-black">Transmission Lockout Active</span>
+          <p class="text-[9px] text-zinc-600 font-sans max-w-xs mt-1 leading-relaxed">Establish a secure token handshake matrix execution signature above to clear this override relay shroud.</p>
         </div>
+        
         <div class="flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-800 pb-2">
-          <i class="fa-solid fa-satellite-dish text-emerald-400"></i> Transmission Deck
+          <i class="fa-solid fa-satellite-dish text-emerald-400"></i> Manual Payload Broadcast
         </div>
-        <div class="space-y-2">
-          <label class="text-[10px] text-zinc-500 uppercase tracking-wider flex justify-between">
-            Target Chat ID <span class="text-blue-500 cursor-pointer hover:underline" onclick="copyIdFromRadar()">(Get from Radar)</span>
+        
+        <div class="space-y-1.5">
+          <label class="text-[10px] text-zinc-500 uppercase tracking-widest font-bold flex justify-between">
+            Target Chat Identifier 
+            <span class="text-blue-500 cursor-pointer hover:underline text-[9px]" onclick="autoLockRadarTarget()">[Auto-Lock Target]</span>
           </label>
-          <input type="text" id="tx-chat-id" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 text-xs text-zinc-300 focus:outline-none focus:border-emerald-500 transition font-mono" placeholder="e.g., 123456789" />
+          <input type="text" id="tx-chat-id" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-300 focus:outline-none focus:border-emerald-500 font-mono transition-all" placeholder="Select target or paste chat ID..." />
         </div>
-        <div class="space-y-2">
-          <label class="text-[10px] text-zinc-500 uppercase tracking-wider">Payload Data</label>
-          <textarea id="tx-message" rows="4" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 text-xs text-zinc-300 focus:outline-none focus:border-emerald-500 transition font-mono resize-none" placeholder="Enter message payload..."></textarea>
+        
+        <div class="space-y-1.5">
+          <label class="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Text Packet Stream (HTML Allowed)</label>
+          <textarea id="tx-message" rows="4" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-300 focus:outline-none focus:border-emerald-500 font-sans transition-all resize-none leading-relaxed placeholder:text-zinc-700" placeholder="Enter output text message sequence data..."></textarea>
         </div>
-        <button onclick="transmitPayload()" class="w-full bg-emerald-900/30 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-800/50 hover:border-emerald-500 font-bold py-2.5 rounded-lg text-xs uppercase transition-all tracking-widest shadow-md flex justify-center items-center gap-2">
-          <i class="fa-solid fa-paper-plane"></i> Execute Send
+        
+        <button onclick="transmitManualPayloadOverrides()" class="w-full bg-emerald-950/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-900/40 hover:border-emerald-500 font-bold py-3 rounded-xl text-xs uppercase transition-all duration-200 tracking-widest shadow-md flex justify-center items-center gap-2">
+          <i class="fa-solid fa-paper-plane text-[10px]"></i> Transmit Override
         </button>
       </div>
+
     </div>
 
-    <div class="lg:col-span-2 glass-panel rounded-xl flex flex-col shadow-lg overflow-hidden border border-zinc-800">
-      <div class="bg-zinc-900 px-5 py-4 flex justify-between items-center border-b border-zinc-800 shrink-0">
+    <div class="lg:col-span-2 glass-panel rounded-2xl flex flex-col shadow-xl overflow-hidden border border-zinc-800/80">
+      
+      <div class="bg-zinc-900/60 px-5 py-4 flex justify-between items-center border-b border-zinc-800 shrink-0">
         <div class="flex items-center gap-2 text-xs font-bold text-zinc-300 uppercase tracking-widest">
-          <i class="fa-solid fa-radar text-purple-400"></i> Active Radar / Inbox
+          <i class="fa-solid fa-radar text-purple-400 animate-pulse"></i> Active Radar Telemetry / Queue Log
         </div>
-        <button onclick="pollUpdates()" class="bg-zinc-800 hover:bg-purple-600 hover:text-white text-zinc-400 border border-zinc-700 font-bold px-3 py-1.5 rounded text-[10px] uppercase transition-all tracking-wider">
-          <i class="fa-solid fa-rotate-right mr-1"></i> Scan Network
+        <button onclick="pollIncomingNetworkTraffic()" class="bg-zinc-800 hover:bg-purple-600 border border-zinc-700 hover:border-purple-500 text-zinc-400 hover:text-white font-bold px-3 py-1.5 rounded-lg text-[10px] uppercase transition-all duration-150 tracking-wider">
+          <i class="fa-solid fa-arrows-rotate mr-1"></i> Force Sweep
         </button>
       </div>
-      <div id="radar-screen" class="flex-1 p-5 overflow-y-auto custom-scroll space-y-3 bg-zinc-950/50 min-h-[400px]">
-        <div class="text-center py-12 text-zinc-600 text-xs uppercase tracking-widest font-bold">
-          <i class="fa-solid fa-network-wired text-3xl block mb-3 text-zinc-800"></i>
-          Awaiting API Connection...
+
+      <div id="radar-screen" class="flex-1 p-5 overflow-y-auto custom-scroll space-y-3 bg-zinc-950/30 min-h-[440px] max-h-[580px]">
+        <div class="text-center py-16 text-zinc-600 text-xs uppercase tracking-widest font-bold font-mono">
+          <i class="fa-solid fa-circle-nodes text-3xl block mb-4 text-zinc-800"></i>
+          Awaiting Handshake Activation Node Sequence...
         </div>
       </div>
+
     </div>
   </main>
 
   <script>
-    let botToken = "";
-    let lastCopiedId = "";
+    let activeBotTokenMatrix = "";
+    let systemLastLoggedUpdateId = 0;
+    let autoPilotExecutionTimerHandle = null;
+    let lastIdentifiedRadarChatId = "";
 
-    async function authenticateBot() {
-      const inputToken = document.getElementById('tg-token').value.trim();
-      if (!inputToken) return alert("System Error: Token missing.");
+    // 1. Mask Input Value View Toggles Utility
+    function toggleTokenMask() {
+      const input = document.getElementById('tg-token');
+      const icon = document.getElementById('mask-icon');
+      if (input.type === "password") {
+        input.type = "text";
+        icon.className = "fa-solid fa-eye-slash";
+      } else {
+        input.type = "password";
+        icon.className = "fa-solid fa-eye";
+      }
+    }
+
+    // 2. Main Authentication Entry Handshake System
+    async function authenticateBotNetwork() {
+      const tokenInput = document.getElementById('tg-token').value.trim();
+      if (!tokenInput) return alert("Initialization Aborted: Token definition field null.");
+      
       const indicator = document.getElementById('bot-status-indicator');
-      const txOverlay = document.getElementById('tx-overlay');
-      indicator.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-[8px] mr-1"></i>Connecting...`;
+      const engineView = document.getElementById('engine-mode-view');
+      const lockoutOverlay = document.getElementById('tx-lockout-overlay');
+      
+      indicator.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-[8px] mr-1 text-blue-400"></i> Authenticating...`;
       
       try {
-        const response = await fetch(`https://api.telegram.org/bot${inputToken}/getMe`);
+        const response = await fetch(`https://api.telegram.org/bot${tokenInput}/getMe`);
         const data = await response.json();
+        
         if (data.ok) {
-          botToken = inputToken;
-          indicator.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-circle text-[8px] mr-1"></i>@${data.result.username} Online</span>`;
-          txOverlay.style.display = "none";
-          pollUpdates();
+          activeBotTokenMatrix = tokenInput;
+          indicator.innerHTML = `<span class="text-emerald-400 font-black"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400 inline-block mr-1 animate-pulse"></span> @${data.result.username}</span>`;
+          engineView.innerText = "AUTOPILOT_ONLINE";
+          engineView.className = "text-emerald-400 font-bold";
+          lockoutOverlay.style.opacity = "0";
+          setTimeout(() => lockoutOverlay.style.display = "none", 300);
+          
+          // Ignition fire: Boot automated looping thread engine immediately inside client framework
+          igniteAutoPilotCoreEngine();
         } else {
-          indicator.innerHTML = `<span class="text-red-500"><i class="fa-solid fa-triangle-exclamation text-[8px] mr-1"></i>Auth Failed</span>`;
+          indicator.innerHTML = `<span class="text-brandCrimson font-bold"><i class="fa-solid fa-square-xmark mr-1"></i> Access Denied</span>`;
+          engineView.innerText = "ERROR_BAD_TOKEN";
+          engineView.className = "text-red-500 font-bold";
         }
       } catch (err) {
-        indicator.innerHTML = `<span class="text-red-500">Network Error</span>`;
+        indicator.innerHTML = `<span class="text-red-400">Network Exception</span>`;
       }
     }
 
-    async function pollUpdates() {
-      if (!botToken) return;
-      const screen = document.getElementById('radar-screen');
-      try {
-        const response = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?limit=20`);
-        const data = await response.json();
-        if (data.ok) {
-          screen.innerHTML = "";
-          if (data.result.length === 0) {
-            screen.innerHTML = `<div class="text-center py-12 text-zinc-600 text-[10px] uppercase tracking-widest font-bold">No data detected in radar.</div>`;
-            return;
-          }
-          data.result.reverse().forEach(item => {
-            if (!item.message) return;
-            const msg = item.message;
-            const isCommand = msg.text && msg.text.startsWith('/');
-            const div = document.createElement('div');
-            div.className = "bg-zinc-900 border border-zinc-800 rounded-xl p-3.5 flex flex-col gap-2 hover:border-zinc-600 transition";
-            div.innerHTML = `
-              <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
-                <span class="text-[10px] text-zinc-400 font-bold tracking-wider uppercase flex items-center gap-2">
-                  <i class="fa-solid fa-user text-zinc-600"></i> ${msg.from.first_name || 'Unknown'} 
-                  <span class="text-zinc-600 lowercase bg-zinc-950 px-1.5 py-0.5 rounded border border-zinc-800">@${msg.from.username || 'none'}</span>
-                </span>
-                <button onclick="setTargetChat('${msg.chat.id}')" class="text-[9px] bg-blue-900/30 text-blue-400 border border-blue-800 hover:bg-blue-600 hover:text-white px-2 py-1 rounded tracking-widest uppercase transition">
-                  Target ID: ${msg.chat.id}
-                </button>
-              </div>
-              <div class="text-xs text-zinc-300 font-sans leading-relaxed ${isCommand ? 'text-purple-400 font-bold' : ''}">
-                ${msg.text || '[Attachment Received]'}
-              </div>
-            `;
-            screen.appendChild(div);
-          });
-        }
-      } catch (err) {
-        console.error("Radar sweep failed:", err);
-      }
-    }
-
-    function setTargetChat(id) {
-      document.getElementById('tx-chat-id').value = id;
-      lastCopiedId = id;
-      const input = document.getElementById('tx-chat-id');
-      input.classList.add('bg-blue-900/30', 'border-blue-500');
-      setTimeout(() => input.classList.remove('bg-blue-900/30', 'border-blue-500'), 500);
-    }
-
-    function copyIdFromRadar() {
-      if(lastCopiedId) setTargetChat(lastCopiedId);
-    }
-
-    async function transmitPayload() {
-      if (!botToken) return;
-      const chatId = document.getElementById('tx-chat-id').value.trim();
-      const text = document.getElementById('tx-message').value.trim();
-      if (!chatId || !text) return alert("System Error: Target ID and Payload required.");
+    // 3. Auto-Pilot Dynamic Loop Control Architecture (3000ms Interval Sweep)
+    function igniteAutoPilotCoreEngine() {
+      if (autoPilotExecutionTimerHandle) clearInterval(autoPilotExecutionTimerHandle);
       
+      pollIncomingNetworkTraffic(); // Frame fire initial state sweep
+      
+      autoPilotExecutionTimerHandle = setInterval(async () => {
+        if (!activeBotTokenMatrix) return;
+        try {
+          // Deploy precise index delta array gates matching historical offsets tracking loops
+          const response = await fetch(`https://api.telegram.org/bot${activeBotTokenMatrix}/getUpdates?offset=${systemLastLoggedUpdateId + 1}&limit=10`);
+          const data = await response.json();
+          
+          if (data.ok && data.result.length > 0) {
+            updateRadarDisplayPanelUI(data.result);
+            
+            // Loop evaluation structures across transaction stacks chronologically
+            for (let networkPacket of data.result) {
+              systemLastLoggedUpdateId = networkPacket.update_id;
+              if (networkPacket.message && networkPacket.message.text) {
+                await evaluateTrafficKeywordsAndReply(networkPacket.message);
+              }
+            }
+          }
+        } catch (err) {
+          console.log("Telemetry matrix holding background cycle bounds...");
+        }
+      }, 3000); // 3-second heartbeat cycle
+    }
+
+    // 4. Force/Manual Sweep Pipeline Evaluator execution node
+    async function pollIncomingNetworkTraffic() {
+      if (!activeBotTokenMatrix) return;
       try {
-        const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        const response = await fetch(`https://api.telegram.org/bot${activeBotTokenMatrix}/getUpdates?limit=15`);
+        const data = await response.json();
+        if (data.ok && data.result.length > 0) {
+          updateRadarDisplayPanelUI(data.result);
+          // Sync baseline index delta updates safely matching current max update footprints
+          const highestOffsetItem = data.result[data.result.length - 1];
+          systemLastLoggedUpdateId = highestOffsetItem.update_id;
+        }
+      } catch (e) {
+        console.error("Radar frame force scan execution error sequence:", e);
+      }
+    }
+
+    // 5. Dynamic Computational Keyword Evaluator Engine & Bengali Conversational Payload Distributor
+    async function evaluateTrafficKeywordsAndReply(msg) {
+      const parsedCleanText = msg.text.trim().toLowerCase();
+      const targetChatId = msg.chat.id;
+      let automatedResponsePayloadText = "";
+
+      // Dynamic rule matrix allocation mappings matching your explicit Class 5 boys text feeds screenshots instructions
+      if (parsedCleanText.includes('/start') || parsedCleanText.includes('hello') || parsedCleanText.includes('hi') || parsedCleanText.includes('সালাম')) {
+        automatedResponsePayloadText = `আসসালামু আলাইকুম <b>${msg.from.first_name || 'শিক্ষার্থী'}</b>! ক্যাডেট মিশন ক্লাসরুম অটো-বট পোর্টালে আপনাকে স্বাগতম।\n\nপঞ্চম শ্রেণীর বৃত্তি পরীক্ষার রেজাল্ট দেখতে টাইপ করুন: <b>result</b>\nচলতি সপ্তাহের জরুরী পরীক্ষার নোটিশ দেখতে টাইপ করুন: <b>notice</b>`;
+      } 
+      else if (parsedCleanText.includes('result') || parsedCleanText.includes('রেজাল্ট') || parsedCleanText.includes('মার্কশিট') || parsedCleanText.includes('পরীক্ষা')) {
+        automatedResponsePayloadText = `<b>ক্যাডেট মিশন পঞ্চম শ্রেণী মডেল টেস্ট ফলাফল জেনারেটর:</b>\n\nবৃত্তিভিত্তিক মডেল পরীক্ষার মেধা তালিকা ও মার্কশিট ডিজিটাল পোর্টালে লাইভ করা হয়েছে। নিচের অফিশিয়াল লিংকে ক্লিক করে আপনার ৫ ডিজিটের রেজিঃ নম্বর দিয়ে ফলাফল অনুসন্ধান করুন:\n\n👉 https://aether-lab.web.app/class5.html`;
+      } 
+      else if (parsedCleanText.includes('notice') || parsedCleanText.includes('নোটিশ') || parsedCleanText.includes('রুটিন') || parsedCleanText.includes('ফি')) {
+        automatedResponsePayloadText = `<b>ক্যাডেট মিশন অফিশিয়াল নোটিশ আপডেট:</b>\n\n• <b>মডেল টেস্ট শুরু:</b> আগামী ১৪ই জুন রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট নিশ্চিতভাবে শুরু হচ্ছে।\n• <b>প্রবেশপত্র সংগ্রহ:</b> ১২ই জুন বৃহস্পতিবারের মধ্যে চলতি মাসের বেতন ও মডেল ফি (৩০০/- টাকা) পরিশোধ করে অফিস থেকে এডমিট কার্ড সংগ্রহ করতে হবে।\n• <b>পরীক্ষা পদ্ধতি:</b> প্রত্যেক স্কুলের নিজস্ব সিলেবাস অনুযায়ী আলাদা প্রশ্নপত্রে পরীক্ষা হবে।`;
+      } 
+      else {
+        automatedResponsePayloadText = `দুঃখিত, আপনার অনুরোধটি ডিরেক্টরি ডেটাতে পাওয়া যায়নি। অনুগ্রহ করে সঠিক তথ্যের জন্য কেবল <b>result</b> অথবা <b>notice</b> টাইপ করুন।`;
+      }
+
+      // Execute non-blocking client pipeline post back into Telegram REST channels endpoints
+      try {
+        await fetch(`https://api.telegram.org/bot${activeBotTokenMatrix}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
+          body: JSON.stringify({
+            chat_id: targetChatId,
+            text: automatedResponsePayloadText,
+            parse_mode: 'HTML'
+          })
         });
-        const data = await response.json();
-        if (data.ok) {
-          document.getElementById('tx-message').value = "";
-          pollUpdates();
-          const btn = document.querySelector('button[onclick="transmitPayload()"]');
-          const originalHTML = btn.innerHTML;
-          btn.innerHTML = `<i class="fa-solid fa-check"></i> Transmitted`;
-          btn.classList.add('bg-emerald-600', 'text-white');
-          setTimeout(() => { btn.innerHTML = originalHTML; btn.classList.remove('bg-emerald-600', 'text-white'); }, 1500);
-        } else {
-          alert(`Transmission Failed: ${data.description}`);
-        }
       } catch (err) {
-        alert("Critical API Error.");
+        console.error("Auto-reply transmission dropout failure:", err);
       }
     }
+
+    // 6. UI Render Injection Engine Matrix
+    function updateRadarDisplayPanelUI(updatesArray) {
+      const radarScreenNode = document.getElementById('radar-screen');
+      if(!radarScreenNode) return;
+      
+      if(radarScreenNode.innerText.includes('Awaiting')) radarScreenNode.innerHTML = "";
+
+      // Reverse list structure map blocks to place recent packets at top layer screen boundaries
+      const visualCompilationList = [...updatesArray].reverse();
+
+      visualCompilationList.forEach(item => {
+        if (!item.message) return;
+        const msg = item.message;
+        const domTraceElementID = `update-node-${item.update_id}`;
+        
+        // Prevent duplicate append traces operations safely
+        if (document.getElementById(domTraceElementID)) return;
+        
+        lastIdentifiedRadarChatId = msg.chat.id; // Retain latest channel tracker pointer trace
+
+        const cardNodeBox = document.createElement('div');
+        cardNodeBox.id = domTraceElementID;
+        cardNodeBox.className = "bg-zinc-900 border border-zinc-800 rounded-xl p-3.5 flex flex-col gap-2 hover:border-zinc-700 transition fade-in-node";
+        
+        cardNodeBox.innerHTML = `
+          <div class="flex justify-between items-center border-b border-zinc-800/60 pb-2">
+            <span class="text-[10px] text-zinc-400 font-bold tracking-wider uppercase flex items-center gap-2">
+              <i class="fa-solid fa-user-ninja text-zinc-600"></i> ${msg.from.first_name || 'Anonymous Node'} 
+              <span class="text-zinc-600 lowercase bg-zinc-950 px-1.5 py-0.5 rounded border border-zinc-800">@${msg.from.username || 'null'}</span>
+            </span>
+            <button onclick="lockManualTargetSelectionId('${msg.chat.id}')" class="text-[9px] bg-blue-950/40 text-blue-400 border border-blue-900/40 hover:bg-blue-600 hover:text-white hover:border-blue-500 px-2.5 py-1 rounded-md tracking-widest uppercase transition duration-150 font-bold">
+              ID: ${msg.chat.id} <i class="fa-solid fa-crosshairs ml-1"></i>
+            </button>
+          </div>
+          <div class="text-xs text-zinc-300 font-sans leading-relaxed break-all">${msg.text || '[Non-Text Data Buffer Array Received]'}</div>
+        `;
+        radarScreenNode.insertBefore(cardNodeBox, radarScreenNode.firstChild);
+      });
+    }
+
+    // 7. Manual Override Target Locks Controls
+    function lockManualTargetSelectionId(chatIdString) {
+      document.getElementById('tx-chat-id').value = chatIdString;
+      
+      const inputTargetField = document.getElementById('tx-chat-id');
+      inputTargetField.classList.add('border-emerald-500', 'bg-emerald-950/10');
+      setTimeout(() => inputTargetField.classList.remove('border-emerald-500', 'bg-emerald-950/10'), 600);
+    }
+
+    function autoLockRadarTarget() {
+      if(lastIdentifiedRadarChatId) lockManualTargetSelectionId(lastIdentifiedRadarChatId);
+    }
+
+    // 8. Manual Override Outbound Broadcast Transmitter Request Shunt
+    async function transmitManualPayloadOverrides() {
+      if (!activeBotTokenMatrix) return;
+      const targetIdFieldVal = document.getElementById('tx-chat-id').value.trim();
+      const rawTextPayloadStream = document.getElementById('tx-message').value.trim();
+      
+      if (!targetIdFieldVal || !rawTextPayloadStream) {
+        alert("Transmission Blocked: Target Chat ID and Message constraints cannot run as null vectors.");
+        return;
+      }
+      
+      try {
+        const response = await fetch(`https://api.telegram.org/bot${activeBotTokenMatrix}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: targetIdFieldVal,
+            text: rawTextPayloadStream,
+            parse_mode: 'HTML'
+          })
+        });
+        const outputReportData = await response.json();
+        
+        if (outputReportData.ok) {
+          document.getElementById('tx-message').value = ""; // Clear buffer region on clean execution
+          pollIncomingNetworkTraffic(); // Refresh radar fields instantly
+        } else {
+          alert(`Transmission Core Rejection: ${outputReportData.description}`);
+        }
+      } catch (err) {
+        alert("Critical Framework Dispatch Error.");
+      }
+    }
+
+    // Boot execution systems on thread allocation mapping initialization bounds hooks
+    window.onload = () => {
+      // Auto boot preloaded token configuration on lifecycle mount triggers
+      authenticateBotNetwork();
+    };
   </script>
 </body>
 </html>
