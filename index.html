@@ -1,47 +1,327 @@
-function renderMasterNoticeBoard() {
-  const container = document.getElementById('notice-board-target');
-  if (!container) return;
-  container.innerHTML = "";
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Cadet Mission Coaching Center // Home</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  // 1. Sort notices to ensure urgent ones appear at the absolute top
-  const sortedNotices = [...CMCC_NOTICES].sort((a, b) => {
-    if (a.type === 'urgent' && b.type !== 'urgent') return -1;
-    if (a.type !== 'urgent' && b.type === 'urgent') return 1;
-    return 0;
-  });
-
-  // 2. Loop through and dynamically generate clean, neutral UI blocks
-  sortedNotices.forEach(notice => {
-    const isUrgent = notice.type === 'urgent';
+  <style>
+    body { font-family: 'Hind Siliguri', 'Inter', sans-serif; background-color: #fcfcfd; }
+    .marquee-stream { animation: slide-left 28s linear infinite; }
+    @keyframes slide-left { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+    .tab-active { color: #dc2626; border-bottom-color: #dc2626; }
     
-    const noticeCard = document.createElement('div');
-    noticeCard.className = `p-4 mb-3 rounded-xl border transition-all duration-200 ${
-      isUrgent 
-        ? 'bg-red-50/60 border-red-200/80 shadow-sm' 
-        : 'bg-zinc-50/50 border-zinc-200 hover:bg-zinc-50'
-    }`;
+    /* Official Color Profile matching the logo and footer screenshots */
+    .brand-purple { color: #4c1d95; }
+    .bg-brand-purple { background-color: #4c1d95; }
+    .bg-cadet-teal { background-color: #0b2e2c; } /* Matching the exact dark teal photo background/footer */
+    .border-cadet-teal { border-color: #0b2e2c; }
+  </style>
+</head>
+<body class="text-zinc-800 antialiased selection:bg-red-600 selection:text-white">
 
-    // Generate attachment button layout if a PDF or download link is present
-    const downloadButton = notice.attachment 
-      ? `<a href="${notice.attachment}" download class="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold bg-zinc-900 text-white px-2.5 py-1 rounded hover:bg-zinc-800 transition mt-2">
-          <i class="fa fa-download"></i> DOWNLOAD ATTACHMENT
-         </a>`
-      : '';
-
-    noticeCard.innerHTML = `
-      <div class="flex flex-col gap-1">
-        <div class="flex justify-between items-center text-[10px] font-mono">
-          <span class="text-zinc-400 font-medium">${notice.date}</span>
-          <span class="px-2 py-0.5 rounded-md font-bold uppercase tracking-wider text-[9px] ${
-            isUrgent ? 'bg-red-200 text-red-800' : 'bg-zinc-200 text-zinc-600'
-          }">${notice.type}</span>
-        </div>
-        <h3 class="text-xs font-bold ${isUrgent ? 'text-red-700' : 'text-zinc-800'} tracking-wide mt-1">${notice.title}</h3>
-        <p class="text-[11px] text-zinc-600 leading-relaxed font-sans mt-1.5 text-justify">${notice.content}</p>
-        ${downloadButton}
+  <div class="fixed bottom-6 right-6 z-50 transition-transform duration-300 hover:scale-110 shadow-xl rounded-full">
+    <a href="https://wa.me/+8801713599468" target="_blank" aria-label="Connect on WhatsApp">
+      <div class="bg-emerald-500 p-4 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl border border-white/20">
+        <i class="fa-brands fa-whatsapp"></i>
       </div>
-    `;
+    </a>
+  </div>
+
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-zinc-200/80 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+      
+      <a href="/" class="flex items-center gap-2.5 group">
+        <div class="h-14 w-14 shrink-0 relative flex items-center justify-center bg-white rounded-full border border-zinc-200 shadow-sm p-1">
+          <svg viewBox="0 0 100 100" class="w-full h-full">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#4c1d95" stroke-width="2"/>
+            <path d="M25,60 C35,25 65,25 75,60 C65,75 35,75 25,60 Z" fill="#facc15" opacity="0.3"/>
+            <circle cx="50" cy="50" r="26" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+            <path d="M34,52 Q50,42 66,52 Q50,62 34,52 Z" fill="none" stroke="#059669" stroke-width="2"/>
+            <line x1="50" y1="36" x2="50" y2="48" stroke="#dc2626" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-base font-black text-zinc-900 tracking-tight leading-tight">ক্যাডেট মিশন কোচিং সেন্টার</h2>
+          <p class="text-[10px] font-mono font-bold tracking-widest text-red-600 uppercase mt-0.5">Be Active, Be Creative</p>
+        </div>
+      </a>
+      
+      <nav class="hidden lg:flex items-center gap-6 text-xs font-bold text-zinc-500 uppercase tracking-wider">
+        <a href="/" class="text-red-600 transition">Home</a>
+        <a href="/program" class="hover:text-purple-800 transition">Program</a>
+        <a href="/admission" class="hover:text-purple-800 transition">Online Admission</a>
+        <a href="/branch" class="hover:text-purple-800 transition">Branch</a>
+        <a href="/result" class="hover:text-purple-800 transition">Result</a>
+        <a href="/notice" class="hover:text-purple-800 transition">Notice</a>
+        <a href="/connect-with-us" class="hover:text-purple-800 transition">Contact Us</a>
+      </nav>
+
+      <button class="lg:hidden flex flex-col gap-1.5 p-2 rounded-lg border border-zinc-200" aria-label="Toggle Menu">
+        <span class="h-0.5 w-5 bg-zinc-600 rounded"></span>
+        <span class="h-0.5 w-5 bg-zinc-600 rounded"></span>
+        <span class="h-0.5 w-5 bg-zinc-600 rounded"></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="bg-brand-purple text-zinc-100 py-2.5 overflow-hidden border-b border-purple-950 font-medium text-xs shadow-inner">
+    <div class="max-w-7xl mx-auto px-4 flex items-center">
+      <span class="bg-red-600 text-white px-2.5 py-0.5 rounded font-black text-[9px] uppercase tracking-widest shrink-0 z-10 mr-4 shadow-md">Notice //</span>
+      <div class="w-full overflow-hidden relative h-4">
+        <div class="marquee-stream absolute whitespace-nowrap font-sans text-white/95">
+          Cadet Mission Coaching Center. Be Active, Be Creative. || পঞ্চম শ্রেণী বৃত্তি ব্যাচ + অ্যাডভান্স ক্যাডেট ব্যাচ ভর্তি চলছে! 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="relative bg-zinc-950 py-16 px-4 overflow-hidden border-b border-zinc-800">
+    <div class="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-overlay" style="background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200');"></div>
+    <div class="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
+      
+      <div class="max-w-xl space-y-4 text-center lg:text-left">
+        <span class="bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-mono font-bold">Class 5 Specialized Hub</span>
+        <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+          ক্যাডেট কলেজ ভর্তি পরীক্ষা ও <br><span class="text-red-500 font-light">বৃত্তি পরীক্ষার</span> সেরা অনলাইন পোর্টাল
+        </h1>
+        <p class="text-zinc-400 text-xs sm:text-sm leading-relaxed font-light">
+          অভিজ্ঞ ও তরুণ শিক্ষকমণ্ডলীর নিবিড় তত্ত্বাবধানে শিক্ষার্থীদের সুপ্ত মেধা বিকাশের একটি নির্ভরযোগ্য প্ল্যাটফর্ম।
+        </p>
+      </div>
+
+      <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl p-2 shadow-2xl relative group">
+        <div class="aspect-[4/3] rounded-xl bg-zinc-800 overflow-hidden relative border border-zinc-700/50 flex items-center justify-center">
+          <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent z-10"></div>
+          <span class="text-zinc-500 text-xs font-mono z-0">[ Cadet Success Photo Stream ]</span>
+        </div>
+        <div class="p-3 text-center font-mono text-[11px] text-zinc-400">
+          • SYSTEM ENGINE STATUS: <span class="text-emerald-400 font-bold animate-pulse">ONLINE</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
     
-    container.appendChild(noticeCard);
-  });
-}
+    <div class="lg:col-span-1 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm flex flex-col justify-between">
+      <div class="space-y-4">
+        <div class="h-56 w-full bg-zinc-100 rounded-xl overflow-hidden border border-zinc-200 relative shadow-inner">
+          <div class="absolute inset-0 flex items-center justify-center text-zinc-400 text-xs font-mono">[ Ashek Mahmod Profile Photo ]</div>
+        </div>
+        <div class="space-y-0.5">
+          <h3 class="text-base font-black text-zinc-900">আশেক মাহমোদ</h3>
+          <p class="text-xs font-bold text-purple-900">পরিচালক, ক্যাডেট মিশন কোচিং সেন্টার</p>
+        </div>
+        <div class="text-zinc-600 text-xs leading-relaxed text-justify space-y-2 border-t border-zinc-100 pt-3">
+          <p>সুপ্রিয় সুধী, আসসালামু আলাইকুম। “ক্যাডেট মিশন” বিশ্বাস করে প্রতিটি শিশু অনন্য মেধার অধিকারী। তাদের সুপ্ত মেধা বিকাশের গুরু দায়িত্ব যখন আপনারা আমাদের হাতে তুলে দেন তখন তা পালন করা আমাদের দায়িত্ব এবং কর্তব্যে পরিণত হয়।</p>
+          <p>আপনার সময় উপযোগী সিদ্ধান্তই আপনার সন্তানের ভবিষ্যৎ নির্ধারণ করে, তার সাথে সঠিক পথ প্রদর্শক যুক্ত হলে আগামীর মেধাবী প্রজন্ম আশা করি খুব বেশি দূরে নয়।</p>
+        </div>
+      </div>
+      <div class="pt-4 border-t border-zinc-100 mt-6 flex justify-between text-[10px] text-zinc-400 font-mono">
+        <span>ESTD // 2018</span>
+        <span>MYMENSINGH // BD</span>
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col">
+      <div class="bg-cadet-teal text-zinc-100 px-5 py-4 flex justify-between items-center shrink-0 border-b border-zinc-800">
+        <div class="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-red-400">
+          <i class="fa fa-file-text"></i>
+          <span>Recent Notice & Routine Board</span>
+        </div>
+        <span class="text-[10px] font-mono text-zinc-400">Companion View: <span id="local-audit-counter" class="text-white font-bold">40304</span></span>
+      </div>
+
+      <div class="bg-zinc-50 border-b border-zinc-200/60 px-4 flex gap-1 font-mono text-[11px] font-bold text-zinc-500 overflow-x-auto shrink-0">
+        <button onclick="filterNoticeDisplay('all')" id="tab-all" class="px-3 py-3 border-b-2 border-red-600 text-red-600 transition shrink-0">ALL NOTICES</button>
+        <button onclick="filterNoticeDisplay('urgent')" id="tab-urgent" class="px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0">URGENT</button>
+        <button onclick="filterNoticeDisplay('routine')" id="tab-routine" class="px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0">RESULTS</button>
+      </div>
+
+      <div id="notice-board-target" class="flex-1 p-4 overflow-y-auto max-h-[440px] divide-y divide-zinc-100">
+        </div>
+    </div>
+
+  </main>
+
+  <section class="bg-zinc-50 border-t border-zinc-200 py-12 px-4">
+    <div class="max-w-7xl mx-auto space-y-8">
+      <div class="text-center space-y-1">
+        <h2 class="text-xl font-black text-zinc-900 uppercase tracking-wide">Our Programs</h2>
+        <p class="text-xs text-zinc-400 font-mono">CLASS SEGMENTATION REGISTRY</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3">
+          <div class="space-y-2">
+            <div class="h-10 w-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-700 font-black text-sm mx-auto">০৫</div>
+            <h3 class="text-sm font-bold text-zinc-800">পঞ্চম শ্রেণী</h3>
+            <p class="text-[11px] text-zinc-500 leading-relaxed">বৃত্তি ব্যাচ + অ্যাডভান্স ক্যাডেট ব্যাচ<br><span class="text-zinc-400 font-semibold">বাংলা + English Version</span></p>
+          </div>
+          <span class="bg-zinc-50 border border-zinc-200 rounded-lg py-1 text-[10px] font-mono text-zinc-400">PORTAL_ACTIVE</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3">
+          <div class="space-y-2">
+            <div class="h-10 w-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-700 font-black text-sm mx-auto">০৬</div>
+            <h3 class="text-sm font-bold text-zinc-800">ষষ্ঠ শ্রেণী</h3>
+            <p class="text-[11px] text-zinc-500 leading-relaxed">ক্যাডেট ব্যাচ / ক্লাস কোচিং<br><span class="text-zinc-400 font-semibold">বাংলা + English Version</span></p>
+          </div>
+          <span class="bg-zinc-50 border border-zinc-200 rounded-lg py-1 text-[10px] font-mono text-zinc-400">PORTAL_ACTIVE</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3">
+          <div class="space-y-2">
+            <div class="h-10 w-10 bg-zinc-100 rounded-xl flex items-center justify-center text-zinc-700 font-black text-sm mx-auto">০৭</div>
+            <h3 class="text-sm font-bold text-zinc-800">সপ্তম শ্রেণী</h3>
+            <p class="text-[11px] text-zinc-500 leading-relaxed">নিয়মিত ক্লাস কোচিং ও<br><span class="text-zinc-400 font-semibold">সিলেবাস ভিত্তিক পাঠদান</span></p>
+          </div>
+          <span class="bg-zinc-50 border border-zinc-200 rounded-lg py-1 text-[10px] font-mono text-zinc-400">PORTAL_ACTIVE</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3">
+          <div class="space-y-2">
+            <div class="h-10 w-10 bg-zinc-100 rounded-xl flex items-center justify-center text-zinc-700 font-black text-sm mx-auto">০৮</div>
+            <h3 class="text-sm font-bold text-zinc-800">অষ্টম শ্রেণী</h3>
+            <p class="text-[11px] text-zinc-500 leading-relaxed">জেএসসি ও উচ্চতর ক্যাডেট<br><span class="text-zinc-400 font-semibold">প্রস্তুতি ব্যাচ</span></p>
+          </div>
+          <span class="bg-zinc-50 border border-zinc-200 rounded-lg py-1 text-[10px] font-mono text-zinc-400">PORTAL_ACTIVE</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 py-12 space-y-6">
+    <div class="text-center space-y-1">
+      <h2 class="text-xl font-black text-zinc-900 tracking-tight uppercase">YouTube Video Showcase</h2>
+      <p class="text-xs text-zinc-400 font-mono">OFFICIAL VIDEO STREAM LECTURES</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="aspect-video rounded-2xl bg-zinc-900 overflow-hidden border border-zinc-200 shadow-md">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/6BcntkNSjNc" title="Cadet Mission Video 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="aspect-video rounded-2xl bg-zinc-900 overflow-hidden border border-zinc-200 shadow-md">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/yxKqtOztL-o" title="Cadet Mission Video 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-cadet-teal py-12 font-mono text-xs text-zinc-400 border-t border-purple-950">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 border-b border-zinc-800/60 pb-8 mb-6 text-center md:text-left">
+      
+      <div class="space-y-2">
+        <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Official Address</h4>
+        <p class="font-sans text-zinc-400 leading-relaxed text-xs">১ নং বাউন্ডারি রোড, ময়মনসিংহ</p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Branch Network</h4>
+        <p class="font-sans text-zinc-400 text-[11px] leading-relaxed">ময়মনসিংহ মেইন ব্রাঞ্চ | ঈশ্বরগঞ্জ শাখা | নেত্রকোনা শাখা | গৌরীপুর শাখা | সাতক্ষীরা শাখা</p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Quick Coordinates</h4>
+        <p class="text-zinc-400 font-sans text-xs">
+          Phone: 01713-599468<br>
+          Email: cadetmission247@gmail.com
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Keep Up With Us</h4>
+        <div class="flex justify-center md:justify-start gap-4 text-base text-zinc-300">
+          <a href="https://www.facebook.com/profile.php?id=100057168742289" target="_blank" class="hover:text-red-500 transition"><i class="fa-brands fa-facebook"></i></a>
+          <a href="https://wa.me/+8801713599468" target="_blank" class="hover:text-emerald-400 transition"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="tel:01713599468" class="hover:text-white transition"><i class="fa-solid fa-phone"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] text-zinc-500">
+      <span>© CMCC. ALL RIGHTS RESERVED 2026.</span>
+      <span class="text-zinc-400 font-bold uppercase tracking-wider bg-zinc-900 px-2.5 py-1 rounded border border-zinc-800">
+        Re-Engineered & Developed by <span class="text-red-500 font-black">Zaeem</span> // Powered by Aether Lab
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    const NOTICES_DATABASE = [
+      { id: "1", cat: "urgent", date: "26 December 2025", title: "আরো কিছু সর্বশেষ সাধারণ জ্ঞান-2026", body: "ক্যাডেট কলেজ ভর্তি পরীক্ষার জন্য চূড়ান্তভাবে নির্বাচিত সাধারণ জ্ঞান ও কারেন্ট অ্যাফেয়ার্স ক্যাপসুল শিট মেইন ব্রাঞ্চ থেকে সংগ্রহ করা যাবে।" },
+      { id: "2", cat: "urgent", date: "26 December 2025", title: "আইডিয়াল কর্তৃক প্রকাশিত সর্বশেষ সাধারণ জ্ঞান -2026", body: "আইডিয়াল পাবলিকেশনস এর সর্বশেষ প্রশ্নব্যাংক এবং সাধারণ জ্ঞান শিটের জটিল অংশগুলোর বিশেষ লেকচার নোট প্রস্তুত করা হয়েছে।" },
+      { id: "3", cat: "all", date: "3 January 2025", title: "আইডিয়াল কর্তৃক প্রকাশিত সর্বশেষ সাধারণ জ্ঞান", body: "সাধারণ জ্ঞান ক্লাসের সহায়িকা শিট এবং মডেল টেস্ট সিলেবাসের কপি অফিশিয়াল ডেক্স থেকে সংগ্রহ করার অনুরোধ রইলো।" },
+      { id: "4", cat: "routine", date: "26 December 2024", title: "ক্যাডেট ভিত্তিক মডেল পরীক্ষা -14 এর ফলাফল (বালক)-2024", body: "মডেল টেস্ট ১৪ এর বালক শাখার মেধা তালিকা এবং নম্বরপত্র প্রকাশ করা হয়েছে। ওএমআর শিটের ভুলত্রুটি সংশোধনের শেষ সুযোগ আগামী রবিবার।" },
+      { id: "5", cat: "routine", date: "26 December 2024", title: "ক্যাডেট ভিত্তিক মডেল পরীক্ষা -14 এর ফলাফল (বালিকা)-2024", body: "মডেল টেস্ট ১৪ এর বালিকা শাখার ওএমআর মূল্যায়ন শেষ হয়েছে। মেধা তালিকায় প্রথম ১০ জন শিক্ষার্থীকে বিশেষ কাউন্সিলিং সেশনে ডাকা হয়েছে।" }
+    ];
+
+    let currentFilterTag = "all";
+
+    function filterNoticeDisplay(category) {
+      currentFilterTag = category;
+      
+      // Update Tab Navigation Active Status UI
+      document.querySelectorAll('[id^="tab-"]').forEach(btn => {
+        btn.className = "px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0";
+      });
+      const activeTab = document.getElementById(`tab-${category}`);
+      if(activeTab) activeTab.className = "px-3 py-3 border-b-2 border-red-600 text-red-600 transition shrink-0 font-bold";
+
+      renderNoticesGrid();
+    }
+
+    function renderNoticesGrid() {
+      const container = document.getElementById('notice-board-target');
+      if(!container) return;
+      container.innerHTML = "";
+
+      const filtered = NOTICES_DATABASE.filter(item => {
+        if(currentFilterTag === "all") return true;
+        return item.cat === currentFilterTag;
+      });
+
+      filtered.forEach(n => {
+        const row = document.createElement('div');
+        row.className = "py-3.5 flex justify-between items-start gap-4 hover:bg-zinc-50/50 px-2 rounded-xl transition font-sans group";
+        row.innerHTML = `
+          <div class="space-y-1">
+            <div class="flex items-center gap-2 text-[10px] font-mono font-bold">
+              <span class="text-zinc-400"><i class="fa-solid fa-calendar-days"></i> ${n.date}</span>
+              <span class="px-1.5 py-0.5 rounded text-[8px] uppercase ${n.cat === 'urgent' ? 'bg-red-100 text-red-700' : 'bg-zinc-100 text-zinc-600'}">${n.cat}</span>
+            </div>
+            <h4 class="text-xs font-bold text-zinc-800 group-hover:text-purple-900 transition-colors">${n.title}</h4>
+            <p class="text-[11px] text-zinc-500 font-light leading-relaxed text-justify max-w-2xl">${n.body}</p>
+          </div>
+          <div class="h-6 w-6 rounded-full bg-zinc-50 border border-zinc-200/60 flex items-center justify-center text-[9px] text-zinc-400 group-hover:bg-purple-100 group-hover:text-purple-700 transition shrink-0 mt-1">
+            <i class="fa fa-chevron-right"></i>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // Client-Side Safe Companion Metrics Hit counter
+    function triggerMetricsHit() {
+      let count = parseInt(localStorage.getItem('cmcc_audits')) || 40304;
+      count++;
+      localStorage.setItem('cmcc_audits', count);
+      
+      const el1 = document.getElementById('local-audit-counter');
+      const el2 = document.getElementById('visitor-audits-view');
+      if(el1) el1.innerText = count.toLocaleString();
+      if(el2) el2.innerText = count.toLocaleString();
+    }
+
+    window.onload = () => {
+      renderNoticesGrid();
+      triggerMetricsHit();
+    };
+  </script>
+</body>
+</html>
