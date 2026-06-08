@@ -11,36 +11,73 @@
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cadetTeal: '#0b2e2c',
+            brandPurple: '#4c1d95',
+            brandCrimson: '#dc2626'
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    body { font-family: 'Hind Siliguri', 'Inter', sans-serif; background-color: #f8fafc; }
+    body { font-family: 'Hind Siliguri', 'Inter', sans-serif; background-color: #fcfcfd; }
     .marquee-stream { animation: slide-left 25s linear infinite; }
     @keyframes slide-left { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-    .bg-cadet-teal { background-color: #0b2e2c; }
-    .text-cadet-teal { color: #0b2e2c; }
-    .brand-purple { color: #4c1d95; }
-    .bg-brand-purple { background-color: #4c1d95; }
     
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(76, 29, 149, 0.2); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(76, 29, 149, 0.4); }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(76, 29, 149, 0.15); border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(76, 29, 149, 0.3); }
+    
+    .fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
-<body class="text-zinc-800 antialiased selection:bg-red-600 selection:text-white">
+<body class="text-zinc-800 antialiased selection:bg-brandCrimson selection:text-white scroll-smooth">
 
   <div class="fixed bottom-6 right-6 z-50 transition-transform duration-300 hover:scale-110 shadow-xl rounded-full">
     <a href="https://wa.me/+8801713599468" target="_blank" aria-label="Connect on WhatsApp">
-      <div class="bg-emerald-500 p-4 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl border border-white/20">
+      <div class="bg-emerald-500 p-4 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl border border-white/10">
         <i class="fa-brands fa-whatsapp"></i>
       </div>
     </a>
+  </div>
+
+  <div id="mobile-menu-overlay" class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300 flex justify-end">
+    <div class="w-72 h-full bg-white p-6 shadow-2xl flex flex-col justify-between border-l border-zinc-100">
+      <div class="space-y-6">
+        <div class="flex justify-between items-center border-b border-zinc-100 pb-4">
+          <span class="font-bold text-xs font-mono uppercase text-zinc-400 tracking-widest">// Navigation</span>
+          <button onclick="toggleMobileMenuEngine(false)" class="h-8 w-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-200 transition">
+            <i class="fa-solid fa-times text-xs"></i>
+          </button>
+        </div>
+        <nav class="flex flex-col gap-4 text-sm font-semibold text-zinc-600">
+          <a href="#" onclick="toggleMobileMenuEngine(false)" class="text-brandCrimson">Home</a>
+          <a href="#result-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition">ফলাফল পোর্টাল</a>
+          <a href="#notice-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition">নোটিশ বোর্ড</a>
+          <a href="#batches-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition">কোর্সসমূহ</a>
+          <a href="#video-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition">ভিডিও ক্লাস</a>
+          <a href="#branch-section" onclick="toggleMobileMenuEngine(false)" class="hover:text-brandPurple transition">শাখা সমূহ</a>
+        </nav>
+      </div>
+      <div class="text-[10px] text-zinc-400 font-mono border-t border-zinc-100 pt-4">
+        CMCC SYSTEM CORE v1.0
+      </div>
+    </div>
   </div>
 
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-zinc-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
       
       <a href="/" class="flex items-center gap-2.5 group">
-        <div class="h-14 w-14 shrink-0 relative flex items-center justify-center bg-white rounded-full border border-zinc-200 shadow-sm p-1">
+        <div class="h-14 w-14 shrink-0 relative flex items-center justify-center bg-white rounded-full border border-zinc-200 shadow-sm p-1 transition-transform group-hover:scale-102">
           <svg viewBox="0 0 100 100" class="w-full h-full">
             <circle cx="50" cy="50" r="46" fill="none" stroke="#4c1d95" stroke-width="2.5"/>
             <path d="M25,60 C35,25 65,25 75,60 C65,75 35,75 25,60 Z" fill="#facc15" opacity="0.3"/>
@@ -51,32 +88,33 @@
         </div>
         <div>
           <h2 class="text-base font-black text-zinc-900 tracking-tight leading-tight">ক্যাডেট মিশন কোচিং সেন্টার</h2>
-          <p class="text-[10px] font-mono font-bold tracking-widest text-red-600 uppercase mt-0.5">Class 5 Exclusive Hub</p>
+          <p class="text-[10px] font-mono font-bold tracking-widest text-brandCrimson uppercase mt-0.5">Class 5 Exclusive Hub</p>
         </div>
       </a>
       
       <nav class="hidden lg:flex items-center gap-6 text-xs font-bold text-zinc-500 uppercase tracking-wider">
-        <a href="#" class="text-red-600 transition">Home</a>
-        <a href="#result-section" class="text-purple-700 hover:text-red-600 transition font-black"><i class="fa-solid fa-square-poll-vertical mr-1"></i> রেজাল্ট সার্চ পোর্টাল</a>
-        <a href="#notice-section" class="hover:text-purple-800 transition">নোটিশ বোর্ড</a>
-        <a href="#batches-section" class="hover:text-purple-800 transition">কোর্সসমূহ</a>
-        <a href="#video-section" class="hover:text-purple-800 transition">ভিডিও ক্লাস</a>
-        <a href="#branch-section" class="hover:text-purple-800 transition">শাখা সমূহ</a>
+        <a href="#" class="text-brandCrimson transition">Home</a>
+        <a href="#result-section" class="text-purple-700 hover:text-brandCrimson transition font-black"><i class="fa-solid fa-square-poll-vertical mr-1"></i> রেজাল্ট সার্চ পোর্টাল</a>
+        <a href="#notice-section" class="hover:text-brandPurple transition">নোটিশ বোর্ড</a>
+        <a href="#batches-section" class="hover:text-brandPurple transition">কোর্সসমূহ</a>
+        <a href="#video-section" class="hover:text-brandPurple transition">ভিডিও ক্লাস</a>
+        <a href="#branch-section" class="hover:text-brandPurple transition">শাখা সমূহ</a>
       </nav>
 
-      <div class="hidden sm:flex items-center gap-2 bg-purple-50 border border-purple-100 px-3 py-1.5 rounded-lg text-[10px] font-mono font-black text-purple-700 tracking-wide uppercase">
-        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        Class 5 Live
-      </div>
+      <button onclick="toggleMobileMenuEngine(true)" class="lg:hidden flex flex-col gap-1.5 p-2 px-2.5 rounded-xl border border-zinc-200 hover:bg-zinc-50 transition" aria-label="Open Navigation Menu">
+        <span class="h-0.5 w-5 bg-zinc-600 rounded"></span>
+        <span class="h-0.5 w-5 bg-zinc-600 rounded"></span>
+        <span class="h-0.5 w-5 bg-zinc-600 rounded"></span>
+      </button>
     </div>
   </header>
 
-  <div class="bg-brand-purple text-zinc-100 py-2.5 overflow-hidden border-b border-purple-950 font-medium text-xs shadow-inner">
+  <div class="bg-brandPurple text-zinc-100 py-2.5 overflow-hidden border-b border-purple-950 font-medium text-xs shadow-inner">
     <div class="max-w-7xl mx-auto px-4 flex items-center">
-      <span class="bg-red-600 text-white px-2.5 py-0.5 rounded font-black text-[9px] uppercase tracking-widest shrink-0 z-10 mr-4 shadow-md">জরুরী ফ্ল্যাশ //</span>
+      <span class="bg-brandCrimson text-white px-2.5 py-0.5 rounded font-black text-[9px] uppercase tracking-widest shrink-0 z-10 mr-4 shadow-md">জরুরী ফ্ল্যাশ //</span>
       <div class="w-full overflow-hidden relative h-4">
         <div class="marquee-stream absolute whitespace-nowrap font-sans text-white/95">
-          আসন্ন ১৪ই জুন রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট শুরু হচ্ছে! ১২ই জুন বৃহস্পতিবারের মধ্যে এডমিট কার্ড সংগ্রহ করতে বলা হলো।
+          ক্যাডেট মিশন কোচিং সেন্টার—পঞ্চম শ্রেণীর স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট এর সময়সূচী নোটিশ বোর্ডে প্রকাশ করা হয়েছে। আগামী ১২ই জুনের মধ্যে প্রবেশপত্র সংগ্রহ করতে বলা হলো।
         </div>
       </div>
     </div>
@@ -87,9 +125,9 @@
     <div class="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
       
       <div class="max-w-xl space-y-4 text-center lg:text-left">
-        <span class="bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-mono font-bold mx-auto lg:mx-0">Class 5 Scholar Hub // 2026</span>
+        <span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-mono font-bold mx-auto lg:mx-0">Class 5 Scholar Hub // 2026</span>
         <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-          পঞ্চম শ্রেণী <span class="text-red-500 font-light">বৃত্তি ব্যাচ</span> এবং <br>অ্যাডভান্স ক্যাডেট ভর্তি প্রস্তুতি
+          পঞ্চম শ্রেণী <span class="text-brandCrimson font-light">বৃত্তি ব্যাচ</span> এবং <br>অ্যাডভান্স ক্যাডেট ভর্তি প্রস্তুতি
         </h1>
         <p class="text-zinc-400 text-xs sm:text-sm leading-relaxed font-light">
           ৫ম শ্রেণীর শিক্ষার্থীদের ক্যাডেট কলেজ ভর্তি পরীক্ষা ও বৃত্তি পরীক্ষার জন্য ময়মনসিংহ বিভাগের শ্রেষ্ঠ নির্ভরযোগ্য ডিজিটাল লার্নিং অ্যান্ড ট্র্যাকিং হাব।
@@ -117,19 +155,19 @@
       <div class="w-full md:w-80 bg-zinc-50 border-r border-zinc-200 p-6 shrink-0 flex flex-col justify-between gap-6">
         <div class="space-y-4">
           <div class="flex items-center gap-2 font-mono text-xs font-black text-purple-900 uppercase">
-            <i class="fa-solid fa-square-poll-vertical text-red-500"></i>
+            <i class="fa-solid fa-square-poll-vertical text-brandCrimson"></i>
             <span>Result Framework v1.0</span>
           </div>
           <div class="space-y-1">
             <h3 class="text-base font-black text-zinc-900 leading-tight">ফলাফল অনুসন্ধান ইঞ্জিন</h3>
-            <p class="text-zinc-500 text-xs">পঞ্চম শ্রেণীর বৃত্তিভিত্তিক মডেল পরীক্ষার মেধা তালিকা ও মার্কশিট জেনারেটর।</p>
+            <p class="text-zinc-500 text-xs">পঞ্চম শ্রেণীর বৃত্তিভিত্তিকরেজিস্ট্রেশন নম্বর টাইপ করে সাবমিট করুন বা এন্টার চাপুন।</p>
           </div>
           
           <div class="space-y-2 pt-2">
             <label class="text-[11px] font-mono font-bold text-zinc-400 uppercase tracking-wider block">রেজিস্ট্রেশন নম্বর দিন</label>
-            <div class="relative rounded-xl bg-white border border-zinc-300 p-1 flex items-center shadow-sm">
+            <div class="relative rounded-xl bg-white border border-zinc-300 p-1 flex items-center shadow-sm focus-within:border-brandCrimson transition-colors">
               <input type="text" id="reg-search-input" placeholder="উদাঃ 59205, 59216..." class="w-full bg-transparent text-xs p-2.5 font-mono text-zinc-800 font-bold focus:outline-none" />
-              <button onclick="executeResultLookupQuery()" class="bg-red-600 hover:bg-red-700 text-white font-bold p-2 px-3.5 rounded-lg text-xs transition shadow-md">
+              <button onclick="executeResultLookupQuery()" class="bg-brandCrimson hover:bg-red-700 text-white font-bold p-2 px-3.5 rounded-lg text-xs transition shadow-md">
                 <i class="fa-solid fa-magnifying-glass"></i>
               </button>
             </div>
@@ -138,15 +176,15 @@
 
         <div class="text-[10px] text-zinc-400 font-mono leading-relaxed border-t border-zinc-200 pt-4">
           • FILTER: CLASS 5 EXCLUSIVE<br>
-          • MATRIX ALIGNMENT: TOP 20 REGISTERED
+          • DATA WEIGHT: MAP_TOP_20_ACTIVE
         </div>
       </div>
 
-      <div class="flex-1 p-6 flex flex-col justify-center bg-zinc-50/20" id="result-display-viewport">
+      <div class="flex-1 p-6 flex flex-col justify-center bg-zinc-50/20 minimum-height-[240px]" id="result-display-viewport">
         <div class="text-center py-12 font-sans text-zinc-400 max-w-sm mx-auto space-y-2">
           <i class="fa-solid fa-sheet-plastic text-3xl text-zinc-300 block mb-2"></i>
           <h4 class="text-xs font-bold text-zinc-700 uppercase tracking-wider">Awaiting Search Request</h4>
-          <p class="text-[11px] text-zinc-500 leading-relaxed font-light">৫ ডিজিটের ক্লাস ৫ রেজিস্ট্রেশন নম্বরটি দিয়ে সাবমিট আইকনে ক্লিক করুন।</p>
+          <p class="text-[11px] text-zinc-500 leading-relaxed font-light">৫ ডিজিটের ক্লাস ৫ রেজিস্ট্রেশন নম্বরটি ইনপুট দিয়ে সাবমিট আইকনে ক্লিক করুন অথবা কীবোর্ডের এন্টার বাটন চাপুন।</p>
         </div>
       </div>
 
@@ -159,14 +197,14 @@
       <div class="space-y-4">
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 flex justify-between items-center font-mono text-[11px] text-zinc-400">
           <span>// EXECUTIVE_DESK</span>
-          <span class="text-red-500 font-bold">VERIFIED</span>
+          <span class="text-brandCrimson font-bold">VERIFIED</span>
         </div>
         <div class="space-y-0.5">
           <h3 class="text-base font-black text-zinc-900">আশেক মাহমোদ</h3>
           <p class="text-xs font-bold text-purple-900">পরিচালক, ক্যাডেট মিশন কোচিং সেন্টার</p>
         </div>
         <div class="text-zinc-600 text-xs leading-relaxed text-justify space-y-2 border-t border-zinc-100 pt-3">
-          <p>সুপ্রিয় সুধী, আসসালামু আলাইকুম। “ক্যাডেট মিশন” বিশ্বাস করে প্রতিটি শিশু অনন্য মেধার অধিকারী। তাদের সুপ্ত মেধা বিকাশের গুরু দায়িত্ব যখন আপনারা আমাদের হাতে তুলে দেন তখন তা সফলভাবে পালন করা আমাদের পরম कर्तव्य ও দায়িত্বে পরিণত হয়।</p>
+          <p>সুপ্রিয় সুধী, আসসালামু আলাইকুম। “ক্যাডেট মিশন” বিশ্বাস করে প্রতিটি শিশু অনন্য মেধার অধিকারী। তাদের সুপ্ত মেধা বিকাশের গুরু দায়িত্ব যখন আপনারা আমাদের হাতে তুলে দেন তখন তা সফলভাবে পালন করা আমাদের পরম কর্তব্য ও দায়িত্বে পরিণত হয়।</p>
           <p>আপনার সন্তানের সময়োপযোগী সিদ্ধান্ত ও সঠিক পথপ্রদর্শক নির্বাচনই আগামীর লক্ষ্য অর্জনে সহায়তা করবে। আমাদের অভিজ্ঞ শিক্ষক প্যানেল সর্বদা শিক্ষার্থীদের সর্বোচ্চ গাইডলাইন দিতে সচেষ্ট।</p>
         </div>
       </div>
@@ -177,7 +215,7 @@
     </div>
 
     <div class="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col">
-      <div class="bg-cadet-teal text-zinc-100 px-5 py-4 flex justify-between items-center shrink-0 border-b border-zinc-800">
+      <div class="bg-cadetTeal text-zinc-100 px-5 py-4 flex justify-between items-center shrink-0 border-b border-zinc-800">
         <div class="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-red-400">
           <i class="fa fa-file-text"></i>
           <span>Class 5 Group Notices & Updates</span>
@@ -185,13 +223,13 @@
         <span class="text-[10px] font-mono text-zinc-400">Registry Counter: <span id="local-audit-counter" class="text-white font-bold">40304</span></span>
       </div>
 
-      <div class="bg-zinc-50 border-b border-zinc-200 px-4 flex gap-1 font-mono text-[11px] font-bold text-zinc-500 overflow-x-auto shrink-0">
-        <button onclick="filterNoticeDisplay('all')" id="tab-all" class="px-3 py-3 border-b-2 border-red-600 text-red-600 transition shrink-0">ALL NOTICES</button>
-        <button onclick="filterNoticeDisplay('urgent')" id="tab-urgent" class="px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0">URGENT ANNOUNCEMENTS</button>
-        <button onclick="filterNoticeDisplay('routine')" id="tab-routine" class="px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0">ROUTINES & SCHEDULES</button>
+      <div class="bg-zinc-50 border-b border-zinc-200 px-4 flex gap-1 font-mono text-[11px] font-bold text-zinc-500 overflow-x-auto shrink-0 custom-scrollbar">
+        <button onclick="filterNoticeDisplay('all')" id="tab-all" class="px-3 py-3 border-b-2 border-brandCrimson text-brandCrimson transition shrink-0 uppercase tracking-wider outline-none">ALL RECORDS</button>
+        <button onclick="filterNoticeDisplay('urgent')" id="tab-urgent" class="px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0 uppercase tracking-wider outline-none">URGENT ANNOUNCEMENTS</button>
+        <button onclick="filterNoticeDisplay('routine')" id="tab-routine" class="px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0 uppercase tracking-wider outline-none">ROUTINES & SCHEDULES</button>
       </div>
 
-      <div id="notice-board-target" class="flex-1 p-4 overflow-y-auto max-h-[400px] divide-y divide-zinc-100">
+      <div id="notice-board-target" class="flex-1 p-4 overflow-y-auto max-h-[400px] divide-y divide-zinc-100 custom-scrollbar">
         </div>
     </div>
 
@@ -205,7 +243,7 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3">
+        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3 transition-transform hover:-translate-y-0.5 duration-200">
           <div class="space-y-2">
             <div class="h-10 w-10 bg-purple-50 text-purple-700 rounded-xl flex items-center justify-center font-black text-xs mx-auto"><i class="fa-solid fa-graduation-cap"></i></div>
             <h3 class="text-sm font-bold text-zinc-800">বৃত্তি ব্যাচ</h3>
@@ -213,7 +251,7 @@
           </div>
           <span class="bg-purple-50 text-purple-700 rounded-lg py-1 text-[9px] font-mono font-bold">SCHOLARSHIP_TRACK</span>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3">
+        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3 transition-transform hover:-translate-y-0.5 duration-200">
           <div class="space-y-2">
             <div class="h-10 w-10 bg-red-50 text-red-700 rounded-xl flex items-center justify-center font-black text-xs mx-auto"><i class="fa-solid fa-shield-halved"></i></div>
             <h3 class="text-sm font-bold text-zinc-800">অ্যাডভান্স ক্যাডেট ব্যাচ</h3>
@@ -221,7 +259,7 @@
           </div>
           <span class="bg-red-50 text-red-700 rounded-lg py-1 text-[9px] font-mono font-bold">CADET_ADVANCED</span>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3">
+        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3 transition-transform hover:-translate-y-0.5 duration-200">
           <div class="space-y-2">
             <div class="h-10 w-10 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center font-black text-xs mx-auto"><i class="fa-solid fa-book-open"></i></div>
             <h3 class="text-sm font-bold text-zinc-800">বাংলা মাধ্যম কোর্স</h3>
@@ -229,7 +267,7 @@
           </div>
           <span class="bg-emerald-50 text-emerald-700 rounded-lg py-1 text-[9px] font-mono font-bold">BANGLA_MEDIUM</span>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3">
+        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-center flex flex-col justify-between gap-3 transition-transform hover:-translate-y-0.5 duration-200">
           <div class="space-y-2">
             <div class="h-10 w-10 bg-blue-50 text-blue-700 rounded-xl flex items-center justify-center font-black text-xs mx-auto"><i class="fa-solid fa-language"></i></div>
             <h3 class="text-sm font-bold text-zinc-800">English Version Core</h3>
@@ -263,17 +301,17 @@
         <p class="text-xs text-zinc-400 font-mono uppercase tracking-widest">Campus Indexes Location Map</p>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 font-mono text-xs">
-        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-1">
-          <span class="text-red-500 font-bold uppercase text-[10px]">// Head Branch</span>
+        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-1 shadow-sm">
+          <span class="text-brandCrimson font-bold uppercase text-[10px]">// Head Branch</span>
           <h3 class="text-zinc-900 font-bold text-sm font-sans">মেইন ব্রাঞ্চ, ময়মনসিংহ</h3>
           <p class="text-zinc-500 text-[11px] font-sans leading-relaxed">১ নং বাউন্ডারি রোড, ময়মনসিংহ<br>Phone: 01713-599468, 01973-599511</p>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-1">
+        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-1 shadow-sm">
           <span class="text-purple-600 font-bold uppercase text-[10px]">// Sub Node 02</span>
           <h3 class="text-zinc-900 font-bold text-sm font-sans">ঈশ্বরগঞ্জ শাখা</h3>
           <p class="text-zinc-500 text-[11px] font-sans leading-relaxed">কালীবাড়ি রোড, ঈশ্বরগঞ্জ<br>Phone: 01721-299921</p>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-1">
+        <div class="bg-white p-4 rounded-xl border border-zinc-200 space-y-1 shadow-sm">
           <span class="text-purple-600 font-bold uppercase text-[10px]">// Sub Node 03</span>
           <h3 class="text-zinc-900 font-bold text-sm font-sans">নেত্রকোনা শাখা</h3>
           <p class="text-zinc-500 text-[11px] font-sans leading-relaxed">মোক্তারপাড়া, নেত্রকোনা<br>Phone: 01973-599512, 01619-067555</p>
@@ -282,7 +320,7 @@
     </div>
   </section>
 
-  <footer class="bg-cadet-teal py-12 font-mono text-xs text-zinc-400 border-t border-purple-950">
+  <footer class="bg-cadetTeal py-12 font-mono text-xs text-zinc-400 border-t border-purple-950">
     <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 border-b border-zinc-800/60 pb-8 mb-6 text-center md:text-left">
       <div class="space-y-2">
         <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Location Specs</h4>
@@ -299,7 +337,7 @@
       <div class="space-y-3">
         <h4 class="text-zinc-200 font-black uppercase text-[11px] tracking-wider">// Social Gateways</h4>
         <div class="flex justify-center md:justify-start gap-4 text-base text-zinc-300">
-          <a href="https://www.facebook.com/profile.php?id=100057168742289" target="_blank" class="hover:text-red-500 transition"><i class="fa-brands fa-facebook"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=100057168742289" target="_blank" class="hover:text-brandCrimson transition"><i class="fa-brands fa-facebook"></i></a>
           <a href="https://wa.me/+8801713599468" target="_blank" class="hover:text-emerald-400 transition"><i class="fa-brands fa-whatsapp"></i></a>
           <a href="tel:01713599468" class="hover:text-white transition"><i class="fa-solid fa-phone"></i></a>
         </div>
@@ -309,13 +347,13 @@
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] text-zinc-500">
       <span>© CMCC CLASS 5 DATA GRID. ALL RIGHTS RESERVED 2026.</span>
       <span class="text-zinc-300 font-bold uppercase tracking-wider bg-zinc-900/60 px-3 py-1.5 rounded-xl border border-zinc-800/80 shadow-md">
-        Re-Engineered & Developed by <span class="text-red-500 font-black tracking-widest">Zaeem</span> // Powered by Aether Lab
+        Re-Engineered & Developed by <span class="text-brandCrimson font-black tracking-widest">Zaeem</span> // Powered by Aether Lab
       </span>
     </div>
   </footer>
 
   <script>
-    // Exact Image Matrix Database (Class 5 Top 20 Candidates Record Sheets)
+    // 1. Full Image Extraction Array Matrix (Class 5 Top 20 Candidates Sheets)
     const CLASS5_EXAM_RESULTS_REGISTRY = [
       { reg: "59205", name: "আহমাদ", eng: 94, ban: 97, math: 97, sci: 50, bgs: 50, total: 392 },
       { reg: "59216", name: "ফায়াজান মোহাম্মদ মুস্তাকীম", eng: 94, ban: 98, math: 96, sci: 49, bgs: 49, total: 386 },
@@ -339,61 +377,76 @@
       { reg: "59113", name: "নিসা", eng: 93, ban: 94, math: 84, sci: 40, bgs: 46, total: 357 }
     ];
 
-    // REAL-WORLD DATA EXTRACTED DIRECTLY FROM YOUR WHATSAPP SCREENSHOTS
+    // Real Whatsapp Message Logs Compiled Registry Arrays
     const NOTICES_DATABASE = [
       { 
         id: "wa-notice-3", 
         cat: "urgent", 
         date: "07 June 2026", 
         title: "স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট এর সময়সূচী ও প্রবেশপত্র সংগ্রহ সংক্রান্ত", 
-        body: "আগামী ১৪/০৬/২০২৬-রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট শুরু হচ্ছে। প্রত্যেক স্কুলের সিলেবাস অনুযায়ী আলাদা আলাদা প্রশ্নে পরীক্ষা হবে। আগামী ১২ই জুন বৃহস্পতিবারের মধ্যে চলতি মাসের মাসিক বেতন ও মডেল ফি (৩০০/- টাকা) পরিশোধ করে অফিস হতে প্রবেশপত্র (Admit Card) সংগ্রহ করার জন্য নির্দেশ দেওয়া হলো। [স্কুল লিস্ট: ১. প্রিমিয়াম আইডিয়াল হাই স্কুল, ২. আফরোজ খান, ৩. ক্যান্টনমেন্ট পাবলিক, ৪. প্রগ্রেসিভ, ৫. মুকুল নিকেতন হাই স্কুল, ৬. গভঃ ল্যাবরেটরি]" 
+        body: "আগামী ১৪/০৬/২০২৬-রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট শুরু হচ্ছে। প্রত্যেক স্কুলের সিলেবাস অনুযায়ী আলাদা আলাদা প্রশ্নে পরীক্ষা হবে। আগামী ১২ই জুন বৃহস্পতিবারের মধ্যে চলতি মাসের মাসিক বেতন ও মডেল ফি (৩০০/- টাকা) পরিশোধ করে অফিস হতে প্রবেশপত্র (Admit Card) সংগ্রহ করার জন্য বিশেষ নির্দেশ দেওয়া হলো। [স্কুল লিস্ট: ১. প্রিমিয়াম আইডিয়াল হাই স্কুল, ২. আফরোজ খান, ৩. ক্যান্টনমেন্ট পাবলিক, ৪. প্রগ্রেসিভ, ৫. মুকুল নিকেতন হাই স্কুল, ৬. গভঃ ল্যাবরেটরি]" 
       },
       { 
         id: "wa-notice-2", 
         cat: "urgent", 
         date: "05 June 2026", 
         title: "হোয়াটসঅ্যাপ গ্রুপ ব্যবহার সংক্রান্ত বিশেষ জরুরী নির্দেশনা", 
-        body: "সম্মানিত অভিভাবকবৃন্দ ও প্রিয় ছাত্র-ছাত্রীবৃন্দ, শিক্ষামূলক এই হোয়াটসঅ্যাপ গ্রুপটি আপনাদের সুবিধার্থে খোলা হয়েছে। গ্রুপে অপ্রাসঙ্গিক কথোপকথন সম্পূর্ণ পরিহার করার নির্দেশ দেওয়া হলো, অন্যথায় এই গ্রুপটিকে 'Only Admin Can Message' অপশনে রূপান্তর করা হবে। বিশেষ প্রয়োজনে সরাসরি অফিস নাম্বারে ফোন দেওয়ার জন্য অনুরোধ করা হলো।" 
+        body: "সম্মানিত অভিভাবকবৃন্দ ও প্রিয় ছাত্র-ছাত্রীবৃন্দ, শিক্ষামূলক এই whatsapp গ্রুপটি অভিভাবক ও ছাত্রছাত্রীদের সুবিধার্থে খোলা হয়েছে, কিন্তু বেশ কিছুদিন ধরে লক্ষ্য করা যাচ্ছে যে, ছাত্র ও ছাত্রীরা অফিশিয়াল এই গ্রুপটিকে তাদের নিজস্ব কথোপকথন গ্রুপ বানিয়ে ফেলেছে, সেক্ষেত্রে গুরুত্বপূর্ণ অনেক নোটিশ অনেকেই খুঁজে পাচ্ছেন না। আপনাদের বিশেষ প্রয়োজনে কারো সাথে কথা বলতে হলে গ্রুপ থেকে নম্বর নিয়ে ফোন দিন, অন্যথায় এই গ্রুপটিকে 'only admin can message' এই অপশনে স্থানান্তর করা হবে।" 
       },
       { 
         id: "wa-notice-1", 
         cat: "routine", 
         date: "01 June 2026", 
         title: "অর্ধবার্ষিক পরীক্ষা ও ঈদ পরবর্তী ক্লাস চালুর নোটিশ", 
-        body: "ঈদের ছুটির পর আগামী ০২/০৬/২০২৬ (মঙ্গলবার) থেকে পঞ্চম শ্রেণীর রুটিন অনুযায়ী নির্দিষ্ট সময়ে ক্লাস পুনরায় রেগুলার অনুষ্ঠিত হবে। অর্ধবার্ষিক পরীক্ষার খুব বেশি সময় আমাদের হাতে নেই, তাই সকল শিক্ষার্থীকে নিয়মিত ও যথাসময়ে ক্লাসে উপস্থিত থাকার জন্য নির্দেশ দেওয়া হলো।" 
+        body: "ঈদের আনন্দের পাশাপাশি, পড়াশোনায়-ও ফিরে আসতে হবে। অর্ধবার্ষিক পরীক্ষার খুব বেশি সময় আমাদের হাতে নেই, তাই আগামী ০২/০৬/২০২৬ (মঙ্গলবার) -থেকে পঞ্চম শ্রেণীর শিডিউল অনুযায়ী নির্দিষ্ট সময়ে ক্লাস অনুষ্ঠিত হবে। সকলকে নির্দিষ্ট সময়ে ক্লাসে উপস্থিত থাকতে বলা হলো।" 
       }
     ];
 
-    let currentNoticeFilter = "all";
+    let currentNoticeFilterTag = "all";
 
-    // Dynamic Search Matrix Handler
+    // Mobile Responsive Menu Controller Shifting Layers
+    function toggleMobileMenuEngine(shouldOpen) {
+      const overlay = document.getElementById('mobile-menu-overlay');
+      if (!overlay) return;
+      if (shouldOpen) {
+        overlay.classList.remove('hidden');
+        setTimeout(() => { overlay.classList.add('opacity-100'); }, 10);
+      } else {
+        overlay.classList.remove('opacity-100');
+        setTimeout(() => { overlay.classList.add('hidden'); }, 300);
+      }
+    }
+
+    // High-Accuracy Result Index Scanning Array Search Query Traversal
     function executeResultLookupQuery() {
-      const queryValue = document.getElementById('reg-search-input').value.trim();
+      const inputNode = document.getElementById('reg-search-input');
+      const queryValue = inputNode.value.trim();
       const viewport = document.getElementById('result-display-viewport');
 
       if (!queryValue) {
-        alert("অনুগ্রহ করে একটি ৫ ডিজিটের রেজিস্ট্রেশন নম্বর টাইপ করুন।");
+        alert("অনুগ্রহ করে একটি সঠিক ৫ ডিজিটের রেজিস্ট্রেশন নম্বর টাইপ করুন।");
         return;
       }
 
+      // Memory loop linear optimization query lookups
       const match = CLASS5_EXAM_RESULTS_REGISTRY.find(student => student.reg === queryValue);
 
       if (!match) {
         viewport.innerHTML = `
-          <div class="text-center py-8 text-xs text-red-600 bg-red-50 border border-red-200/60 rounded-xl font-mono max-w-sm mx-auto">
+          <div class="text-center py-8 text-xs text-brandCrimson bg-red-50 border border-red-200/60 rounded-xl font-mono max-w-sm mx-auto fade-in">
             <i class="fa-solid fa-triangle-exclamation mr-1 text-sm block mb-1"></i> [INDEX_NOT_FOUND] এই রেজিঃ নম্বরের কোনো রেকর্ড পঞ্চম শ্রেণীর ডেটাবেজে পাওয়া যায়নি।
           </div>`;
         return;
       }
 
-      // Render score matrix transcript mapping exactly your layout constraints
+      // Render score matrix transcript sheet matching your screenshot structure
       viewport.innerHTML = `
-        <div class="w-full bg-white border border-purple-200 rounded-2xl p-5 shadow-sm font-sans space-y-4 max-w-xl mx-auto border-t-4 border-t-purple-800 animation-fade">
+        <div class="w-full bg-white border border-purple-200 rounded-2xl p-5 shadow-sm font-sans space-y-4 max-w-xl mx-auto border-t-4 border-t-brandPurple fade-in">
           <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-zinc-100 pb-3 gap-2">
             <div>
               <span class="text-[9px] font-mono font-black bg-purple-100 text-purple-800 px-2 py-0.5 rounded uppercase tracking-wider">CLASS_5_OFFICIAL_TRANSCRIPT</span>
               <h4 class="text-sm font-black text-zinc-900 mt-1">${match.name}</h4>
-              <p class="text-[10px] text-zinc-400 font-mono">REG ID: ${match.reg}</p>
+              <p class="text-[10px] text-zinc-400 font-mono">REGISTRATION INDEX: ${match.reg}</p>
             </div>
             <div class="text-left sm:text-right bg-zinc-50 border border-zinc-200 rounded-xl p-2 px-4">
               <span class="text-[9px] text-zinc-400 font-mono block uppercase font-bold tracking-wider">TOTAL SCORE</span>
@@ -402,23 +455,23 @@
           </div>
           
           <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs font-mono">
-            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl">
+            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl transition-all hover:bg-zinc-100/50">
               <span class="text-zinc-400 block text-[9px] font-sans mb-0.5 font-bold">ইংরেজি</span>
               <span class="text-zinc-800 font-black text-sm">${match.eng}</span>
             </div>
-            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl">
+            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl transition-all hover:bg-zinc-100/50">
               <span class="text-zinc-400 block text-[9px] font-sans mb-0.5 font-bold">বাংলা</span>
               <span class="text-zinc-800 font-black text-sm">${match.ban}</span>
             </div>
-            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl">
+            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl transition-all hover:bg-zinc-100/50">
               <span class="text-zinc-400 block text-[9px] font-sans mb-0.5 font-bold">গণিত</span>
               <span class="text-zinc-800 font-black text-sm">${match.math}</span>
             </div>
-            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl">
+            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl transition-all hover:bg-zinc-100/50">
               <span class="text-zinc-400 block text-[9px] font-sans mb-0.5 font-bold">বিজ্ঞান</span>
               <span class="text-zinc-800 font-black text-sm">${match.sci}</span>
             </div>
-            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl col-span-2 sm:col-span-1">
+            <div class="bg-zinc-50/60 border border-zinc-200 p-2.5 rounded-xl col-span-2 sm:col-span-1 transition-all hover:bg-zinc-100/50">
               <span class="text-zinc-400 block text-[9px] font-sans mb-0.5 font-bold">বাওবি</span>
               <span class="text-zinc-800 font-black text-sm">${match.bgs}</span>
             </div>
@@ -427,13 +480,13 @@
       `;
     }
 
-    // Dynamic Notices Filtering Subsystem
+    // Dynamic Notices List Filtering Subsystem
     function filterNoticeDisplay(cat) {
-      currentNoticeFilter = cat;
-      document.querySelectorAll('[id^="tab-"]').forEach(b => b.className = "px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0");
+      currentNoticeFilterTag = cat;
+      document.querySelectorAll('[id^="tab-"]').forEach(b => b.className = "px-3 py-3 border-b-2 border-transparent hover:text-zinc-800 transition shrink-0 uppercase tracking-wider outline-none");
       
       const activeTab = document.getElementById(`tab-${cat}`);
-      if(activeTab) activeTab.className = "px-3 py-3 border-b-2 border-red-600 text-red-600 transition shrink-0 font-bold";
+      if(activeTab) activeTab.className = "px-3 py-3 border-b-2 border-brandCrimson text-brandCrimson transition shrink-0 font-bold uppercase tracking-wider outline-none";
       
       renderNoticesGrid();
     }
@@ -444,8 +497,8 @@
       container.innerHTML = "";
 
       const filtered = NOTICES_DATABASE.filter(item => {
-        if(currentNoticeFilter === "all") return true;
-        return item.cat === currentNoticeFilter;
+        if(currentNoticeFilterTag === "all") return true;
+        return item.cat === currentNoticeFilterTag;
       });
 
       if(filtered.length === 0) {
@@ -455,17 +508,17 @@
 
       filtered.forEach(n => {
         const row = document.createElement('div');
-        row.className = "py-3.5 flex justify-between items-start gap-4 hover:bg-zinc-50/40 px-2 rounded-xl transition group";
+        row.className = "py-4 flex justify-between items-start gap-4 hover:bg-zinc-50/40 px-2 rounded-xl transition group fade-in";
         row.innerHTML = `
           <div class="space-y-1 font-sans">
             <div class="flex items-center gap-2 text-[10px] font-mono font-bold">
               <span class="text-zinc-400"><i class="fa-regular fa-clock"></i> ${n.date}</span>
-              <span class="px-1.5 py-0.5 rounded text-[8px] uppercase ${n.cat === 'urgent' ? 'bg-red-100 text-red-700' : 'bg-purple-100 text-purple-700'}">${n.cat}</span>
+              <span class="px-1.5 py-0.5 rounded text-[8px] uppercase ${n.cat === 'urgent' ? 'bg-red-100 text-brandCrimson' : 'bg-purple-100 text-brandPurple'}">${n.cat}</span>
             </div>
-            <h4 class="text-xs font-bold text-zinc-800 group-hover:text-purple-900 transition-colors">${n.title}</h4>
+            <h4 class="text-xs font-bold text-zinc-800 group-hover:text-brandPurple transition-colors">${n.title}</h4>
             <p class="text-[11px] text-zinc-500 font-light leading-relaxed text-justify max-w-2xl">${n.body}</p>
           </div>
-          <div class="h-6 w-6 rounded-full bg-zinc-50 border border-zinc-200/60 flex items-center justify-center text-[9px] text-zinc-400 group-hover:bg-purple-100 group-hover:text-purple-700 transition shrink-0 mt-1">
+          <div class="h-6 w-6 rounded-full bg-zinc-50 border border-zinc-200/60 flex items-center justify-center text-[9px] text-zinc-400 group-hover:bg-purple-100 group-hover:text-brandPurple transition shrink-0 mt-1">
             <i class="fa fa-chevron-right"></i>
           </div>
         `;
@@ -473,11 +526,11 @@
       });
     }
 
-    // Static Metric Hit Auditor
+    // Static Metric Hit Counter Tracker Cache
     function triggerMetricsHit() {
-      let score = parseInt(localStorage.getItem('cmcc_class5_visits')) || 40304;
+      let score = parseInt(localStorage.getItem('cmcc_class5_master_visits')) || 40304;
       score++;
-      localStorage.setItem('cmcc_class5_visits', score);
+      localStorage.setItem('cmcc_class5_master_visits', score);
       
       const el1 = document.getElementById('local-audit-counter');
       const el2 = document.getElementById('visitor-audits-view');
@@ -485,9 +538,21 @@
       if (el2) el2.innerText = score.toLocaleString();
     }
 
+    // Setup input listeners on startup sequences for high quality ergonomics
     window.onload = () => {
       renderNoticesGrid();
       triggerMetricsHit();
+      
+      // Map quick enter key tracking actions to result query input layers
+      const searchInput = document.getElementById('reg-search-input');
+      if(searchInput) {
+        searchInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            executeResultLookupQuery();
+          }
+        });
+      }
     };
   </script>
 </body>
