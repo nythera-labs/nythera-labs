@@ -15,7 +15,7 @@ app.use((req, res, next) => {
 });
 
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
-// 🛠️ FIXED: Restored exact case-sensitive capital 'E' for your npoint bin ID
+// 🛠️ FIXED: Exact case-sensitive capital 'E' verified for your npoint bin ID
 const DB_CODE_ENDPOINT = "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
 
 // Root diagnostic link
