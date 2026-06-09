@@ -5,10 +5,10 @@ app.use(express.json());
 
 // 🛡️ UNIVERSAL CORS MIDDLEWARE: Authorizes cross-site data streams for dashboard compatibility
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
   next();
@@ -18,19 +18,19 @@ const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
 const DB_CODE_ENDPOINT = "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
 
 // Root diagnostic link
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).send("Aether Lab Vercel Serverless AI Bot Engine Active.");
 });
 
 // TUNNEL CHANNEL A: Receives base64 string from your iPad and saves it server-to-server into npoint
-app.post('/api/save-code', async (req, res) => {
+app.post("/api/save-code", async (req, res) => {
   try {
     const { code } = req.body;
     if (!code) return res.status(400).send("Missing code parameter stream");
 
     const dbAction = await fetch(DB_CODE_ENDPOINT, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code: code })
     });
 
@@ -46,7 +46,7 @@ app.post('/api/save-code', async (req, res) => {
 });
 
 // TUNNEL CHANNEL B: Pulls the encrypted string from npoint to populate your iPad code container view
-app.get('/api/get-code', async (req, res) => {
+app.get("/api/get-code", async (req, res) => {
   try {
     const dbResponse = await fetch(DB_CODE_ENDPOINT);
     if (!dbResponse.ok) return res.status(200).send(""); 
@@ -58,7 +58,7 @@ app.get('/api/get-code', async (req, res) => {
 });
 
 // 🤖 MAIN WEBHOOK CHANNEL: Handles incoming messages and streams responses via Pollinations AI Core
-app.post('/api/webhook', async (req, res) => {
+app.post("/api/webhook", async (req, res) => {
   const update = req.body;
   
   // Guard clause: immediately dismiss empty updates or non-text messages to preserve execution parameters
@@ -75,38 +75,38 @@ app.post('/api/webhook', async (req, res) => {
   // -------------------------------------------------------------------------
   // DECK A: THE STRATIFIED CADET MISSION RULES MATRIX
   // -------------------------------------------------------------------------
-  if (lowerText.includes('/start') || lowerText.includes('hello') || lowerText.includes('hi') || lowerText.includes('সালাম')) {
-    finalResponsePayloadText = `আসসালামু আলাইকুম <b>${msg.from.first_name || 'শিক্ষার্থী'}</b>! ক্যাডেট মিশন AI অটো-বট পোর্টালে আপনাকে স্বাগত।\n\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\n• পরীক্ষা ও ক্লাসের রুটিন দেখতে টাইপ করুন: <b>notice</b>\n\n• যেকোনো পড়ালেখার বা সাধারণ জ্ঞানের প্রশ্ন সরাসরি এখানে টাইপ করুন, আমাদের AI সাথে সাথে উত্তর দিয়ে দেবে!`;
+  if (lowerText.includes("/start") || lowerText.includes("hello") || lowerText.includes("hi") || lowerText.includes("সালাম")) {
+    finalResponsePayloadText = "আসসালামু আলাইকুম <b>" + (msg.from.first_name || "শিক্ষার্থী") + "</b>! ক্যাডেট মিশন AI অটো-বট পোর্টালে আপনাকে স্বাগত।\n\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\n• পরীক্ষা ও ক্লাসের রুটিন দেখতে টাইপ করুন: <b>notice</b>\n\n• যেকোনো পড়ালেখার বা সাধারণ জ্ঞানের প্রশ্ন সরাসরি এখানে টাইপ করুন, আমাদের AI সাথে সাথে উত্তর দিয়ে দেবে!";
   } 
-  else if (lowerText.includes('result') || lowerText.includes('রেজাল্ট') || lowerText.includes('মার্কশিট')) {
-    finalResponsePayloadText = `<b>ক্যাডেট মিশন পঞ্চম শ্রেণী ফলাফল জেনারেটর:</b>\n\nমডেল পরীক্ষার মেধা তালিকা ও ডিজিটাল মার্কশিট সিস্টেমে আপলোড করা হয়েছে। নিচের লিংকে গিয়ে রোল ইনপুট দিন:\n\n👉 https://aether-lab.web.app/class5.html`;
+  else if (lowerText.includes("result") || lowerText.includes("রেজাল্ট") || lowerText.includes("মার্কশিট")) {
+    finalResponsePayloadText = "<b>ক্যাডেট মিশন পঞ্চম শ্রেণী ফলাফল জেনারেটর:</b>\n\nমডেল পরীক্ষার মেধা তালিকা ও ডিজিটাল মার্কশিট সিস্টেমে আপলোড করা হয়েছে। নিচের লিংকে গিয়ে রোল ইনপুট দিন:\n\n👉 https://aether-lab.web.app/class5.html";
   } 
-  else if (lowerText.includes('notice') || lowerText.includes('নোটিশ') || lowerText.includes('রুটিন')) {
-    finalResponsePayloadText = `<b>ক্যাডেট মিশন অফিশিয়াল নোটিশ আপডেট:</b>\n\n• <b>মডেল টেস্ট:</b> আগামী ১৪ই জুন রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট শুরু হবে।\n• <b>প্রবেশপত্র:</b> ১২ই জুন বৃহস্পতিবারের মধ্যে প্রবেশপত্র সংগ্রহ করতে হবে।\n• <b>ফি:</b> মডেল ফি ৩০০/- টাকা।`;
+  else if (lowerText.includes("notice") || lowerText.includes("নোটিশ") || lowerText.includes("রুটিন")) {
+    finalResponsePayloadText = "<b>ক্যাডেট মিশন অফিশিয়াল নোটিশ আপডেট:</b>\n\n• <b>মডেল টেস্ট:</b> আগামী ১৪ই জুন রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট শুরু হবে।\n• <b>প্রবেশপত্র:</b> ১২ই জুন বৃহস্পতিবারের মধ্যে প্রবেশপত্র সংগ্রহ করতে হবে।\n• <b>ফি:</b> মডেল ফি ৩০০/- টাকা।";
   } 
   // -------------------------------------------------------------------------
   // DECK B: LIVE AI CHAT CORE (POLLINATIONS EDGE PROCESSING)
   // -------------------------------------------------------------------------
   else {
     try {
-      const aiPayloadResponse = await fetch('https://text.pollinations.ai/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const aiPayloadResponse = await fetch("https://text.pollinations.ai/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [
             { 
-              role: 'system', 
-              content: 'You are the official Aether Lab AI Assistant deployed for Cadet Mission Coaching Center (Class 5 Boys group) in Mymensingh, Bangladesh. You help primary school students understand math (unitary method, fractions, geometry), english grammar (parts of speech, tenses), and general knowledge. Keep answers highly accurate, polite, extremely short, clear, and very easy for a 10-year-old Class 5 student to read. Respond beautifully in Bengali or English based on the language they write to you in.' 
+              role: "system", 
+              content: "You are the official Aether Lab AI Assistant deployed for Cadet Mission Coaching Center (Class 5 Boys group) in Mymensingh, Bangladesh. You help primary school students understand math (unitary method, fractions, geometry), english grammar (parts of speech, tenses), and general knowledge. Keep answers highly accurate, polite, extremely short, clear, and very easy for a 10-year-old Class 5 student to read. Respond beautifully in Bengali or English based on the language they write to you in." 
             },
-            { role: 'user', content: originalText }
+            { role: "user", content: originalText }
           ],
-          model: 'openai'
+          model: "openai"
         })
       });
 
       finalResponsePayloadText = await aiPayloadResponse.text();
     } catch (aiError) {
-      finalResponsePayloadText = `দুঃখিত, এই মুহূর্তে আমার এআই কোর network পোর্টে সাময়িক সমস্যা হচ্ছে। অনুগ্রহ করে কিছুক্ষণ পর আবার প্রশ্ন করুন।`;
+      finalResponsePayloadText = "দুঃখিত, এই মুহূর্তে আমার এআই কোর নেটওয়ার্ক পোর্টে সাময়িক সমস্যা হচ্ছে। অনুগ্রহ করে কিছুক্ষণ পর আবার প্রশ্ন করুন।";
     }
   }
 
@@ -114,13 +114,13 @@ app.post('/api/webhook', async (req, res) => {
   // DECK C: OUTBOUND TELEGRAM REST GATEWAY ROUTING
   // -------------------------------------------------------------------------
   try {
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chat_id: targetChatId,
         text: finalResponsePayloadText,
-        parse_mode: 'HTML'
+        parse_mode: "HTML"
       })
     });
   } catch (err) {
@@ -131,5 +131,5 @@ app.post('/api/webhook', async (req, res) => {
   res.sendStatus(200);
 });
 
-// ⚡ FIXED FOR VERCEL SERVERLESS: app.listen() is removed to prevent port compilation crashes.
+// ⚡ SERVERLESS MODULE HANDOFF EXPORT
 module.exports = app;
