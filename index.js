@@ -1,10 +1,9 @@
-```javascript
 const express = require('express');
 const app = express();
 
 app.use(express.json());
 
-// 🛡️ UNIVERSAL CORS MIDDLEWARE: Authorizes your iPad layout elements to communicate cross-site with zero blocks
+// 🛡️ UNIVERSAL CORS MIDDLEWARE: Authorizes cross-site data streams so your browser never blocks requests
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
@@ -114,5 +113,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Aether Lab Runtime Engine listening on port context: " + PORT));
 
 module.exports = app;
-
-```
