@@ -59,11 +59,12 @@ app.get('/api/get-code', async (req, res) => {
 
 // 🤖 MAIN WEBHOOK CHANNEL: Handles incoming messages and streams responses via Pollinations AI Core
 app.post('/api/webhook', async (req, res) => {
-  // Acknowledge the webhook request instantly to Telegram
-  res.sendStatus(200);
-
   const update = req.body;
-  if (!update || !update.message || !update.message.text) return;
+  
+  // Guard clause: immediately dismiss empty updates or non-text messages to preserve execution quotas
+  if (!update || !update.message || !update.message.text) {
+    return res.sendStatus(200);
+  }
 
   const msg = update.message;
   const originalText = msg.text.trim();
@@ -125,6 +126,9 @@ app.post('/api/webhook', async (req, res) => {
   } catch (err) {
     console.error("Outbound relay failed to broadcast over Vercel lifecycle:", err);
   }
+
+  // 🛡️ CRITICAL FOR VERCEL: Handshake terminates execution context only AFTER outbound network buffer clears
+  res.sendStatus(200);
 });
 
 const PORT = process.env.PORT || 3000;
