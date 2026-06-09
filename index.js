@@ -1,3 +1,4 @@
+```javascript
 const express = require('express');
 const app = express();
 
@@ -38,10 +39,11 @@ app.post('/api/save-code', async (req, res) => {
     if (dbAction.ok) {
       return res.status(200).send("OK");
     } else {
-      return res.status(500).send("Database node rejected stream write");
+      const dbErrText = await dbAction.text();
+      return res.status(500).send(`Database rejected write: ${dbErrText}`);
     }
   } catch (err) {
-    return res.status(500).send(err.message);
+    return res.status(500).send(`Tunnel execution error: ${err.message}`);
   }
 });
 
@@ -112,3 +114,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Aether Lab Runtime Engine listening on port context: ${PORT}`));
 
 module.exports = app;
+
+```
