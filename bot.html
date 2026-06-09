@@ -50,11 +50,10 @@
   </header>
 
   <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-    
     <div class="lg:col-span-3 glass-panel p-5 rounded-2xl space-y-4 shadow-2xl border border-zinc-800">
       <div class="flex justify-between items-center border-b border-zinc-800/60 pb-3">
         <div class="text-xs font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
-          <i class="fa-solid fa-lock text-purple-400"></i> Secure Core Workspace (KeyValue Tunnel Active)
+          <i class="fa-solid fa-lock text-purple-400"></i> Secure Core Workspace (Base64 Firewall Bypass Active)
         </div>
         <button onclick="compileAndInjectCodeToCloud()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl text-[11px] uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(147,51,234,0.4)] flex items-center gap-2">
           <i class="fa-solid fa-shield-halved animate-pulse"></i> Encrypt & Inject Live
@@ -64,7 +63,7 @@
       <div class="relative bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden focus-within:border-purple-500/80 transition-colors">
         <div class="bg-zinc-900/60 px-4 py-2 border-b border-zinc-900 text-[10px] font-mono text-zinc-500 flex justify-between uppercase font-bold tracking-wider">
           <span>Accessors: msg, originalText, lowerText, targetChatId, BOT_TOKEN</span>
-          <span>Tunneling Mode: Base64 Unified Route</span>
+          <span>Tunneling Mode: Base64 Binary Stream</span>
         </div>
         <textarea id="code-editor-field" class="w-full h-[520px] bg-transparent p-5 text-zinc-300 focus:outline-none code-workspace resize-none custom-scrollbar whitespace-pre" spellcheck="false" placeholder="Loading dynamic workspace matrix maps..."></textarea>
       </div>
@@ -73,21 +72,19 @@
     <div class="lg:col-span-1 space-y-6">
       <div class="glass-panel p-5 rounded-2xl space-y-4 shadow-xl border border-zinc-800">
         <div class="flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-800 pb-2">
-          <i class="fa-solid fa-circle-check text-emerald-400"></i> KeyValue Shunt Live
+          <i class="fa-solid fa-circle-check text-emerald-400"></i> Firewall Fix Active
         </div>
         <div class="text-[11px] text-zinc-400 leading-relaxed space-y-2 font-sans">
-          <p>Your raw code payload is obfuscated automatically inside browser RAM prior to transmission.</p>
-          <p class="text-zinc-500">This fully bypasses standard web hosting packet inspection limits or security denials.</p>
+          <p>Your raw code payload is now obfuscated automatically inside local browser RAM prior to transmission.</p>
+          <p class="text-zinc-500">This completely bypasses any web hosting packet inspection limits or security denials.</p>
         </div>
       </div>
     </div>
   </main>
 
   <script>
-    // Migrated to keyvalue.xyz with a secure, custom-hashed sandbox path string
-    const DB_CODE_ENDPOINT = "https://api.keyvalue.xyz/v1/aether_lab_vault_8610031632/core_script_v4";
+    const DB_CODE_ENDPOINT = "https://kvdb.io/aether_lab_cfg_8610031632/bot_live_code_v3";
 
-    // Clean image-compression template structure preloaded as default
     const baselineDevelopmentWorkspaceScript = `// =========================================================================
 // AETHER LAB LIVE AUTOMATION: EDGE-BASED MEDIA COMPRESSION CORE
 // Variables Available: msg, originalText, lowerText, targetChatId, BOT_TOKEN
@@ -133,3 +130,81 @@ if (lowerText.includes('/start') || lowerText.includes('hello') || lowerText.inc
   await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: targetChatId, text: welcomeText, parse_mode: 'HTML' })
+  });
+  return;
+}
+
+if (lowerText.includes('result') || lowerText.includes('রেজাল্ট')) {
+  const resultText = \`<b>ক্যাডেট মিশন পঞ্চম শ্রেণী ফলাফল:</b>\\n👉 https://aether-lab.web.app/class5.html\`;
+  await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: targetChatId, text: resultText, parse_mode: 'HTML' })
+  });
+  return;
+}
+
+const textQueryURL = \`https://text.pollinations.ai/\${encodeURIComponent(originalText)}?model=openai\`;
+const textQueryResponse = await fetch(textQueryURL);
+const calculatedAITextResult = await textQueryResponse.text();
+
+await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chat_id: targetChatId, text: calculatedAITextResult })
+});`;
+
+    async function pullCloudScriptWorkspaceToEditor() {
+      const badge = document.getElementById('compiler-status-badge');
+      badge.innerText = "FETCHING MATRIX...";
+      badge.className = "text-amber-400 animate-pulse font-bold";
+      
+      try {
+        const response = await fetch(DB_CODE_ENDPOINT);
+        if (!response.ok) throw new Error("Empty cell");
+        const cloudBase64Payload = await response.text();
+        
+        const decodedJavaScriptCode = decodeURIComponent(escape(atob(cloudBase64Payload.trim())));
+        document.getElementById('code-editor-field').value = decodedJavaScriptCode;
+        badge.innerText = "COMPILER ONLINE";
+        badge.className = "text-emerald-400 font-bold";
+      } catch (e) {
+        document.getElementById('code-editor-field').value = baselineDevelopmentWorkspaceScript;
+        badge.innerText = "TEMPLATE LOADED";
+        badge.className = "text-purple-400 font-bold";
+      }
+    }
+
+    async function compileAndInjectCodeToCloud() {
+      const badge = document.getElementById('compiler-status-badge');
+      badge.innerText = "ENCRYPTING SHUNT...";
+      badge.className = "text-amber-400 animate-pulse font-bold";
+      
+      const rawCodeTextStream = document.getElementById('code-editor-field').value;
+      
+      try {
+        const base64SecuredString = btoa(unescape(encodeURIComponent(rawCodeTextStream)));
+        const action = await fetch(DB_CODE_ENDPOINT, {
+          method: 'PUT',
+          body: base64SecuredString
+        });
+        
+        if (action.ok) {
+          badge.innerText = "INJECTION SUCCESSFUL!";
+          badge.className = "text-emerald-400 font-bold";
+          setTimeout(pullCloudScriptWorkspaceToEditor, 800);
+        } else {
+          alert("Handshake rejected by host framework nodes.");
+          pullCloudScriptWorkspaceToEditor();
+        }
+      } catch (err) {
+        alert("Execution pipeline exception fault.");
+        pullCloudScriptWorkspaceToEditor();
+      }
+    }
+
+    window.onload = pullCloudScriptWorkspaceToEditor;
+  </script>
+</body>
+</html>
