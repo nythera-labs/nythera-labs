@@ -1,109 +1,133 @@
 const express = require('express');
 const app = express();
 
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json());
 
-// CORS Configuration
+// 🛡️ UNIVERSAL CORS MIDDLEWARE: Authorizes cross-site data streams for dashboard compatibility
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
   next();
 });
 
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
-
-// Use environment variable for npoint endpoint with fallback
-const DB_CODE_ENDPOINT = process.env.NPOINT_ENDPOINT || "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
+const DB_CODE_ENDPOINT = "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
 
 // Root diagnostic link
 app.get('/', (req, res) => {
-  res.status(200).send("Aether Lab Edge Secure Script Interpreter Node Active.");
+  res.status(200).send("Aether Lab Vercel Serverless AI Bot Engine Active.");
 });
 
+// TUNNEL CHANNEL A: Receives base64 string from your iPad and saves it server-to-server into npoint
 app.post('/api/save-code', async (req, res) => {
   try {
     const { code } = req.body;
-    
-    if (!code) {
-      return res.status(400).send("Missing code parameter");
-    }
+    if (!code) return res.status(400).send("Missing code parameter stream");
 
-    console.log(`📝 Attempting to save code (length: ${code.length}) to npoint...`);
-    console.log(`🔗 Using endpoint: ${DB_CODE_ENDPOINT}`);
-    
-    // npoint expects the full payload object structure
-    const payload = { code };
-    const jsonPayload = JSON.stringify(payload);
-    
-    console.log(`📤 Payload size: ${jsonPayload.length} bytes`);
-    
-    const response = await fetch(DB_CODE_ENDPOINT, {
+    const dbAction = await fetch(DB_CODE_ENDPOINT, {
       method: 'PUT',
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      body: jsonPayload
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: code })
     });
 
-    const responseText = await response.text();
-    console.log(`📥 npoint response (${response.status}):`, responseText.substring(0, 500));
-    
-    if (response.ok) {
-      console.log(`✅ Code saved successfully to npoint`);
-      return res.send("OK");
+    if (dbAction.ok) {
+      return res.status(200).send("OK");
     } else {
-      console.error(`❌ npoint rejected save (${response.status}):`, responseText.substring(0, 200));
-      return res.status(response.status).send(`Database error: ${responseText}`);
+      const dbErrText = await dbAction.text();
+      return res.status(500).send("Database rejected write: " + dbErrText);
     }
-  } catch (e) {
-    console.error(`❌ Error in save-code:`, e.message);
-    res.status(500).send(`Server error: ${e.message}`);
+  } catch (err) {
+    return res.status(500).send("Tunnel execution error: " + err.message);
   }
 });
 
+// TUNNEL CHANNEL B: Pulls the encrypted string from npoint to populate your iPad code container view
 app.get('/api/get-code', async (req, res) => {
   try {
-    console.log(`📖 Fetching code from npoint...`);
-    const response = await fetch(DB_CODE_ENDPOINT);
-    
-    if (!response.ok) {
-      console.warn(`⚠️ npoint returned ${response.status}`);
-      return res.send("");
-    }
-    
-    const data = await response.json();
-    console.log(`✅ Code retrieved (length: ${data.code?.length || 0})`);
-    res.send(data.code || "");
-  } catch (e) {
-    console.error(`❌ Error in get-code:`, e.message);
-    res.status(500).send("");
+    const dbResponse = await fetch(DB_CODE_ENDPOINT);
+    if (!dbResponse.ok) return res.status(200).send(""); 
+    const jsonOutput = await dbResponse.json();
+    return res.status(200).send(jsonOutput.code || "");
+  } catch (err) {
+    return res.status(200).send("");
   }
 });
 
+// 🤖 MAIN WEBHOOK CHANNEL: Handles incoming messages and streams responses via Pollinations AI Core
 app.post('/api/webhook', async (req, res) => {
-  const { message } = req.body;
-  if (!message?.text) return res.sendStatus(200);
-  
-  try {
-    const response = await fetch(DB_CODE_ENDPOINT);
-    const data = await response.json();
-    const script = Buffer.from(data.code, 'base64').toString('utf-8');
-    const fn = new Function('msg', 'BOT_TOKEN', script);
-    await fn(message, BOT_TOKEN);
-  } catch (e) { 
-    console.error(`❌ Webhook error:`, e.message);
-  }
+  // Acknowledge the webhook request instantly to Telegram
   res.sendStatus(200);
+
+  const update = req.body;
+  if (!update || !update.message || !update.message.text) return;
+
+  const msg = update.message;
+  const originalText = msg.text.trim();
+  const lowerText = originalText.toLowerCase();
+  const targetChatId = msg.chat.id;
+  let finalResponsePayloadText = "";
+
+  // -------------------------------------------------------------------------
+  // DECK A: THE STRATIFIED CADET MISSION RULES MATRIX
+  // -------------------------------------------------------------------------
+  if (lowerText.includes('/start') || lowerText.includes('hello') || lowerText.includes('hi') || lowerText.includes('সালাম')) {
+    finalResponsePayloadText = `আসসালামু আলাইকুম <b>${msg.from.first_name || 'শিক্ষার্থী'}</b>! ক্যাডেট মিশন AI অটো-বট পোর্টালে আপনাকে স্বাগত।\n\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\n• পরীক্ষা ও ক্লাসের রুটিন দেখতে টাইপ করুন: <b>notice</b>\n\n• যেকোনো পড়ালেখার বা সাধারণ জ্ঞানের প্রশ্ন সরাসরি এখানে টাইপ করুন, আমাদের AI সাথে সাথে উত্তর দিয়ে দেবে!`;
+  } 
+  else if (lowerText.includes('result') || lowerText.includes('রেজাল্ট') || lowerText.includes('মার্কশিট')) {
+    finalResponsePayloadText = `<b>ক্যাডেট মিশন পঞ্চম শ্রেণী ফলাফল জেনারেটর:</b>\n\nমডেল পরীক্ষার মেধা তালিকা ও ডিজিটাল মার্কশিট সিস্টেমে আপলোড করা হয়েছে। নিচের লিংকে গিয়ে রোল ইনপুট দিন:\n\n👉 https://aether-lab.web.app/class5.html`;
+  } 
+  else if (lowerText.includes('notice') || lowerText.includes('নোটিশ') || lowerText.includes('রুটিন')) {
+    finalResponsePayloadText = `<b>ক্যাডেট মিশন অফিশিয়াল নোটিশ আপডেট:</b>\n\n• <b>মডেল টেস্ট:</b> আগামী ১৪ই জুন রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট শুরু হবে।\n• <b>প্রবেশপত্র:</b> ১২ই জুন বৃহস্পতিবারের মধ্যে প্রবেশপত্র সংগ্রহ করতে হবে।\n• <b>ফি:</b> মডেল ফি ৩০০/- টাকা।`;
+  } 
+  // -------------------------------------------------------------------------
+  // DECK B: LIVE AI CHAT CORE (POLLINATIONS EDGE PROCESSING)
+  // -------------------------------------------------------------------------
+  else {
+    try {
+      const aiPayloadResponse = await fetch('https://text.pollinations.ai/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            { 
+              role: 'system', 
+              content: 'You are the official Aether Lab AI Assistant deployed for Cadet Mission Coaching Center (Class 5 Boys group) in Mymensingh, Bangladesh. You help primary school students understand math (unitary method, fractions, geometry), english grammar (parts of speech, tenses), and general knowledge. Keep answers highly accurate, polite, extremely short, clear, and very easy for a 10-year-old Class 5 student to read. Respond beautifully in Bengali or English based on the language they write to you in.' 
+            },
+            { role: 'user', content: originalText }
+          ],
+          model: 'openai'
+        })
+      });
+
+      finalResponsePayloadText = await aiPayloadResponse.text();
+    } catch (aiError) {
+      finalResponsePayloadText = `দুঃখিত, এই মুহূর্তে আমার এআই কোর নেটওয়ার্ক পোর্টে সাময়িক সমস্যা হচ্ছে। অনুগ্রহ করে কিছুক্ষণ পর আবার প্রশ্ন করুন।`;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // DECK C: OUTBOUND TELEGRAM REST GATEWAY ROUTING
+  // -------------------------------------------------------------------------
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: targetChatId,
+        text: finalResponsePayloadText,
+        parse_mode: 'HTML'
+      })
+    });
+  } catch (err) {
+    console.error("Outbound relay failed to broadcast over Vercel lifecycle:", err);
+  }
 });
 
-// START SERVER
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`✅ Aether Lab Runtime Engine listening on port ${PORT}`);
-  console.log(`📡 Webhook ready at http://localhost:${PORT}/api/webhook`);
-  console.log(`💾 Using npoint endpoint: ${DB_CODE_ENDPOINT}`);
-});
+app.listen(PORT, () => console.log("Aether Lab Serverless Engine active on port: " + PORT));
 
 module.exports = app;
