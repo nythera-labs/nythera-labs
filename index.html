@@ -7,103 +7,151 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
-    body { background: #09090b; color: #e4e4e7; font-family: 'Inter', sans-serif; overflow: hidden; }
+    body { background: #050507; color: #e4e4e7; font-family: 'Inter', sans-serif; overflow-x: hidden; }
     .glass-panel {
-      background: rgba(18, 18, 24, 0.7);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: rgba(12, 12, 16, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.04);
     }
     .node-card:hover {
       border-color: rgba(239, 68, 68, 0.3);
-      box-shadow: 0 0 25px rgba(239, 68, 68, 0.05);
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.08);
     }
-    .node-card-tg:hover {
+    .node-card-blue:hover {
       border-color: rgba(59, 130, 246, 0.3);
-      box-shadow: 0 0 25px rgba(59, 130, 246, 0.05);
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.08);
+    }
+    .node-card-amber:hover {
+      border-color: rgba(245, 158, 11, 0.3);
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.08);
+    }
+    .node-card-purple:hover {
+      border-color: rgba(147, 51, 234, 0.3);
+      box-shadow: 0 0 30px rgba(147, 51, 234, 0.08);
     }
   </style>
 </head>
-<body class="h-screen w-screen flex flex-col items-center justify-center p-4 antialiased select-none">
+<body class="min-h-screen w-screen flex flex-col items-center justify-start p-4 sm:p-8 antialiased select-none">
 
-  <canvas id="aether-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-10 opacity-25"></canvas>
+  <canvas id="aether-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-10 opacity-30"></canvas>
 
-  <div class="w-full max-w-3xl glass-panel rounded-3xl p-6 sm:p-8 flex flex-col gap-6 z-20 relative shadow-2xl">
+  <div class="w-full max-w-5xl glass-panel rounded-3xl p-6 sm:p-8 flex flex-col gap-6 z-20 relative shadow-2xl my-auto border border-zinc-800/50">
     
-    <div class="flex justify-between items-center border-b border-zinc-800 pb-4">
-      <div class="flex items-center gap-3">
-        <div class="h-8 w-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-xs font-black tracking-tighter text-zinc-300">æ</div>
+    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-zinc-800/80 pb-5 gap-4">
+      <div class="flex items-center gap-3.5">
+        <div class="h-9 w-9 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-sm font-black tracking-tighter text-zinc-200 shadow-inner">æ</div>
         <div>
-          <h1 class="text-xs font-mono font-bold tracking-[0.2em] text-zinc-200 uppercase">AETHER LAB // ROOT SYSTEM</h1>
-          <p class="text-[10px] text-zinc-500 font-mono uppercase mt-0.5">Active Operational Node Control Matrix</p>
+          <h1 class="text-xs font-mono font-bold tracking-[0.25em] text-zinc-100 uppercase">AETHER LAB // MAIN CONTROL CORE</h1>
+          <p class="text-[10px] text-zinc-500 font-mono uppercase mt-0.5 tracking-wider">Operational Development Sandbox Matrix</p>
         </div>
       </div>
-      <div class="bg-zinc-950 border border-zinc-800 px-3 py-1 rounded-md text-[10px] font-mono text-emerald-400 font-bold flex items-center gap-1.5">
-        <span class="h-1 w-1 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_6px_#34d399]"></span>
-        CORE: NOMINAL
+      <div class="flex items-center gap-3">
+        <div class="bg-zinc-950 border border-zinc-800/80 px-3 py-1.5 rounded-lg text-[10px] font-mono text-zinc-400 font-bold flex items-center gap-2">
+          <span class="text-zinc-600 uppercase">Sandbox Mode:</span>
+          <span class="text-purple-400 font-black">LOCAL_STORAGE</span>
+        </div>
+        <div class="bg-zinc-950 border border-zinc-800/80 px-3 py-1.5 rounded-lg text-[10px] font-mono text-emerald-400 font-bold flex items-center gap-1.5">
+          <span class="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_#34d399]"></span>
+          SYS_ONLINE
+        </div>
       </div>
     </div>
 
-    <div class="space-y-1 font-mono">
-      <span class="text-[10px] text-zinc-600 uppercase font-black tracking-widest">// Central Command Dashboard</span>
+    <div class="space-y-1 font-mono max-w-2xl">
+      <span class="text-[9px] text-purple-400 uppercase font-black tracking-widest">// Central Interface Portal</span>
       <p class="text-xs text-zinc-400 leading-relaxed font-sans font-light">
-        Welcome to your serverless engineering engine. Select an isolated operational module from the directory matrix below to interact with your live deployed applications.
+        Welcome to your unified engineering node. Select an operational architecture component from the configuration field below to initialize isolated tool blocks.
       </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
       
-      <a href="./class5.html" class="node-card block p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 transition-all duration-300 group flex flex-col justify-between gap-4">
-        <div class="space-y-2">
+      <a href="./class5.html" class="node-card block p-5 rounded-2xl bg-zinc-900/20 border border-zinc-800/60 transition-all duration-300 group flex flex-col justify-between gap-5">
+        <div class="space-y-2.5">
           <div class="flex justify-between items-start">
-            <div class="h-10 w-10 bg-red-950/20 text-red-500 rounded-xl border border-red-900/30 flex items-center justify-center text-base">
+            <div class="h-10 w-10 bg-red-950/20 text-red-500 rounded-xl border border-red-900/30 flex items-center justify-center text-base shadow-md">
               <i class="fa-solid fa-graduation-cap"></i>
             </div>
-            <span class="text-[9px] font-mono text-zinc-600 tracking-widest uppercase font-bold group-hover:text-red-400 transition-colors">NODE_01 // LIVE</span>
+            <span class="text-[9px] font-mono text-zinc-600 tracking-widest uppercase font-bold group-hover:text-red-400/80 transition-colors">NODE_01 // ACTIVE</span>
           </div>
           <h3 class="text-sm font-bold text-zinc-100 group-hover:text-red-500 transition-colors font-sans">ক্যাডেট মিশন স্পেশাল পোর্টাল</h3>
           <p class="text-[11px] text-zinc-500 font-sans font-light leading-relaxed">পঞ্চম শ্রেণীর বৃত্তি ও ক্যাডেট কলেজ ভর্তি পরীক্ষার জন্য এক্সক্লুসিভ স্টুডেন্ট পোর্টাল, নোটিশ বোর্ড এবং রিয়েল-টাইম মার্কশিট সার্চ ইঞ্জিন।</p>
         </div>
-        <div class="border-t border-zinc-800/60 pt-3 flex justify-between items-center text-[10px] font-mono text-zinc-500">
+        <div class="border-t border-zinc-900 pt-3 flex justify-between items-center text-[10px] font-mono text-zinc-500">
           <span>Target: class5.html</span>
           <i class="fa-solid fa-arrow-right-long text-zinc-600 group-hover:translate-x-1 group-hover:text-red-500 transition-all"></i>
         </div>
       </a>
 
-      <a href="./bot.html" class="node-card-tg block p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 transition-all duration-300 group flex flex-col justify-between gap-4">
-        <div class="space-y-2">
+      <a href="./roblox.html" class="node-card-blue block p-5 rounded-2xl bg-zinc-900/20 border border-zinc-800/60 transition-all duration-300 group flex flex-col justify-between gap-5">
+        <div class="space-y-2.5">
           <div class="flex justify-between items-start">
-            <div class="h-10 w-10 bg-blue-950/20 text-blue-500 rounded-xl border border-blue-900/30 flex items-center justify-center text-base">
-              <i class="fa-brands fa-telegram"></i>
+            <div class="h-10 w-10 bg-blue-950/20 text-blue-500 rounded-xl border border-blue-900/30 flex items-center justify-center text-base shadow-md">
+              <i class="fa-solid fa-gamepad"></i>
             </div>
-            <span class="text-[9px] font-mono text-zinc-600 tracking-widest uppercase font-bold group-hover:text-blue-400 transition-colors">NODE_02 // LIVE</span>
+            <span class="text-[9px] font-mono text-zinc-600 tracking-widest uppercase font-bold group-hover:text-blue-400/80 transition-colors">NODE_02 // SHUNT</span>
           </div>
-          <h3 class="text-sm font-bold text-zinc-100 group-hover:text-blue-400 transition-colors font-sans">Telegram Bot Core Panel</h3>
-          <p class="text-[11px] text-zinc-500 font-sans font-light leading-relaxed">100% serverless, browser-based Telegram API dashboard controlling @aether_lab_bot. Monitor live updates and send messages inside active memory sandbox.</p>
+          <h3 class="text-sm font-bold text-zinc-100 group-hover:text-blue-400 transition-colors font-sans">Roblox Motion Core Matrix</h3>
+          <p class="text-[11px] text-zinc-500 font-sans font-light leading-relaxed">Technical mechanical movement logging parameters tracking 4,200 kill milestones, loop dashing curves, and character flick turn frame analysis.</p>
         </div>
-        <div class="border-t border-zinc-800/60 pt-3 flex justify-between items-center text-[10px] font-mono text-zinc-500">
-          <span>Target: bot.html</span>
+        <div class="border-t border-zinc-900 pt-3 flex justify-between items-center text-[10px] font-mono text-zinc-500">
+          <span>Target: roblox.html</span>
           <i class="fa-solid fa-arrow-right-long text-zinc-600 group-hover:translate-x-1 group-hover:text-blue-400 transition-all"></i>
+        </div>
+      </a>
+
+      <a href="./imaging.html" class="node-card-amber block p-5 rounded-2xl bg-zinc-900/20 border border-zinc-800/60 transition-all duration-300 group flex flex-col justify-between gap-5">
+        <div class="space-y-2.5">
+          <div class="flex justify-between items-start">
+            <div class="h-10 w-10 bg-amber-950/20 text-amber-500 rounded-xl border border-amber-900/30 flex items-center justify-center text-base shadow-md">
+              <i class="fa-solid fa-camera-retro"></i>
+            </div>
+            <span class="text-[9px] font-mono text-zinc-600 tracking-widest uppercase font-bold group-hover:text-amber-400/80 transition-colors">NODE_03 // SHUNT</span>
+          </div>
+          <h3 class="text-sm font-bold text-zinc-100 group-hover:text-amber-400 transition-colors font-sans">RAW Image Sizing Engine</h3>
+          <p class="text-[11px] text-zinc-500 font-sans font-light leading-relaxed">High-capacity data processor managing 32-bit manual bracketed HDR photo merges with specialized structural size diagnostic calculators.</p>
+        </div>
+        <div class="border-t border-zinc-900 pt-3 flex justify-between items-center text-[10px] font-mono text-zinc-500">
+          <span>Target: imaging.html</span>
+          <i class="fa-solid fa-arrow-right-long text-zinc-600 group-hover:translate-x-1 group-hover:text-amber-400 transition-all"></i>
+        </div>
+      </a>
+
+      <a href="./debugger.html" class="node-card-purple block p-5 rounded-2xl bg-zinc-900/20 border border-zinc-800/60 transition-all duration-300 group flex flex-col justify-between gap-5">
+        <div class="space-y-2.5">
+          <div class="flex justify-between items-start">
+            <div class="h-10 w-10 bg-purple-950/20 text-purple-500 rounded-xl border border-purple-900/30 flex items-center justify-center text-base shadow-md">
+              <i class="fa-solid fa-code-branch"></i>
+            </div>
+            <span class="text-[9px] font-mono text-zinc-600 tracking-widest uppercase font-bold group-hover:text-purple-400/80 transition-colors">NODE_04 // SHUNT</span>
+          </div>
+          <h3 class="text-sm font-bold text-zinc-100 group-hover:text-purple-400 transition-colors font-sans">Firmware Hash & Debugger</h3>
+          <p class="text-[11px] text-zinc-500 font-sans font-light leading-relaxed">Integrated utility containing a high-speed SHA-256 converter matrix, UI testing panels, and dark mode toggles for framework simulation.</p>
+        </div>
+        <div class="border-t border-zinc-900 pt-3 flex justify-between items-center text-[10px] font-mono text-zinc-500">
+          <span>Target: debugger.html</span>
+          <i class="fa-solid fa-arrow-right-long text-zinc-600 group-hover:translate-x-1 group-hover:text-purple-400 transition-all"></i>
         </div>
       </a>
 
     </div>
 
-    <div class="bg-zinc-950 border border-zinc-800/60 rounded-xl p-3 font-mono text-[10px] flex justify-between items-center text-zinc-500">
+    <div class="bg-zinc-950 border border-zinc-900 rounded-xl p-3.5 font-mono text-[10px] flex justify-between items-center text-zinc-500">
       <div class="flex items-center gap-2">
         <i class="fa-solid fa-microchip text-zinc-700"></i>
-        <span>ENVIRONMENT MAP: SECURE_RAM_SANDBOX</span>
+        <span>ENVIRONMENT RUNTIME MAP: LOCAL_ISOLATED_CONTAINER</span>
       </div>
-      <span>UPTIME: NOMINAL_OK</span>
+      <span>CACHE_STATUS: READY_OK</span>
     </div>
 
-    <div class="flex justify-between items-center text-[9px] text-zinc-600 tracking-widest pt-1 border-t border-zinc-900 font-mono">
-      <span>PROPAGATION: NATIVE_STATIC</span>
-      <span class="text-zinc-500 uppercase">Re-Engineered & Developed by <span class="text-red-500 font-bold">Zaeem</span></span>
+    <div class="flex justify-between items-center text-[9px] text-zinc-600 tracking-widest pt-1 border-t border-zinc-900/60 font-mono">
+      <span>PROPAGATION: STATIC_EDGE</span>
+      <span class="text-zinc-500 uppercase">Designed & Re-Engineered by <span class="text-red-500 font-bold">Zaeem</span></span>
     </div>
 
   </div>
@@ -123,13 +171,13 @@
 
     function buildAetherMatrix() {
       nodePoints = [];
-      const densityCount = Math.floor((w * h) / 14000) + 10;
+      const densityCount = Math.floor((w * h) / 14000) + 12;
       for (let i = 0; i < densityCount; i++) {
         nodePoints.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
+          vx: (Math.random() - 0.5) * 0.35,
+          vy: (Math.random() - 0.5) * 0.35,
           r: 1 + Math.random() * 1.5
         });
       }
@@ -153,7 +201,7 @@
           }
         }
         ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(228, 228, 231, 0.3)'; ctx.fill();
+        ctx.fillStyle = 'rgba(228, 228, 231, 0.25)'; ctx.fill();
       });
 
       for (let i = 0; i < nodePoints.length; i++) {
@@ -162,8 +210,8 @@
           const dx = n1.x - n2.x, dy = n1.y - n2.y;
           const d = Math.sqrt(dx * dx + dy * dy);
           if (d < maxLinkDist) {
-            ctx.strokeStyle = "rgba(228, 228, 231, " + ((1 - (d / maxLinkDist)) * 0.08) + ")";
-            ctx.lineWidth = 0.7; ctx.beginPath(); ctx.moveTo(n1.x, n1.y); ctx.lineTo(n2.x, n2.y); ctx.stroke();
+            ctx.strokeStyle = "rgba(228, 228, 231, " + ((1 - (d / maxLinkDist)) * 0.07) + ")";
+            ctx.lineWidth = 0.65; ctx.beginPath(); ctx.moveTo(n1.x, n1.y); ctx.lineTo(n2.x, n2.y); ctx.stroke();
           }
         }
       }
