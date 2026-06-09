@@ -3,112 +3,50 @@ const app = express();
 
 app.use(express.json());
 
-// 🛡️ UNIVERSAL CORS MIDDLEWARE
+// CORS Configuration
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
 });
 
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
 const DB_CODE_ENDPOINT = "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
 
-// Root diagnostic link
-app.get('/', (req, res) => {
-  res.status(200).send("Aether Lab Edge Secure Script Interpreter Node Active.");
-});
-
-// TUNNEL CHANNEL A: Save code securely
 app.post('/api/save-code', async (req, res) => {
   try {
     const { code } = req.body;
-    if (!code) return res.status(400).send("Missing code parameter stream");
-
-    const dbAction = await fetch(DB_CODE_ENDPOINT, {
+    const response = await fetch(DB_CODE_ENDPOINT, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: code })
+      body: JSON.stringify({ code })
     });
-
-    if (dbAction.ok) {
-      return res.status(200).send("OK");
-    } else {
-      const dbErrText = await dbAction.text();
-      return res.status(500).send("Database node rejected save: " + dbErrText);
-    }
-  } catch (err) {
-    return res.status(500).send("Backend caught unexpected exception: " + err.message);
-  }
+    return response.ok ? res.send("OK") : res.status(500).send("DB Error");
+  } catch (e) { res.status(500).send(e.message); }
 });
 
-// TUNNEL CHANNEL B: Get code smoothly
 app.get('/api/get-code', async (req, res) => {
   try {
-    const dbResponse = await fetch(DB_CODE_ENDPOINT);
-    if (!dbResponse.ok) return res.status(200).send("");
-    const jsonOutput = await dbResponse.json();
-    return res.status(200).send(jsonOutput.code || "");
-  } catch (err) {
-    return res.status(200).send("");
-  }
+    const response = await fetch(DB_CODE_ENDPOINT);
+    const data = await response.json();
+    res.send(data.code || "");
+  } catch (e) { res.status(500).send(""); }
 });
 
-// Telegram Webhook Channel Pipeline
 app.post('/api/webhook', async (req, res) => {
-  res.sendStatus(200);
-
-  const update = req.body;
-  if (!update || !update.message || (!update.message.text && !update.message.photo)) return;
-
-  const msg = update.message;
-  const originalText = msg.text ? msg.text.trim() : "";
-  const lowerText = originalText.toLowerCase();
-  const targetChatId = msg.chat.id;
-
+  const { message } = req.body;
+  if (!message?.text) return res.sendStatus(200);
+  
   try {
-    const dbQueryResponse = await fetch(DB_CODE_ENDPOINT);
-    if (!dbQueryResponse.ok) throw new Error("Could not download dynamic logic arrays from database.");
-    
-    const jsonOutput = await dbQueryResponse.json();
-    const base64EncryptedCodeDataString = jsonOutput.code;
-
-    if (!base64EncryptedCodeDataString || base64EncryptedCodeDataString.trim() === "") {
-      throw new Error("No live script instructions stored inside active node framework.");
-    }
-
-    const customInjectedJavaScriptCodeString = Buffer.from(base64EncryptedCodeDataString.trim(), 'base64').toString('utf-8');
-
-    const AsyncFunctionConstructor = Object.getPrototypeOf(async function(){}).constructor;
-    const executeLiveInjectedScriptNode = new AsyncFunctionConstructor(
-      'msg', 'originalText', 'lowerText', 'targetChatId', 'BOT_TOKEN', 
-      customInjectedJavaScriptCodeString
-    );
-
-    await executeLiveInjectedScriptNode(msg, originalText, lowerText, targetChatId, BOT_TOKEN);
-
-  } catch (error) {
-    console.error("Interpreter execution caught exception:", error);
-    try {
-      await fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: targetChatId,
-          text: "⚠️ <b>Aether Lab Matrix Runtime Exception Alert</b>\n\n<code>" + error.message + "</code>",
-          parse_mode: 'HTML'
-        })
-      });
-    } catch (tgErr) {
-      console.error(tgErr);
-    }
-  }
+    const response = await fetch(DB_CODE_ENDPOINT);
+    const data = await response.json();
+    const script = Buffer.from(data.code, 'base64').toString('utf-8');
+    const fn = new Function('msg', 'BOT_TOKEN', script);
+    await fn(message, BOT_TOKEN);
+  } catch (e) { console.error(e); }
+  res.sendStatus(200);
 });
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Aether Lab Runtime Engine listening on port context: " + PORT));
 
 module.exports = app;
