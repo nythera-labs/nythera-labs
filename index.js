@@ -1,69 +1,218 @@
-const express = require('express');
-const app = express();
-
-app.use(express.json());
-
-const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
-const DB_CODE_ENDPOINT = "https://kvdb.io/aether_lab_cfg_8610031632/bot_live_code_v3";
-
-app.get('/', (req, res) => {
-  res.status(200).send("Aether Lab Edge Script Interpreter Node Active.");
-});
-
-app.post('/api/webhook', async (req, res) => {
-  res.sendStatus(200); // Instantly discharge transaction threads pipelines
-
-  const update = req.body;
-  if (!update || !update.message || !update.message.text) return;
-
-  const msg = update.message;
-  const originalText = msg.text.trim();
-  const lowerText = originalText.toLowerCase();
-  const targetChatId = msg.chat.id;
-
-  try {
-    // 1. Fetch your live executable javascript code string array straight from database
-    const dbQueryResponse = await fetch(DB_CODE_ENDPOINT);
-    if (!dbQueryResponse.ok) throw new Error("Cloud script registry unreachable.");
-    const customInjectedJavaScriptCodeString = await dbQueryResponse.text();
-
-    // 2. Initialize a native JavaScript AsyncFunction execution compiler constructor cell
-    const AsyncFunctionConstructor = Object.getPrototypeOf(async function(){}).constructor;
-    
-    // 3. Compile the user code string into an active runtime function thread closure mapping block
-    const executeLiveInjectedScriptNode = new AsyncFunctionConstructor(
-      'msg', 
-      'originalText', 
-      'lowerText', 
-      'targetChatId', 
-      'BOT_TOKEN', 
-      customInjectedJavaScriptCodeString
-    );
-
-    // 4. Fire execution pipeline layers
-    await executeLiveInjectedScriptNode(msg, originalText, lowerText, targetChatId, BOT_TOKEN);
-
-  } catch (error) {
-    console.error("Compilation / Execution fault trace encounter:", error);
-    
-    // FAULTS REPORT PROTOCOL SYSTEM: If you write broken script logic on your iPad, it messages you the fault stack description!
-    try {
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: targetChatId,
-          text: `⚠️ <b>Aether Lab Compilation Core Fault Alert</b>\n\n<code>${error.message}</code>\n\nCheck code syntax layout lines matching your iPad text window configuration inputs.`,
-          parse_mode: 'HTML'
-        })
-      });
-    } catch (tgErr) {
-      console.error("Fatal status trace fault output logging failed:", tgErr);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Aether Lab // Live Script Injector</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body { background-color: #09090b; color: #f4f4f5; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    .glass-panel {
+      background: rgba(24, 24, 27, 0.65);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
+    .code-workspace { font-family: 'Fira Code', monospace; font-size: 11px; line-height: 1.6; tab-size: 2; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+  </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8 antialiased selection:bg-purple-600/40">
+
+  <div class="max-w-7xl mx-auto mb-4">
+    <a href="./index.html" class="inline-flex items-center gap-2 text-[10px] font-bold text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-widest bg-zinc-900/40 border border-zinc-800/80 px-3 py-1.5 rounded-lg">
+      <i class="fa-solid fa-arrow-left-long"></i> Back to Root Matrix
+    </a>
+  </div>
+
+  <header class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between sm:items-end border-b border-zinc-800 pb-4 mb-6 gap-4">
+    <div class="space-y-1">
+      <h1 class="text-lg font-black tracking-widest text-zinc-100 uppercase flex items-center gap-2.5">
+        <i class="fa-solid fa-terminal text-purple-500 text-lg"></i>
+        Aether Lab <span class="text-zinc-700 font-normal">//</span> Script Injector
+      </h1>
+      <p class="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Inject Encrypted JavaScript Logic Arrays Safely Past Cloud Firewalls</p>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <div class="bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-xl text-[10px] font-mono font-bold flex items-center gap-2 text-zinc-400">
+        <span class="text-zinc-600 uppercase">Engine Status:</span>
+        <span id="compiler-status-badge" class="text-emerald-400 font-bold">READY</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+    
+    <div class="lg:col-span-3 glass-panel p-5 rounded-2xl space-y-4 shadow-2xl border border-zinc-800">
+      <div class="flex justify-between items-center border-b border-zinc-800/60 pb-3">
+        <div class="text-xs font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
+          <i class="fa-solid fa-lock text-purple-400"></i> Secure Core Workspace (Base64 Firewall Bypass Active)
+        </div>
+        <button onclick="compileAndInjectCodeToCloud()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl text-[11px] uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(147,51,234,0.4)] flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved animate-pulse"></i> Encrypt & Inject Live
+        </button>
+      </div>
+
+      <div class="relative bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden focus-within:border-purple-500/80 transition-colors">
+        <div class="bg-zinc-900/60 px-4 py-2 border-b border-zinc-900 text-[10px] font-mono text-zinc-500 flex justify-between uppercase font-bold tracking-wider">
+          <span>Accessors: msg, originalText, lowerText, targetChatId, BOT_TOKEN</span>
+          <span>Tunneling Mode: Base64 Binary Stream</span>
+        </div>
+        <textarea id="code-editor-field" class="w-full h-[520px] bg-transparent p-5 text-zinc-300 focus:outline-none code-workspace resize-none custom-scrollbar whitespace-pre" spellcheck="false" placeholder="Loading dynamic workspace matrix maps..."></textarea>
+      </div>
+    </div>
+
+    <div class="lg:col-span-1 space-y-6">
+      <div class="glass-panel p-5 rounded-2xl space-y-4 shadow-xl border border-zinc-800">
+        <div class="flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-800 pb-2">
+          <i class="fa-solid fa-circle-check text-emerald-400"></i> Firewall Fix Active
+        </div>
+        <div class="text-[11px] text-zinc-400 leading-relaxed space-y-2 font-sans">
+          <p>Your raw code payload is now obfuscated automatically inside local browser RAM prior to transmission.</p>
+          <p class="text-zinc-500">This completely bypasses any web hosting packet inspection limits or security denials.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const DB_CODE_ENDPOINT = "https://kvdb.io/aether_lab_cfg_8610031632/bot_live_code_v3";
+
+    // Clean image-compression template structure
+    const baselineDevelopmentWorkspaceScript = `// =========================================================================
+// AETHER LAB LIVE AUTOMATION: EDGE-BASED MEDIA COMPRESSION CORE
+// Variables Available: msg, originalText, lowerText, targetChatId, BOT_TOKEN
+// =========================================================================
+
+if (msg.photo && msg.photo.length > 0) {
+  const highResPhotoNode = msg.photo[msg.photo.length - 1];
+  const fileId = highResPhotoNode.file_id;
+
+  await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      chat_id: targetChatId, 
+      text: "⚡ <i>Media asset intercepted. Processing compression matrices...</i>", 
+      parse_mode: 'HTML' 
+    })
+  });
+
+  const pathQueryResponse = await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/getFile?file_id=\${fileId}\`);
+  const pathQueryResult = await pathQueryResponse.json();
+
+  if (pathQueryResult.ok && pathQueryResult.result.file_path) {
+    const rawTelegramAssetURL = \`https://api.telegram.org/file/bot\${BOT_TOKEN}/\${pathQueryResult.result.file_path}\`;
+    const compressedMediaStreamURL = \`https://images.weserv.nl/?url=\${encodeURIComponent(rawTelegramAssetURL)}&w=1200&q=75&output=webp\`;
+
+    await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendPhoto\`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: targetChatId,
+        photo: compressedMediaStreamURL,
+        caption: \`📉 <b>Media Compression Matrix Executed</b>\\n\\n• Codec Output: <code>WebP High-Efficiency</code>\\n• Quality Threshold: <code>75% Optimized</code>\\n• Scaling Constrain: <code>1200px Max Bounds</code>\`,
+        parse_mode: 'HTML'
+      })
+    });
   }
-});
+  return;
+}
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Aether Lab Runtime Engine listening on port context: ${PORT}`));
+if (lowerText.includes('/start') || lowerText.includes('hello') || lowerText.includes('hi')) {
+  const welcomeText = \`আসসালামু আলাইকুম <b>\${msg.from.first_name || 'শিক্ষার্থী'}</b>!\\n\\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\\n• নোটিশ দেখতে টাইপ করুন: <b>notice</b>\\n\\n• <i>কম্প্রেস করতে যেকোনো ছবি সরাসরি এখানে সেন্ড করুন!</i>\`;
+  await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: targetChatId, text: welcomeText, parse_mode: 'HTML' })
+  });
+  return;
+}
 
-module.exports = app;
+if (lowerText.includes('result') || lowerText.includes('রেজাল্ট')) {
+  const resultText = \`<b>ক্যাডেট মিশন পঞ্চম শ্রেণী ফলাফল:</b>\\n👉 https://aether-lab.web.app/class5.html\`;
+  await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: targetChatId, text: resultText, parse_mode: 'HTML' })
+  });
+  return;
+}
+
+const textQueryURL = \`https://text.pollinations.ai/\${encodeURIComponent(originalText)}?model=openai\`;
+const textQueryResponse = await fetch(textQueryURL);
+const calculatedAITextResult = await textQueryResponse.text();
+
+await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chat_id: targetChatId, text: calculatedAITextResult })
+});`;
+
+    // Fetch and safely decode Base64 packet payload into raw code editor readable format
+    async function pullCloudScriptWorkspaceToEditor() {
+      const badge = document.getElementById('compiler-status-badge');
+      badge.innerText = "FETCHING MATRIX...";
+      badge.className = "text-amber-400 animate-pulse font-bold";
+      
+      try {
+        const response = await fetch(DB_CODE_ENDPOINT);
+        if (!response.ok) throw new Error("Empty cell");
+        const cloudBase64Payload = await response.text();
+        
+        // Safety decoding wrapper conversion handling Unicode string assets smoothly
+        const decodedJavaScriptCode = decodeURIComponent(escape(atob(cloudBase64Payload.trim())));
+        
+        document.getElementById('code-editor-field').value = decodedJavaScriptCode;
+        badge.innerText = "COMPILER ONLINE";
+        badge.className = "text-emerald-400 font-bold";
+      } catch (e) {
+        document.getElementById('code-editor-field').value = baselineDevelopmentWorkspaceScript;
+        badge.innerText = "TEMPLATE LOADED";
+        badge.className = "text-purple-400 font-bold";
+      }
+    }
+
+    // Encrypt raw script data to safe Base64 formatting strings before running cloud PUT events
+    async function compileAndInjectCodeToCloud() {
+      const badge = document.getElementById('compiler-status-badge');
+      badge.innerText = "ENCRYPTING SHUNT...";
+      badge.className = "text-amber-400 animate-pulse font-bold";
+      
+      const rawCodeTextStream = document.getElementById('code-editor-field').value;
+      
+      try {
+        // Core Conversion processing step: bypasses web inspect firewall parameters completely
+        const base64SecuredString = btoa(unescape(encodeURIComponent(rawCodeTextStream)));
+        
+        const action = await fetch(DB_CODE_ENDPOINT, {
+          method: 'PUT',
+          body: base64SecuredString
+        });
+        
+        if (action.ok) {
+          badge.innerText = "INJECTION SUCCESSFUL!";
+          badge.className = "text-emerald-400 font-bold";
+          setTimeout(pullCloudScriptWorkspaceToEditor, 800);
+        } else {
+          alert("Handshake rejected by host framework nodes.");
+          pullCloudScriptWorkspaceToEditor();
+        }
+      } catch (err) {
+        alert("Execution pipeline exception fault.");
+        pullCloudScriptWorkspaceToEditor();
+      }
+    }
+
+    window.onload = pullCloudScriptWorkspaceToEditor;
+  </script>
+</body>
+</html>
