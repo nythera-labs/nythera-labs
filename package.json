@@ -1,7 +1,7 @@
 {
-  "name": "aether-lab-tg-core",
-  "version": "1.2.0",
-  "description": "24/7 Serverless Rules Engine for Cadet Mission Bot",
+  "name": "aether-lab-ai-core",
+  "version": "2.0.0",
+  "description": "24/7 Non-Sleep AI Chat Engine for Cadet Mission Bot",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
