@@ -70,13 +70,16 @@ app.post("/api/webhook", async (req, res) => {
   const originalText = msg.text.trim();
   const lowerText = originalText.toLowerCase();
   const targetChatId = msg.chat.id;
+  
+  let isPhotoAction = false;
   let finalResponsePayloadText = "";
+  let targetMediaUrl = "";
 
   // -------------------------------------------------------------------------
   // DECK A: THE STRATIFIED CADET MISSION RULES MATRIX
   // -------------------------------------------------------------------------
   if (lowerText.includes("/start") || lowerText.includes("hello") || lowerText.includes("hi") || lowerText.includes("সালাম")) {
-    finalResponsePayloadText = "আসসালামু আলাইকুম <b>" + (msg.from.first_name || "শিক্ষার্থী") + "</b>! ক্যাডেট মিশন AI অটো-বট পোর্টালে আপনাকে স্বাগত।\n\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\n• পরীক্ষা ও ক্লাসের রুটিন দেখতে টাইপ করুন: <b>notice</b>\n\n• যেকোনো পড়ালেখার বা সাধারণ জ্ঞানের প্রশ্ন সরাসরি এখানে টাইপ করুন, আমাদের AI সাথে সাথে উত্তর দিয়ে দেবে!";
+    finalResponsePayloadText = "আসসালামু আলাইকুম <b>" + (msg.from.first_name || "শিক্ষার্থী") + "</b>! ক্যাডেট মিশন AI অটো-বট পোর্টালে আপনাকে স্বাগত।\n\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\n• পরীক্ষা ও ক্লাসের রুটিন দেখতে টাইপ করুন: <b>notice</b>\n• এআই ছবি তৈরি করতে টাইপ করুন: <b>/image [আপনার কল্পনা]</b>\n\n• যেকোনো পড়ালেখার বা সাধারণ জ্ঞানের প্রশ্ন সরাসরি এখানে টাইপ করুন, আমাদের AI সাথে সাথে উত্তর দিয়ে দেবে!";
   } 
   else if (lowerText.includes("result") || lowerText.includes("রেজাল্ট") || lowerText.includes("মার্কশিট")) {
     finalResponsePayloadText = "<b>ক্যাডেট মিশন পঞ্চম শ্রেণী ফলাফল জেনারেটর:</b>\n\nমডেল পরীক্ষার মেধা তালিকা ও ডিজিটাল মার্কশিট সিস্টেমে আপলোড করা হয়েছে। নিচের লিংকে গিয়ে রোল ইনপুট দিন:\n\n👉 https://aether-lab.web.app/class5.html";
@@ -85,7 +88,23 @@ app.post("/api/webhook", async (req, res) => {
     finalResponsePayloadText = "<b>ক্যাডেট মিশন অফিশিয়াল নোটিশ আপডেট:</b>\n\n• <b>মডেল টেস্ট:</b> আগামী ১৪ই জুন রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট শুরু হবে।\n• <b>প্রবেশপত্র:</b> ১২ই জুন বৃহস্পতিবারের মধ্যে প্রবেশপত্র সংগ্রহ করতে হবে।\n• <b>ফি:</b> মডেল ফি ৩০০/- টাকা।";
   } 
   // -------------------------------------------------------------------------
-  // DECK B: LIVE AI CHAT CORE (POLLINATIONS EDGE PROCESSING)
+  // DECK B: AI IMAGE GENERATION ENGINE COMMAND PIPELINE
+  // -------------------------------------------------------------------------
+  else if (lowerText.startsWith("/image ") || lowerText.startsWith("image ")) {
+    let cleanPrompt = originalText.replace(/^\/image\s+/i, "").replace(/^image\s+/i, "").trim();
+    
+    if (!cleanPrompt) {
+      finalResponsePayloadText = "❌ প্লিজ ইমেজ তৈরি করার জন্য একটি প্রম্পট/বর্ণনা দিন।\n\n<b>উদাহরণ:</b> <code>/image a futuristic cybernetic city neon lights</code>";
+    } else {
+      isPhotoAction = true;
+      // Generates a dynamic random numeric seed parameter to completely bypass image cache logs
+      let randomSeed = Math.floor(Math.random() * 999999);
+      targetMediaUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(cleanPrompt) + "?width=1024&height=1024&nologo=true&seed=" + randomSeed;
+      finalResponsePayloadText = "🎨 <b>Generated Prompt:</b> <i>" + cleanPrompt + "</i>";
+    }
+  }
+  // -------------------------------------------------------------------------
+  // DECK C: LIVE AI CHAT CORE (POLLINATIONS TEXT INTERCEPT)
   // -------------------------------------------------------------------------
   else {
     try {
@@ -111,17 +130,28 @@ app.post("/api/webhook", async (req, res) => {
   }
 
   // -------------------------------------------------------------------------
-  // DECK C: OUTBOUND TELEGRAM REST GATEWAY ROUTING
+  // DECK D: OUTBOUND TELEGRAM REST GATEWAY ROUTING
   // -------------------------------------------------------------------------
   try {
-    await fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
+    let apiMethodTarget = "sendMessage";
+    let outboundBodyPayload = {
+      chat_id: targetChatId,
+      parse_mode: "HTML"
+    };
+
+    // Routing adapter shifts payload shapes dynamically if image tags are checked true
+    if (isPhotoAction) {
+      apiMethodTarget = "sendPhoto";
+      outboundBodyPayload.photo = targetMediaUrl;
+      outboundBodyPayload.caption = finalResponsePayloadText;
+    } else {
+      outboundBodyPayload.text = finalResponsePayloadText;
+    }
+
+    await fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/" + apiMethodTarget, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: targetChatId,
-        text: finalResponsePayloadText,
-        parse_mode: "HTML"
-      })
+      body: JSON.stringify(outboundBodyPayload)
     });
   } catch (err) {
     console.error("Outbound relay failed to broadcast over Vercel lifecycle:", err);
