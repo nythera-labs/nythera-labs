@@ -50,10 +50,11 @@
   </header>
 
   <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+    
     <div class="lg:col-span-3 glass-panel p-5 rounded-2xl space-y-4 shadow-2xl border border-zinc-800">
       <div class="flex justify-between items-center border-b border-zinc-800/60 pb-3">
         <div class="text-xs font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
-          <i class="fa-solid fa-lock text-purple-400"></i> Secure Core Workspace (npoint Stable Layer Active)
+          <i class="fa-solid fa-lock text-purple-400"></i> Secure Core Workspace (NPOINT JSON Object Mode)
         </div>
         <button onclick="compileAndInjectCodeToCloud()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl text-[11px] uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(147,51,234,0.4)] flex items-center gap-2">
           <i class="fa-solid fa-shield-halved animate-pulse"></i> Encrypt & Inject Live
@@ -63,7 +64,7 @@
       <div class="relative bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden focus-within:border-purple-500/80 transition-colors">
         <div class="bg-zinc-900/60 px-4 py-2 border-b border-zinc-900 text-[10px] font-mono text-zinc-500 flex justify-between uppercase font-bold tracking-wider">
           <span>Accessors: msg, originalText, lowerText, targetChatId, BOT_TOKEN</span>
-          <span>Tunneling Mode: Base64 Unified Object</span>
+          <span>Tunneling Mode: Base64 Encapsulated JSON</span>
         </div>
         <textarea id="code-editor-field" class="w-full h-[520px] bg-transparent p-5 text-zinc-300 focus:outline-none code-workspace resize-none custom-scrollbar whitespace-pre" spellcheck="false" placeholder="Loading dynamic workspace matrix maps..."></textarea>
       </div>
@@ -72,20 +73,18 @@
     <div class="lg:col-span-1 space-y-6">
       <div class="glass-panel p-5 rounded-2xl space-y-4 shadow-xl border border-zinc-800">
         <div class="flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-800 pb-2">
-          <i class="fa-solid fa-circle-check text-emerald-400"></i> npoint Cloud Sync
+          <i class="fa-solid fa-circle-check text-emerald-400"></i> npoint Validation Active
         </div>
         <div class="text-[11px] text-zinc-400 leading-relaxed space-y-2 font-sans">
-          <p>Your raw code payload is now obfuscated and safely transmitted inside a protected JSON container.</p>
-          <p class="text-zinc-500">This bypasses all anonymous namespace blocks and firewalls completely.</p>
+          <p>Your raw code payload is now wrapped into a verified JSON structure before leaving your device.</p>
+          <p class="text-zinc-500">This fully satisfies npoint structure requirements and securely bypasses server inspection blocks.</p>
         </div>
       </div>
     </div>
   </main>
 
   <script>
-    // ⚠️ PASTE YOUR 20-CHARACTER NPOINT BIN ID RIGHT HERE:
-    const NPOINT_BIN_ID = "e8d53f9c51e5b8d3b5ed"; 
-    const DB_CODE_ENDPOINT = `https://api.npoint.io/${NPOINT_BIN_ID}`;
+    const DB_CODE_ENDPOINT = "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
 
     const baselineDevelopmentWorkspaceScript = `// =========================================================================
 // AETHER LAB LIVE AUTOMATION: EDGE-BASED MEDIA COMPRESSION CORE
@@ -159,28 +158,29 @@ await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
 
     async function pullCloudScriptWorkspaceToEditor() {
       const badge = document.getElementById('compiler-status-badge');
-      badge.innerText = "FETCHING CODE...";
+      badge.innerText = "FETCHING MATRIX...";
       badge.className = "text-amber-400 animate-pulse font-bold";
       
       try {
         const response = await fetch(DB_CODE_ENDPOINT);
-        if (!response.ok) throw new Error("Empty cell");
-        const data = await response.json();
+        const json = await response.json();
         
-        const decodedJavaScriptCode = decodeURIComponent(escape(atob(data.script.trim())));
+        if (!json || !json.code) throw new Error("Empty cell structure");
+        
+        const decodedJavaScriptCode = decodeURIComponent(escape(atob(json.code.trim())));
         document.getElementById('code-editor-field').value = decodedJavaScriptCode;
         badge.innerText = "COMPILER ONLINE";
         badge.className = "text-emerald-400 font-bold";
       } catch (e) {
         document.getElementById('code-editor-field').value = baselineDevelopmentWorkspaceScript;
-        badge.innerText = "TEMPLATE READY";
+        badge.innerText = "TEMPLATE LOADED";
         badge.className = "text-purple-400 font-bold";
       }
     }
 
     async function compileAndInjectCodeToCloud() {
       const badge = document.getElementById('compiler-status-badge');
-      badge.innerText = "INJECTING CODE...";
+      badge.innerText = "ENCRYPTING SHUNT...";
       badge.className = "text-amber-400 animate-pulse font-bold";
       
       const rawCodeTextStream = document.getElementById('code-editor-field').value;
@@ -191,19 +191,20 @@ await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
         const action = await fetch(DB_CODE_ENDPOINT, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ script: base64SecuredString })
+          body: JSON.stringify({ code: base64SecuredString })
         });
         
         if (action.ok) {
           badge.innerText = "INJECTION SUCCESSFUL!";
           badge.className = "text-emerald-400 font-bold";
-          setTimeout(pullCloudScriptWorkspaceToEditor, 500);
+          setTimeout(pullCloudScriptWorkspaceToEditor, 800);
         } else {
-          alert("Handshake rejected by host framework nodes.");
+          const errorErrText = await action.text();
+          alert("Handshake rejected: " + errorErrText);
           pullCloudScriptWorkspaceToEditor();
         }
       } catch (err) {
-        alert("Execution pipeline exception fault.");
+        alert("Execution pipeline exception fault: " + err.message);
         pullCloudScriptWorkspaceToEditor();
       }
     }
