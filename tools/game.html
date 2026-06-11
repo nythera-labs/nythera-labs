@@ -195,7 +195,6 @@
     </div>
 
     <script>
-        // --- NATIVE AUDIO ENGINE ---
         class WebAudioSystem {
             constructor() {
                 this.ctx = null;
@@ -262,7 +261,6 @@
             initEngine();
         }
 
-        // --- CORE GAME MODULE CONFIGURATION ---
         let scene, camera, renderer, clock;
         let player, playerMesh;
         let twinClone = null;
@@ -278,7 +276,6 @@
         const mapSize = 50;
         const playerSpeedBase = 16.0;
 
-        // Ability parameters
         let twinAbilityActive = false;
         let twinTimeRemaining = 0;
         let twinCooldownTimer = 0;
@@ -305,7 +302,6 @@
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
-            // Lighting Rig Configuration
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
 
@@ -324,7 +320,8 @@
             for(let i=0; i<18; i++) spawnCyberDummy();
 
             window.addEventListener('resize', onWindowResize);
-            clock.getDelta(); // Clear buffer timeline spikes
+            clock.getDelta(); 
+            animate();
         }
 
         function buildPlaygroundMap() {
@@ -338,7 +335,6 @@
             gridLines.position.y = 0.005;
             scene.add(gridLines);
 
-            // Glowing Boundary Structures
             const wallGeo = new THREE.BoxGeometry(mapSize * 2, 0.6, 0.6);
             const wallMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc, emissive: 0x00aa88 });
             
@@ -357,8 +353,6 @@
             loader.load('./Meshy_AI_Cloudy_Sky_Portrait_0610185922_texture.glb', function(gltf) {
                 playerMesh = gltf.scene;
                 playerMesh.scale.set(playerScaleModifier, playerScaleModifier, playerScaleModifier); 
-                
-                // FIXED COORDINATES: Shifted upwards relative to scale matrix to prevent leg embedding errors
                 playerMesh.position.set(0, 0.28 * playerScaleModifier, 0); 
                 playerMesh.rotation.y = Math.PI; 
                 player.add(playerMesh);
@@ -398,28 +392,24 @@
             });
         }
 
-        // --- THE TWIN SPECIAL ABILITY LOGIC ---
         function triggerShadowTwinAbility() {
             if (twinCooldownTimer > 0 || twinAbilityActive || !playerMesh) return;
             
             audio.playTwinSound();
             twinAbilityActive = true;
-            twinTimeRemaining = 5.0; // Ability lasts for 5 seconds
+            twinTimeRemaining = 5.0; 
 
             twinClone = new THREE.Group();
             
-            // Build Hologram Representation of your current size state
             const cloneGeo = new THREE.BoxGeometry(0.8, 1.8, 0.8);
             const cloneMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.7 });
             const holoMesh = new THREE.Mesh(cloneGeo, cloneMat);
             
-            // Scaled dynamically relative to current size ratios
             const currentScaleRatio = playerScaleModifier / 4.0;
             holoMesh.scale.set(currentScaleRatio, currentScaleRatio, currentScaleRatio);
             holoMesh.position.y = 0.9 * currentScaleRatio;
             twinClone.add(holoMesh);
 
-            // Spawn slightly forward from where Mr. Kim is facing
             const forwardVector = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0,1,0), player.rotation.y);
             twinClone.position.copy(player.position).add(forwardVector.multiplyScalar(3));
             
@@ -427,12 +417,10 @@
             createSparksExplosion(twinClone.position, 0x00ffff, currentScaleRatio);
         }
 
-        // --- UPGRADED MECH-DUMMY GENERATOR ---
         function spawnCyberDummy() {
             const dummyGroup = new THREE.Group();
             const scaleFactor = 0.5 + Math.random() * 1.5;
 
-            // Multi-part Mech structure
             const torso = new THREE.Mesh(
                 new THREE.BoxGeometry(0.7, 0.8, 0.6),
                 new THREE.MeshStandardMaterial({ color: 0x1c2333, roughness: 0.3, metalness: 0.7 })
@@ -457,7 +445,6 @@
 
             dummyGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
             
-            // Random distribution positioning coordinates
             dummyGroup.position.set(
                 (Math.random() - 0.5) * (mapSize * 1.7),
                 0,
@@ -506,8 +493,6 @@
 
             if (playerMesh) {
                 playerMesh.scale.set(playerScaleModifier, playerScaleModifier, playerScaleModifier);
-                
-                // HEIGHT RE-CALIBRATION MATRIX: Matches floor offset during active expansion shifts
                 playerMesh.position.y = 0.28 * playerScaleModifier; 
             }
 
@@ -524,16 +509,13 @@
             if(player) camera.lookAt(player.position.x, player.position.y + (1.2 * cameraZoomFactor), player.position.z);
         }
 
-        // --- HARDWARE STABLE TICK LOOP ---
         function animate() {
             requestAnimationFrame(animate);
             if (!clock) return;
             
-            // Delta time calculation ensures identical velocities on 60Hz and 120Hz screens
             const delta = clock.getDelta();
 
             if (gameActive) {
-                // Update Cooldown Interface Elements
                 if (twinCooldownTimer > 0) {
                     twinCooldownTimer -= delta;
                     if (twinCooldownTimer <= 0) {
@@ -545,11 +527,9 @@
                     }
                 }
 
-                // Handle Twin Active AI Routine Mapping
                 if (twinAbilityActive && twinClone) {
                     twinTimeRemaining -= delta;
                     
-                    // Automated vacuum AI path tracking nearest target entity item
                     let closestTarget = null;
                     let recordDist = Infinity;
                     
@@ -565,19 +545,19 @@
                         let twinMoveDir = new THREE.Vector3().subVectors(closestTarget.position, twinClone.position);
                         twinMoveDir.y = 0;
                         twinMoveDir.normalize();
-                        twinClone.position.add(twinMoveDir.multiplyScalar(22.0 * delta)); // Fast clone chase vector
+                        twinClone.position.add(twinMoveDir.multiplyScalar(22.0 * delta)); 
                     }
 
                     if (twinTimeRemaining <= 0) {
+                        // FIXED: Changed #ff007f string error to standard hex integer syntax
                         createSparksExplosion(twinClone.position, 0x00ffff, playerScaleModifier / 4.0);
                         scene.remove(twinClone);
                         twinClone = null;
                         twinAbilityActive = false;
-                        twinCooldownTimer = twinMaxCooldown; // Initiate standard cooldown tracking cycle
+                        twinCooldownTimer = twinMaxCooldown; 
                     }
                 }
 
-                // Mr. Kim Movement Processing
                 if (player) {
                     const speedModifier = playerSpeedBase * (1 + (cameraZoomFactor - 1) * 0.35); 
                     const moveVec = new THREE.Vector3(moveInput.x, 0, -moveInput.y).multiplyScalar(speedModifier * delta);
@@ -593,14 +573,12 @@
                     updateCameraPosition();
                 }
 
-                // Mech-Dummy Entities Execution Arrays
                 const currentPlayerRadius = (playerScaleModifier / 4.0) * 1.5;
                 const time = performance.now() * 0.005;
 
                 for(let i = targets.length - 1; i >= 0; i--) {
                     const target = targets[i];
                     
-                    // Hover animations
                     target.children[0].position.y = 0.6 + Math.sin(time + target.userData.seed) * 0.08;
 
                     const distToPlayer = player.position.distanceTo(target.position);
@@ -608,7 +586,6 @@
                     
                     const combinedRadius = currentPlayerRadius + target.userData.radius;
 
-                    // Fleeing Routine execution path logic triggers if player or clone gets close
                     let dangerDist = Math.min(distToPlayer, distToTwin);
                     let dangerSource = distToPlayer < distToTwin ? player : twinClone;
 
@@ -623,7 +600,6 @@
                         target.position.z = Math.max(-mapSize+2, Math.min(mapSize-2, target.position.z));
                     }
 
-                    // Check Player Consumption
                     if (distToPlayer < combinedRadius) {
                         createSparksExplosion(target.position, 0xffaa00, target.scale.y);
                         handleGrowthSequence(target.userData.radius);
@@ -633,7 +609,6 @@
                         continue;
                     }
 
-                    // Check Shadow Twin Vacuum Consumption
                     if (distToTwin < (combinedRadius * 1.2)) {
                         createSparksExplosion(target.position, 0x00ffff, target.scale.y);
                         handleGrowthSequence(target.userData.radius);
@@ -644,7 +619,6 @@
                 }
             }
 
-            // Frame-independent explosion mechanics
             for(let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
                 p.position.add(p.userData.velocity.clone().multiplyScalar(delta));
