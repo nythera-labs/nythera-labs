@@ -3,345 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mr Kim runner</title>
+    <title>Zaeem Labs // Hub</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background: #0f111a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+        :root {
+            --bg-base: #0a0c12;
+            --bg-surface: #121622;
+            --bg-card: #171d2f;
+            --accent: #00e5ff;
+            --text-main: #ffffff;
+            --text-muted: #8a90a6;
+            --border: rgba(0, 229, 255, 0.15);
+            --neon-glow: 0 0 15px rgba(0, 229, 255, 0.25);
+        }
+
+        /* Light Mode Variables via Dataset Toggle */
+        [data-theme="light"] {
+            --bg-base: #f4f6f9;
+            --bg-surface: #ffffff;
+            --bg-card: #eaeef5;
+            --accent: #00838f;
+            --text-main: #1a1d24;
+            --text-muted: #60677a;
+            --border: rgba(0, 131, 143, 0.2);
+            --neon-glow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); transition: background-color 0.3s, color 0.3s; padding: 20px; min-height: 100vh; }
+
+        /* Navigation Header */
+        header { max-width: 1200px; margin: 0 auto 40px auto; display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+        .logo-group h1 { font-size: 1.8rem; letter-spacing: 3px; font-weight: 900; color: var(--text-main); }
+        .logo-group span { color: var(--accent); }
         
-        /* HUD UI Overlay */
-        .ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
-        .score-card { background: rgba(15, 17, 26, 0.85); padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 1.2rem; color: #00e5ff; align-self: flex-start; pointer-events: auto; border: 1px solid rgba(0, 229, 255, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .theme-toggle-btn { background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main); padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem; box-shadow: var(--neon-glow); transition: all 0.2s ease; }
+        .theme-toggle-btn:hover { transform: translateY(-2px); }
+
+        /* Main Grid Layout */
+        .dashboard-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+
+        /* Base Card Styling */
+        .card { background-color: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px; padding: 25px; box-shadow: var(--neon-glow); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s ease; }
+        .card:hover { transform: translateY(-4px); }
+        .card-header h2 { font-size: 1.4rem; margin-bottom: 8px; letter-spacing: 1px; }
+        .card-header p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.4; }
+
+        /* Action Buttons */
+        .launch-btn { background: var(--accent); color: #0a0c12; text-decoration: none; text-align: center; padding: 14px; border-radius: 8px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: opacity 0.2s; margin-top: 15px; }
+        .launch-btn:hover { opacity: 0.9; }
+
+        /* Functional UI Widgets inside Cards */
+        .widget-box { background: var(--bg-card); border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        input[type="text"], input[type="number"] { width: 100%; background: var(--bg-base); border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: var(--text-main); font-size: 1rem; margin-bottom: 12px; outline: none; }
         
-        /* Screen Overlays */
-        .screen-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(10, 12, 18, 0.9); color: white; text-align: center; padding: 20px; transition: opacity 0.3s ease; }
-        .screen-overlay.hidden { opacity: 0; pointer-events: none; }
-        #loading-screen { background: #0a0c12; z-index: 30; }
-        
-        h1 { font-size: 2.8rem; margin-bottom: 10px; letter-spacing: 2px; font-weight: 800; text-transform: uppercase; }
-        p { font-size: 1.1rem; margin-bottom: 25px; color: #8a90a6; }
-        
-        button { background: #00e5ff; color: #0a0c12; border: none; padding: 16px 45px; font-size: 1.2rem; font-weight: bold; border-radius: 30px; cursor: pointer; pointer-events: auto; box-shadow: 0 5px 25px rgba(0, 229, 255, 0.4); transform: translateY(0); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        button:active { transform: translateY(3px); box-shadow: 0 2px 10px rgba(0, 229, 255, 0.4); }
-        
-        .spinner { border: 4px solid rgba(255,255,255,0.05); width: 60px; height: 60px; border-radius: 50%; border-left-color: #00e5ff; animation: spin 0.8s linear infinite; margin-bottom: 25px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .result-output { word-break: break-all; font-family: monospace; font-size: 0.85rem; color: var(--accent); margin-top: 8px; min-height: 20px; }
+
+        /* Calculator Interface Layout */
+        .calc-grid { display: grid; grid-template-columns: repeat(4, ifr); gap: 8px; margin-top: 10px; }
+        .calc-screen { width: 100%; background: var(--bg-base); text-align: right; padding: 12px; font-family: monospace; font-size: 1.2rem; color: var(--accent); border-radius: 6px; border: 1px solid var(--border); margin-bottom: 10px; min-height: 45px; }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+        .calc-btn:hover { background: var(--accent); color: #0a0c12; }
     </style>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
-<body>
+<body data-theme="dark">
 
-    <div id="canvas-container"></div>
+    <header>
+        <div class="logo-group">
+            <h1>ZAEEM <span>LABS</span></h1>
+        </div>
+        <button class="theme-toggle-btn" id="theme-trigger">TOGGLE MATRIX MODE</button>
+    </header>
 
-    <div class="ui-layer">
-        <div class="score-card">DISTANCE: <span id="score-val">0</span>m</div>
-    </div>
+    <main class="dashboard-grid">
 
-    <div id="loading-screen" class="screen-overlay">
-        <div class="spinner"></div>
-        <h1>MR KIM RUNNER</h1>
-        <p>Connecting to secure database & mapping telemetry matrices...</p>
-    </div>
+        <div class="card">
+            <div class="card-header">
+                <h2 style="color: var(--accent);">MR KIM RUNNER</h2>
+                <p>Launch the production-grade 3D infinite runner system module. Built via Three.js with integrated ProMotion high-refresh tracking metrics and obstacle vector streaming.</p>
+            </div>
+            <a href="tools/game.html" class="launch-btn">INITIALIZE RUN ENGINE</a>
+        </div>
 
-    <div id="crash-screen" class="screen-overlay hidden">
-        <h1 style="color: #ff3366; text-shadow: 0 0 15px rgba(255,51,102,0.3);">CRASHED!</h1>
-        <p>You ran into a security matrix barrier.</p>
-        <p>Distance Survived: <span id="final-score">0</span> meters</p>
-        <button id="retry-btn">RUN AGAIN</button>
-    </div>
+        <div class="card">
+            <div class="card-header">
+                <h2>SHA-256 GENERATOR</h2>
+                <p>Encode plain text payloads directly into structured cryptographic signature strings execution layers locally inside the client environment frame.</p>
+                
+                <div class="widget-box">
+                    <input type="text" id="hash-input" placeholder="Enter plaintext string payload...">
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">CRYPTOGRAPHIC HASH OUTPUT:</div>
+                    <div class="result-output" id="hash-output">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</div>
+                </div>
+            </div>
+        </div>
 
-    <script type="module">
-        // --- 1. FIREBASE ARCHITECTURE ENVIRONMENT ---
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js";
+        <div class="card">
+            <div class="card-header">
+                <h2>CORE MATH MATRIX</h2>
+                <p>Standard quick-access arithmetic computer terminal layer supporting structural code calculations and general unit conversions.</p>
+                
+                <div class="widget-box">
+                    <div class="calc-screen" id="calc-display">0</div>
+                    <div class="calc-buttons">
+                        <button class="calc-btn" onclick="clearCalc()">C</button>
+                        <button class="calc-btn" onclick="pressCalc('/')">/</button>
+                        <button class="calc-btn" onclick="pressCalc('*')">*</button>
+                        <button class="calc-btn" onclick="pressCalc('-')">-</button>
+                        <button class="calc-btn" onclick="pressCalc('7')">7</button>
+                        <button class="calc-btn" onclick="pressCalc('8')">8</button>
+                        <button class="calc-btn" onclick="pressCalc('9')">9</button>
+                        <button class="calc-btn" onclick="pressCalc('+')">+</button>
+                        <button class="calc-btn" onclick="pressCalc('4')">4</button>
+                        <button class="calc-btn" onclick="pressCalc('5')">5</button>
+                        <button class="calc-btn" onclick="pressCalc('6')">6</button>
+                        <button class="calc-btn" onclick="calculateResult()">=</button>
+                        <button class="calc-btn" onclick="pressCalc('1')">1</button>
+                        <button class="calc-btn" onclick="pressCalc('2')">2</button>
+                        <button class="calc-btn" onclick="pressCalc('3')">3</button>
+                        <button class="calc-btn" onclick="pressCalc('0')">0</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBy7SHqImlO_8obbBOkT_vHpDnoKvzVD3U",
-            authDomain: "zaeem-labs.firebaseapp.com",
-            projectId: "zaeem-labs",
-            storageBucket: "zaeem-labs.firebasestorage.app",
-            messagingSenderId: "915154381688",
-            appId: "1:915154381688:web:e1730e3be11e8164d1b68d",
-            measurementId: "G-WE2WLGE8JP"
+    </main>
+
+    <script>
+        // --- 1. CONFIGURATION SYSTEM TOGGLE ---
+        const themeBtn = document.getElementById('theme-trigger');
+        const bodyTag = document.body;
+
+        themeBtn.addEventListener('click', () => {
+            const currentMode = bodyTag.getAttribute('data-theme');
+            const targetMode = currentMode === 'dark' ? 'light' : 'dark';
+            bodyTag.setAttribute('data-theme', targetMode);
+        });
+
+        // --- 2. ASYNC CLIENT CRYPTO CONVERTER RUNTIME ENGINE ---
+        const hashInput = document.getElementById('hash-input');
+        const hashOutput = document.getElementById('hash-output');
+
+        hashInput.addEventListener('input', async () => {
+            const val = hashInput.value;
+            if(!val) {
+                hashOutput.innerText = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+                return;
+            }
+            
+            // Generate clean web native API text conversions using modern window cryptographic layers
+            const msgUint8 = new TextEncoder().encode(val);                           
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           
+            const hashArray = Array.from(new Uint8Array(hashBuffer));                     
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); 
+            
+            hashOutput.innerText = hashHex;
+        });
+
+        // --- 3. WIDGET TERMINAL CALCULATOR ENGINE LOGIC ---
+        const calcDisplay = document.getElementById('calc-display');
+        let calcStateString = "";
+
+        window.pressCalc = function(char) {
+            if (calcStateString === "0" && !isNaN(char)) {
+                calcStateString = char;
+            } else {
+                calcStateString += char;
+            }
+            updateCalcDisplay();
         };
 
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-
-        // Track user visit signature
-        logEvent(analytics, 'game_visited');
-
-        // --- 2. RUNTIME ENGINE ENGINE PARAMETERS ---
-        const CONFIG = {
-            lanes: [-2.5, 0, 2.5], 
-            laneSpeed: 16,         
-            baseSpeed: 25,         
-            speedIncrement: 0.6,   
-            spawnInterval: 1.4,    
-            playerZ: 0             
+        window.clearCalc = function() {
+            calcStateString = "0";
+            updateCalcDisplay();
         };
 
-        let scene, camera, renderer, clock;
-        let player = null;
-        let obstacles = [];
-        let tracks = [];
-        
-        let currentLane = 1;       
-        let targetX = CONFIG.lanes[currentLane];
-        let gameActive = false;
-        let currentSpeed = CONFIG.baseSpeed;
-        let distanceTraveled = 0;
-        let lastSpawnTime = 0;
-
-        // --- 3. GRAPHICS ENVIRONMENT INITIALIZATION ---
-        function init() {
-            const container = document.getElementById('canvas-container');
-            
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0a0c12); 
-            scene.fog = new THREE.FogExp2(0x0a0c12, 0.015);
-
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
-            renderer.shadowMap.enabled = true;
-            container.appendChild(renderer.domElement);
-
-            clock = new THREE.Clock();
-
-            setupLights();
-            buildTrackLayout();
-            importCharacter();
-            bindInputMechanics();
-
-            window.addEventListener('resize', onWindowResize);
-        }
-
-        function setupLights() {
-            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambient);
-
-            const directional = new THREE.DirectionalLight(0x00e5ff, 0.8);
-            directional.position.set(5, 20, 10);
-            scene.add(directional);
-        }
-
-        // --- 4. ASSET INGESTION MATRIX ---
-        function importCharacter() {
-            const loader = new window.THREE.GLTFLoader();
-            const playerGroup = new THREE.Group();
-            
-            // Adjust file name string logic if necessary to match asset file updates
-            loader.load('model.gltf', 
-                (gltf) => {
-                    const model = gltf.scene;
-                    
-                    // Fixed scaling transformations to prevent oversized rendering anomalies
-                    model.scale.set(0.18, 0.18, 0.18); 
-                    model.position.set(0, 0, 0); 
-                    
-                    playerGroup.add(model);
-                    deployGameEnvironment(playerGroup);
-                },
-                undefined,
-                (err) => {
-                    console.log("GLTF path empty or unresolvable. Loading mesh placeholder proxy container.");
-                    const backupGeo = new THREE.BoxGeometry(1, 1.8, 0.8);
-                    const backupMat = new THREE.MeshStandardMaterial({ color: 0x00e5ff });
-                    const backupMesh = new THREE.Mesh(backupGeo, backupMat);
-                    backupMesh.position.y = 0.9;
-                    
-                    playerGroup.add(backupMesh);
-                    deployGameEnvironment(playerGroup);
-                }
-            );
-        }
-
-        function deployGameEnvironment(playerGroup) {
-            player = playerGroup;
-            player.position.set(CONFIG.lanes[currentLane], 0, CONFIG.playerZ);
-            scene.add(player);
-
-            document.getElementById('loading-screen').classList.add('hidden');
-            gameActive = true;
-            clock.getDelta(); // Clear time delta calculation step spikes
-            logEvent(analytics, 'game_started');
-        }
-
-        function buildTrackLayout() {
-            for (let i = 0; i < 3; i++) {
-                renderTrackSegment(-i * 100);
+        window.calculateResult = function() {
+            try {
+                // Evaluates the math string expressions safely inside local bounds
+                const result = Function('"use strict";return (' + calcStateString + ')')();
+                calcStateString = String(result);
+            } catch (err) {
+                calcStateString = "ERROR";
             }
+            updateCalcDisplay();
+        };
+
+        function updateCalcDisplay() {
+            calcDisplay.innerText = calcStateString || "0";
         }
-
-        function renderTrackSegment(zPos) {
-            const segment = new THREE.Group();
-            
-            const roadGeo = new THREE.PlaneGeometry(10, 100);
-            const roadMat = new THREE.MeshStandardMaterial({ color: 0x131722, roughness: 0.7 });
-            const road = new THREE.Mesh(roadGeo, roadMat);
-            road.rotation.x = -Math.PI / 2;
-            segment.add(road);
-
-            const lineGeo = new THREE.PlaneGeometry(0.06, 100);
-            const lineMat = new THREE.MeshBasicMaterial({ color: 0x1f2438 });
-            
-            const leftL = new THREE.Mesh(lineGeo, lineMat);
-            leftL.position.set(-1.6, 0.01, 0);
-            leftL.rotation.x = -Math.PI / 2;
-            segment.add(leftL);
-
-            const rightL = leftL.clone();
-            rightL.position.x = 1.6;
-            segment.add(rightL);
-
-            segment.position.z = zPos;
-            scene.add(segment);
-            tracks.push(segment);
-        }
-
-        // --- 5. INTERACTION ENGINE LAYER ---
-        function bindInputMechanics() {
-            window.addEventListener('keydown', (e) => {
-                if (!gameActive) return;
-                if (e.key === 'ArrowLeft' || e.key === 'a') processLaneShift(-1);
-                if (e.key === 'ArrowRight' || e.key === 'd') processLaneShift(1);
-            });
-
-            let touchX = 0;
-            window.addEventListener('touchstart', (e) => {
-                touchX = e.changedTouches[0].screenX;
-            }, { passive: true });
-
-            window.addEventListener('touchend', (e) => {
-                if (!gameActive) return;
-                const diff = e.changedTouches[0].screenX - touchX;
-                if (diff < -45) processLaneShift(-1);
-                if (diff > 45) processLaneShift(1);
-            }, { passive: true });
-
-            document.getElementById('retry-btn').addEventListener('click', restartSystemLoop);
-        }
-
-        function processLaneShift(dir) {
-            currentLane = Math.max(0, Math.min(2, currentLane + dir));
-            targetX = CONFIG.lanes[currentLane];
-        }
-
-        // --- 6. PROMOTION 120HZ COMPLIANT EXECUTION TICK LOOP ---
-        function tick() {
-            requestAnimationFrame(tick);
-            const delta = clock.getDelta();
-
-            if (gameActive && player) {
-                currentSpeed += CONFIG.speedIncrement * (delta * 0.1);
-                distanceTraveled += currentSpeed * delta;
-                document.getElementById('score-val').innerText = Math.floor(distanceTraveled);
-
-                // Safe frame-rate independent physics interpolations via delta scales
-                player.position.x = THREE.MathUtils.lerp(player.position.x, targetX, CONFIG.laneSpeed * delta);
-
-                tracks.forEach(t => {
-                    t.position.z += currentSpeed * delta;
-                    if (t.position.z > 50) t.position.z -= 300;
-                });
-
-                lastSpawnTime += delta;
-                if (lastSpawnTime >= CONFIG.spawnInterval) {
-                    generateObstacleBlock();
-                    lastSpawnTime = 0;
-                }
-
-                for (let i = obstacles.length - 1; i >= 0; i--) {
-                    const obs = obstacles[i];
-                    obs.position.z += currentSpeed * delta;
-
-                    if (obs.position.z > 2) {
-                        scene.remove(obs);
-                        obstacles.splice(i, 1);
-                        continue;
-                    }
-
-                    const zCollision = Math.abs(obs.position.z - player.position.z);
-                    const xCollision = Math.abs(obs.position.x - player.position.x);
-                    
-                    if (zCollision < 1.0 && xCollision < 1.1) {
-                        executeCrashPipeline();
-                    }
-                }
-
-                // Camera follow matrix calculations
-                camera.position.x = THREE.MathUtils.lerp(camera.position.x, player.position.x * 0.6, 4 * delta);
-                camera.position.y = 3.6;               
-                camera.position.z = CONFIG.playerZ + 6.8; 
-                camera.lookAt(player.position.x, 1.0, CONFIG.playerZ - 3);
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        function generateObstacleBlock() {
-            const laneIndex = Math.floor(Math.random() * CONFIG.lanes.length);
-            const h = 1.0 + Math.random() * 0.8;
-            
-            const geo = new THREE.BoxGeometry(1.5, h, 1);
-            const mat = new THREE.MeshStandardMaterial({ color: 0x1f2438, metalness: 0.5, roughness: 0.3 });
-            const obs = new THREE.Mesh(geo, mat);
-            
-            obs.position.set(CONFIG.lanes[laneIndex], h / 2, -200);
-            scene.add(obs);
-            obstacles.push(obs);
-        }
-
-        function executeCrashPipeline() {
-            gameActive = false;
-            const finalScore = Math.floor(distanceTraveled);
-            document.getElementById('final-score').innerText = finalScore;
-            document.getElementById('crash-screen').classList.remove('hidden');
-            
-            // Push player execution metrics directly into Firebase console logs
-            logEvent(analytics, 'level_end', {
-                score: finalScore,
-                success: false
-            });
-        }
-
-        function restartSystemLoop() {
-            obstacles.forEach(o => scene.remove(o));
-            obstacles = [];
-            
-            for (let i = 0; i < tracks.length; i++) {
-                tracks[i].position.z = -i * 100;
-            }
-
-            currentLane = 1;
-            targetX = CONFIG.lanes[currentLane];
-            player.position.set(targetX, 0, CONFIG.playerZ);
-            
-            distanceTraveled = 0;
-            currentSpeed = CONFIG.baseSpeed;
-            lastSpawnTime = 0;
-            
-            document.getElementById('crash-screen').classList.add('hidden');
-            gameActive = true;
-            clock.getDelta();
-            
-            logEvent(analytics, 'level_start');
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        // Execute engine
-        init();
-        tick();
     </script>
 </body>
 </html>
