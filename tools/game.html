@@ -60,7 +60,7 @@
         #stat-growth { color: #ffaa00; text-shadow: 0 0 8px #ffaa00; }
         #stat-count { color: #00ffcc; text-shadow: 0 0 8px #00ffcc; }
         
-        /* Mobile Virtual Joystick */
+        /* iPad Mobile Virtual Joystick */
         #controls-layer {
             display: flex;
             justify-content: flex-start;
@@ -97,6 +97,21 @@
             border-radius: 15px;
             font-size: 0.9rem;
         }
+        #error-log {
+            position: absolute;
+            top: 90px;
+            left: 20px;
+            background: rgba(255, 0, 0, 0.85);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-width: 90%;
+            display: none;
+            z-index: 200;
+            pointer-events: auto;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -104,6 +119,7 @@
 <body>
 
     <div id="canvas-container"></div>
+    <div id="error-log"></div>
 
     <div id="ui-layer">
         <div id="top-hud">
@@ -126,7 +142,7 @@
         let particles = [];
         
         let devouredCount = 0;
-        let playerScaleModifier = 4.0; // Matches your exact working scale baseline
+        let playerScaleModifier = 4.0; // Perfect base layout scale
         let cameraZoomFactor = 1.0;
         
         const moveInput = new THREE.Vector2(0, 0);
@@ -154,7 +170,6 @@
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
-            // Vibrant stylized environment lighting
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
 
@@ -170,7 +185,6 @@
             buildPlayerCharacter();
             setupJoystickControls();
             
-            // Populate initial map targets
             for(let i=0; i<15; i++) spawnTargetItem();
 
             window.addEventListener('resize', onWindowResize);
@@ -178,7 +192,6 @@
         }
 
         function buildPlaygroundMap() {
-            // Neon grid playground floor
             const floorGeo = new THREE.PlaneGeometry(mapSize * 2, mapSize * 2);
             const floorMat = new THREE.MeshStandardMaterial({ color: 0x121824, roughness: 0.6 });
             const floor = new THREE.Mesh(floorGeo, floorMat);
@@ -189,7 +202,6 @@
             gridLines.position.y = 0.01;
             scene.add(gridLines);
 
-            // Out-of-bounds safety fences
             const fenceGeo = new THREE.BoxGeometry(mapSize * 2, 1, 1);
             const fenceMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0x552200 });
             
@@ -208,11 +220,17 @@
             loader.load('./Meshy_AI_Cloudy_Sky_Portrait_0610185922_texture.glb', function(gltf) {
                 playerMesh = gltf.scene;
                 
-                // Initialize using your perfect height setup properties
                 playerMesh.scale.set(playerScaleModifier, playerScaleModifier, playerScaleModifier); 
-                playerMesh.position.set(0, 0.8, 0); 
+                
+                // FIXED VALUE: Brought up to 2.2 units so feet touch ground surface perfectly
+                playerMesh.position.set(0, 0.55 * playerScaleModifier, 0); 
                 playerMesh.rotation.y = Math.PI; 
                 player.add(playerMesh);
+            }, undefined, function(error) {
+                const logBox = document.getElementById('error-log');
+                logBox.style.display = 'block';
+                logBox.innerText = "Check file location for your custom portrait model.";
+                console.error(error);
             });
         }
 
@@ -243,7 +261,6 @@
                 moveInput.set(0, 0);
             });
 
-            // Keyboard Fallback mapped parameters
             let keys = { w: false, a: false, s: false, d: false };
             window.addEventListener('keydown', (e) => {
                 if(e.key.toLowerCase() in keys) { keys[e.key.toLowerCase()] = true; updateKeyInput(); }
@@ -262,11 +279,8 @@
 
         function spawnTargetItem() {
             const targetGroup = new THREE.Group();
-            
-            // Randomize target height/scale indices
             const scaleFactor = 0.4 + Math.random() * 1.5;
 
-            // Simple bouncy capsule dummy model architecture
             const body = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.4, 0.4, 1.4, 8),
                 new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff, roughness: 0.4 })
@@ -283,14 +297,12 @@
 
             targetGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
-            // Scatter randomly across the platform boundaries
             targetGroup.position.set(
                 (Math.random() - 0.5) * (mapSize * 1.7),
                 0,
                 (Math.random() - 0.5) * (mapSize * 1.7)
             );
 
-            // Storing calculated volume sizes for collision thresholds
             targetGroup.userData = { 
                 radius: scaleFactor * 0.8,
                 bounceSeed: Math.random() * 10,
@@ -326,16 +338,15 @@
         function handlePlayerGrowth(targetRadius) {
             devouredCount++;
             
-            // Calculate relative size increase step multipliers
             const growthIncrement = targetRadius * 0.25;
             playerScaleModifier += growthIncrement;
             cameraZoomFactor += growthIncrement * 0.12;
 
             if (playerMesh) {
-                // Dynamically expand 3D matrix scaling metrics
                 playerMesh.scale.set(playerScaleModifier, playerScaleModifier, playerScaleModifier);
-                // Adjust ground clearance height offsets dynamically to match growth ratios
-                playerMesh.position.y = 0.2 * playerScaleModifier;
+                
+                // FIXED RATIO ENGINE: Maintains leg position on top of floor throughout full growth cycle
+                playerMesh.position.y = 0.55 * playerScaleModifier;
             }
 
             document.getElementById('stat-growth').innerText = (playerScaleModifier / 4.0).toFixed(1) + "x";
@@ -343,7 +354,6 @@
         }
 
         function updateCameraPosition() {
-            // Camera scales out backward dynamically relative to Mr. Kim's size index parameters
             camera.position.set(
                 player ? player.position.x : 0, 
                 (player ? player.position.y : 0) + (14 * cameraZoomFactor), 
@@ -357,7 +367,6 @@
             const delta = clock.getDelta();
 
             if (player) {
-                // Keep movement velocities uniform across variable high-refresh monitors (120Hz ProMotion)
                 const speedModifier = playerSpeedBase * (1 + (cameraZoomFactor - 1) * 0.4); 
                 const moveVec = new THREE.Vector3(moveInput.x, 0, -moveInput.y).multiplyScalar(speedModifier * delta);
                 player.position.add(moveVec);
@@ -366,38 +375,32 @@
                     player.rotation.y = Math.atan2(moveInput.x, -moveInput.y);
                 }
 
-                // Map boundary locks
                 player.position.x = Math.max(-mapSize + 2, Math.min(mapSize - 2, player.position.x));
                 player.position.z = Math.max(-mapSize + 2, Math.min(mapSize - 2, player.position.z));
 
                 updateCameraPosition();
             }
 
-            // Animate target entities
             const time = performance.now() * 0.004;
             const currentPlayerRadius = (playerScaleModifier / 4.0) * 1.5;
 
             for(let i = targets.length - 1; i >= 0; i--) {
                 const target = targets[i];
                 
-                // Cute idle hopping animations
                 target.position.y = Math.abs(Math.sin(time + target.userData.bounceSeed)) * 0.5 * target.scale.y;
 
                 const distance = player.position.distanceTo(target.position);
                 const combinedRadius = currentPlayerRadius + target.userData.radius;
 
-                // AI Fleeing routine logic: Dummies scatter if Mr. Kim approaches and is bigger
                 if (distance < combinedRadius * 3.5) {
                     const fleeDir = new THREE.Vector3().subVectors(target.position, player.position).normalize();
                     target.position.add(fleeDir.multiplyScalar(6.0 * delta * target.scale.x));
                     target.rotation.y = Math.atan2(fleeDir.x, fleeDir.z);
                     
-                    // Constrain targets within arena bounds
                     target.position.x = Math.max(-mapSize+2, Math.min(mapSize-2, target.position.x));
                     target.position.z = Math.max(-mapSize+2, Math.min(mapSize-2, target.position.z));
                 }
 
-                // Collision Detection Step
                 if (distance < combinedRadius) {
                     createAbsorbParticles(target.position, 0xffaa00, target.scale.y);
                     handlePlayerGrowth(target.userData.radius);
@@ -405,16 +408,14 @@
                     scene.remove(target);
                     targets.splice(i, 1);
                     
-                    // Instantly refresh a new unit elsewhere on map bounds
                     spawnTargetItem();
                 }
             }
 
-            // Frame-independent particle physics calculation cycles
             for(let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
                 p.position.add(p.userData.velocity.clone().multiplyScalar(delta));
-                p.userData.velocity.y -= delta * 22.0; // Gravity index pull
+                p.userData.velocity.y -= delta * 22.0; 
                 p.userData.life -= delta;
                 p.scale.multiplyScalar(0.96);
 
