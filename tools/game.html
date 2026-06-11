@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nythera Labs // Cyber Runner</title>
+    <title>Mr. Kim Runner</title>
     <style>
         * {
             box-sizing: border-box;
@@ -131,16 +131,16 @@
 
     <div id="ui-layer">
         <div id="top-hud">
-            <div class="hud-element">DISTANCE: <span id="score-val">0m</span></div>
+            <div class="hud-element">MR. KIM DISTANCE: <span id="score-val">0m</span></div>
         </div>
-        <div id="instructions">SWIPE LEFT / RIGHT TO SWITCH LANES</div>
+        <div id="instructions">SWIPE LEFT / RIGHT TO MOVE MR. KIM</div>
     </div>
 
     <div id="game-over-screen">
-        <h1>CRASHED!</h1>
-        <p>You ran into a security matrix barrier.</p>
-        <p>Distance Survived: <span id="final-score">0</span></p>
-        <button class="btn-restart" onclick="resetGame()">RUN AGAIN</button>
+        <h1>RUN OVER!</h1>
+        <p>Mr. Kim hit a security barrier matrix.</p>
+        <p>Distance Traveled: <span id="final-score">0</span></p>
+        <button class="btn-restart" onclick="resetGame()">RESTART RUN</button>
     </div>
 
     <script>
@@ -154,7 +154,6 @@
         let score = 0;
         let accurateScore = 0;
         
-        // Calibrated baseline speeds (Normalized for 60FPS reference values)
         let gameSpeed = 25.0; 
         const maxSpeed = 50.0;
 
@@ -167,8 +166,6 @@
 
         function init() {
             const container = document.getElementById('canvas-container');
-            
-            // Initialize hardware tracking clock
             clock = new THREE.Clock();
 
             scene = new THREE.Scene();
@@ -201,7 +198,6 @@
         }
 
         function buildInfiniteGroundTrack() {
-            // Two 100-unit chunks seamlessly joined at initialization
             for (let i = 0; i < 2; i++) {
                 const chunk = new THREE.Group();
                 chunk.position.z = -i * 100;
@@ -244,14 +240,18 @@
             const loader = new THREE.GLTFLoader();
             loader.load('./Meshy_AI_Cloudy_Sky_Portrait_0610185922_texture.glb', function(gltf) {
                 const model = gltf.scene;
-                model.scale.set(10.0, 10.0, 10.0); 
-                model.position.set(0, 2.2, 0); 
+                
+                // Scaled down beautifully so he fits standard lane boxes
+                model.scale.set(4.0, 4.0, 4.0); 
+                
+                // Ground offset adjusted for scale factor
+                model.position.set(0, 0.8, 0); 
                 model.rotation.y = Math.PI; 
                 player.add(model);
             }, undefined, function(error) {
                 const logBox = document.getElementById('error-log');
                 logBox.style.display = 'block';
-                logBox.innerText = "Model Load Failed! Check if filename matches exactly in your folder.";
+                logBox.innerText = "Model Load Failed! Check configuration paths.";
                 console.error(error);
             });
         }
@@ -324,7 +324,7 @@
             for(let i=0; i<30; i++) {
                 const p = new THREE.Mesh(geo, mat);
                 p.position.copy(pos);
-                p.position.y += 1.5; 
+                p.position.y += 1.0; 
                 p.userData = {
                     velocity: new THREE.Vector3(
                         (Math.random() - 0.5) * 0.6,
@@ -340,34 +340,26 @@
 
         function animate() {
             requestAnimationFrame(animate);
-
-            // Get exact time difference passed since the last frame drawing execution
             const delta = clock.getDelta();
 
             if (gameActive) {
-                // Adjust speed independently from frame rates
                 gameSpeed = Math.min(maxSpeed, gameSpeed + (0.5 * delta));
                 
                 accurateScore += gameSpeed * delta;
                 score = Math.floor(accurateScore);
                 document.getElementById('score-val').innerText = score + "m";
 
-                // Move environment chunks using exact delta calculations
                 environmentChunks.forEach(chunk => {
                     chunk.position.z += gameSpeed * delta; 
-                    
-                    // FIX FLICKER: If chunk passes the camera boundary, subtract exactly 200 units to place it perfectly behind the other chunk
                     if (chunk.position.z > 100) {
                         chunk.position.z -= 200; 
                     }
                 });
 
                 if (player) {
-                    // Frame rate independent smooth lerping calculation
                     const lerpFactor = 1 - Math.pow(0.001, delta); 
                     player.position.x += (targetX - player.position.x) * lerpFactor;
                     
-                    // Running animation bounce scale relative to time delta
                     player.position.y = Math.abs(Math.sin(performance.now() * 0.012)) * 0.2;
                     player.rotation.z = (player.position.x - targetX) * -0.05; 
                 }
@@ -428,459 +420,10 @@
             document.getElementById('score-val').innerText = "0m";
             document.getElementById('game-over-screen').style.display = 'none';
             
-            // Reset world chunks back to baseline initial spots
             environmentChunks[0].position.z = 0;
             environmentChunks[1].position.z = -100;
             
-            clock.getDelta(); // Clear old buffer readings
-            gameActive = true;
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        window.onload = init;
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nythera Labs // Cyber Runner</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            margin: 0;
-            padding: 0;
-        }
-        body, html {
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            background-color: #87ceeb;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        #canvas-container {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-        #ui-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 30px 20px;
-        }
-        .hud-element {
-            background: rgba(255, 255, 255, 0.85);
-            border: 2px solid #2e7d32;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            padding: 12px 25px;
-            border-radius: 30px;
-            color: #1b5e20;
-            backdrop-filter: blur(4px);
-            font-weight: 900;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-        }
-        #top-hud {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            pointer-events: auto;
-        }
-        #instructions {
-            align-self: center;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            margin-top: 10px;
-            animation: fadeOut 4s forwards;
-        }
-        #error-log {
-            position: absolute;
-            top: 90px;
-            left: 20px;
-            background: rgba(255, 0, 0, 0.85);
-            color: white;
-            padding: 10px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.8rem;
-            max-width: 90%;
-            display: none;
-            z-index: 200;
-            pointer-events: auto;
-        }
-        #game-over-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(27, 94, 32, 0.9);
-            z-index: 100;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-        }
-        #game-over-screen h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .btn-restart {
-            margin-top: 25px;
-            padding: 15px 40px;
-            background: #ffffff;
-            border: none;
-            color: #1b5e20;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            pointer-events: auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        @keyframes fadeOut {
-            0% { opacity: 1; }
-            70% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-</head>
-<body>
-
-    <div id="canvas-container"></div>
-    <div id="error-log"></div>
-
-    <div id="ui-layer">
-        <div id="top-hud">
-            <div class="hud-element">DISTANCE: <span id="score-val">0m</span></div>
-        </div>
-        <div id="instructions">SWIPE LEFT / RIGHT TO SWITCH LANES</div>
-    </div>
-
-    <div id="game-over-screen">
-        <h1>CRASHED!</h1>
-        <p>You ran into a security matrix barrier.</p>
-        <p>Distance Survived: <span id="final-score">0</span></p>
-        <button class="btn-restart" onclick="resetGame()">RUN AGAIN</button>
-    </div>
-
-    <script>
-        let scene, camera, renderer, clock;
-        let player;
-        let obstacles = [];
-        let particles = [];
-        let environmentChunks = [];
-        
-        let gameActive = true;
-        let score = 0;
-        let accurateScore = 0;
-        
-        // Calibrated baseline speeds (Normalized for 60FPS reference values)
-        let gameSpeed = 25.0; 
-        const maxSpeed = 50.0;
-
-        const lanes = [-4, 0, 4]; 
-        let currentLane = 1; 
-        let targetX = lanes[currentLane];
-
-        let touchStartX = 0;
-        let touchMinDistance = 40;
-
-        function init() {
-            const container = document.getElementById('canvas-container');
-            
-            // Initialize hardware tracking clock
-            clock = new THREE.Clock();
-
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0xaaccff); 
-            scene.fog = new THREE.FogExp2(0xaaccff, 0.015);
-
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 6, 9);
-            camera.lookAt(0, 2, -4);
-
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.outputEncoding = THREE.sRGBEncoding; 
-            container.appendChild(renderer.domElement);
-
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-            scene.add(ambientLight);
-
-            const sunLight = new THREE.DirectionalLight(0xfffaed, 0.9);
-            sunLight.position.set(20, 40, 20);
-            scene.add(sunLight);
-
-            buildInfiniteGroundTrack();
-            buildPlayerCharacter();
-            setupTouchInteractions();
-            
-            window.addEventListener('resize', onWindowResize);
-            animate();
-        }
-
-        function buildInfiniteGroundTrack() {
-            // Two 100-unit chunks seamlessly joined at initialization
-            for (let i = 0; i < 2; i++) {
-                const chunk = new THREE.Group();
-                chunk.position.z = -i * 100;
-
-                const earthGeo = new THREE.PlaneGeometry(14, 100);
-                const earthMat = new THREE.MeshStandardMaterial({ color: 0x8d6e63, roughness: 0.9 });
-                const earth = new THREE.Mesh(earthGeo, earthMat);
-                earth.rotation.x = -Math.PI / 2;
-                chunk.add(earth);
-
-                const grassGeo = new THREE.PlaneGeometry(100, 100);
-                const grassMat = new THREE.MeshStandardMaterial({ color: 0x4caf50, roughness: 0.6 });
-                
-                const leftGrass = new THREE.Mesh(grassGeo, grassMat);
-                leftGrass.rotation.x = -Math.PI / 2;
-                leftGrass.position.x = -57;
-                chunk.add(leftGrass);
-
-                const rightGrass = new THREE.Mesh(grassGeo, grassMat);
-                rightGrass.rotation.x = -Math.PI / 2;
-                rightGrass.position.x = 57;
-                chunk.add(rightGrass);
-
-                const lineGeo = new THREE.PlaneGeometry(0.2, 100);
-                const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.2 });
-                
-                const line1 = new THREE.Mesh(lineGeo, lineMat); line1.rotation.x = -Math.PI/2; line1.position.set(-2, 0.01, 0); chunk.add(line1);
-                const line2 = new THREE.Mesh(lineGeo, lineMat); line2.rotation.x = -Math.PI/2; line2.position.set(2, 0.01, 0); chunk.add(line2);
-
-                scene.add(chunk);
-                environmentChunks.push(chunk);
-            }
-        }
-
-        function buildPlayerCharacter() {
-            player = new THREE.Group();
-            player.position.set(lanes[currentLane], 0, 0);
-            scene.add(player);
-
-            const loader = new THREE.GLTFLoader();
-            loader.load('./Meshy_AI_Cloudy_Sky_Portrait_0610185922_texture.glb', function(gltf) {
-                const model = gltf.scene;
-                model.scale.set(10.0, 10.0, 10.0); 
-                model.position.set(0, 2.2, 0); 
-                model.rotation.y = Math.PI; 
-                player.add(model);
-            }, undefined, function(error) {
-                const logBox = document.getElementById('error-log');
-                logBox.style.display = 'block';
-                logBox.innerText = "Model Load Failed! Check if filename matches exactly in your folder.";
-                console.error(error);
-            });
-        }
-
-        function setupTouchInteractions() {
-            window.addEventListener('touchstart', (e) => {
-                touchStartX = e.touches[0].clientX;
-            }, {passive: true});
-
-            window.addEventListener('touchend', (e) => {
-                const touchEndX = e.changedTouches[0].clientX;
-                const swipeDistance = touchEndX - touchStartX;
-
-                if (Math.abs(swipeDistance) > touchMinDistance) {
-                    if (swipeDistance > 0) {
-                        if (currentLane < 2) {
-                            currentLane++;
-                            targetX = lanes[currentLane];
-                        }
-                    } else {
-                        if (currentLane > 0) {
-                            currentLane--;
-                            targetX = lanes[currentLane];
-                        }
-                    }
-                }
-            }, {passive: true});
-
-            window.addEventListener('keydown', (e) => {
-                if ((e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') && currentLane > 0) {
-                    currentLane--;
-                    targetX = lanes[currentLane];
-                }
-                if ((e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') && currentLane < 2) {
-                    currentLane++;
-                    targetX = lanes[currentLane];
-                }
-            });
-        }
-
-        function spawnObstacle() {
-            if (!gameActive) return;
-
-            const targetSpawnLane = Math.floor(Math.random() * 3);
-            const obstacleGroup = new THREE.Group();
-
-            const frameGeo = new THREE.BoxGeometry(3.2, 2.5, 0.6);
-            const frameMat = new THREE.MeshStandardMaterial({ color: 0x2c3e50, roughness: 0.4, metalness: 0.7 });
-            const frame = new THREE.Mesh(frameGeo, frameMat);
-            frame.position.y = 1.25;
-            obstacleGroup.add(frame);
-
-            const beamGeo = new THREE.BoxGeometry(2.8, 0.3, 0.7);
-            const beamMat = new THREE.MeshStandardMaterial({ color: 0xff3333, emissive: 0xff0000, roughness: 0.1 });
-            const beam = new THREE.Mesh(beamGeo, beamMat);
-            beam.position.y = 1.25;
-            obstacleGroup.add(beam);
-
-            obstacleGroup.position.set(lanes[targetSpawnLane], 0, -120);
-            obstacleGroup.userData = { lane: targetSpawnLane };
-
-            scene.add(obstacleGroup);
-            obstacles.push(obstacleGroup);
-        }
-
-        function createExplosion(pos, colorHex) {
-            const geo = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-            const mat = new THREE.MeshBasicMaterial({ color: colorHex });
-
-            for(let i=0; i<30; i++) {
-                const p = new THREE.Mesh(geo, mat);
-                p.position.copy(pos);
-                p.position.y += 1.5; 
-                p.userData = {
-                    velocity: new THREE.Vector3(
-                        (Math.random() - 0.5) * 0.6,
-                        Math.random() * 0.5,
-                        (Math.random() - 0.5) * 0.6
-                    ),
-                    life: 1.0
-                };
-                scene.add(p);
-                particles.push(p);
-            }
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Get exact time difference passed since the last frame drawing execution
-            const delta = clock.getDelta();
-
-            if (gameActive) {
-                // Adjust speed independently from frame rates
-                gameSpeed = Math.min(maxSpeed, gameSpeed + (0.5 * delta));
-                
-                accurateScore += gameSpeed * delta;
-                score = Math.floor(accurateScore);
-                document.getElementById('score-val').innerText = score + "m";
-
-                // Move environment chunks using exact delta calculations
-                environmentChunks.forEach(chunk => {
-                    chunk.position.z += gameSpeed * delta; 
-                    
-                    // FIX FLICKER: If chunk passes the camera boundary, subtract exactly 200 units to place it perfectly behind the other chunk
-                    if (chunk.position.z > 100) {
-                        chunk.position.z -= 200; 
-                    }
-                });
-
-                if (player) {
-                    // Frame rate independent smooth lerping calculation
-                    const lerpFactor = 1 - Math.pow(0.001, delta); 
-                    player.position.x += (targetX - player.position.x) * lerpFactor;
-                    
-                    // Running animation bounce scale relative to time delta
-                    player.position.y = Math.abs(Math.sin(performance.now() * 0.012)) * 0.2;
-                    player.rotation.z = (player.position.x - targetX) * -0.05; 
-                }
-
-                for (let i = obstacles.length - 1; i >= 0; i--) {
-                    const obs = obstacles[i];
-                    obs.position.z += gameSpeed * delta;
-
-                    if (obs.position.z > -1.5 && obs.position.z < 1.5 && obs.userData.lane === currentLane) {
-                        triggerGameOver();
-                    }
-
-                    if (obs.position.z > 20) {
-                        scene.remove(obs);
-                        obstacles.splice(i, 1);
-                    }
-                }
-
-                if (Math.random() < 0.02 + (gameSpeed * 0.0005)) {
-                    if (obstacles.length === 0 || obstacles[obstacles.length - 1].position.z > -75) {
-                        spawnObstacle();
-                    }
-                }
-            }
-
-            for(let i = particles.length - 1; i >= 0; i--) {
-                const p = particles[i];
-                p.position.add(p.userData.velocity);
-                p.userData.life -= delta * 1.8;
-                p.scale.multiplyScalar(0.95);
-                if(p.userData.life <= 0) {
-                    scene.remove(p);
-                    particles.splice(i, 1);
-                }
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        function triggerGameOver() {
-            gameActive = false;
-            createExplosion(player.position, 0xff3333);
-            document.getElementById('final-score').innerText = score + " meters";
-            document.getElementById('game-over-screen').style.display = 'flex';
-        }
-
-        function resetGame() {
-            obstacles.forEach(o => scene.remove(o));
-            obstacles = [];
-            
-            currentLane = 1;
-            targetX = lanes[currentLane];
-            if(player) player.position.set(targetX, 0, 0);
-
-            gameSpeed = 25.0;
-            accurateScore = 0;
-            score = 0;
-            document.getElementById('score-val').innerText = "0m";
-            document.getElementById('game-over-screen').style.display = 'none';
-            
-            // Reset world chunks back to baseline initial spots
-            environmentChunks[0].position.z = 0;
-            environmentChunks[1].position.z = -100;
-            
-            clock.getDelta(); // Clear old buffer readings
+            clock.getDelta(); 
             gameActive = true;
         }
 
