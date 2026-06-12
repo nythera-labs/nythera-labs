@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Game Center // 1st Hub</title>
+    <title>Zaeem Labs // Mainframe</title>
     
     <!-- Official Branding Web Logo Tab Icon -->
     <link rel="icon" type="image/png" href="logo.png">
@@ -52,7 +52,7 @@
             min-height: 100vh;
         }
 
-        /* Brand Main Header Panel Layout */
+        /* Zaeem Labs Station Header */
         .hub-header {
             display: flex;
             flex-direction: column;
@@ -79,16 +79,14 @@
             text-shadow: 0 0 12px rgba(255, 17, 17, 0.5);
         }
         .lab-subtitle {
-            font-size: 0.95rem;
-            color: #00ffcc;
-            text-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+            font-size: 0.85rem;
+            color: #556275;
             margin-top: 10px;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            font-weight: 700;
         }
 
-        /* Custom Project Modular Matrix Grid Layout */
+        /* Tools & Modules Workspace Grid */
         .modules-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -97,7 +95,6 @@
             margin-bottom: 40px;
         }
 
-        /* High-Tech Engine Card Components Layout */
         .module-card {
             background: rgba(5, 6, 12, 0.85);
             border: 1px solid rgba(255, 17, 17, 0.15);
@@ -113,7 +110,6 @@
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Interactive Card Glow-ups */
         .module-card.online {
             border: 1px solid rgba(0, 255, 204, 0.25);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
@@ -129,7 +125,6 @@
             opacity: 0.45;
         }
 
-        /* Module Status Flag Layout Indication markers */
         .status-flag {
             position: absolute;
             top: 15px;
@@ -147,7 +142,7 @@
             margin-bottom: 25px;
         }
         .module-name {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 900;
             letter-spacing: 1px;
             color: #ffffff;
@@ -162,7 +157,6 @@
             line-height: 1.5;
         }
 
-        /* Mainframe Simulation Boots Actions Links Elements */
         .launch-anchor {
             display: inline-flex;
             align-items: center;
@@ -201,7 +195,7 @@
             cursor: not-allowed;
         }
 
-        /* Infrastructure Status Terminal Footer Layout */
+        /* Telemetry Diagnostic Footer */
         .hub-telemetry-footer {
             border-top: 1px dashed rgba(255, 17, 17, 0.15);
             padding-top: 25px;
@@ -219,7 +213,6 @@
             color: #728196;
         }
 
-        /* Core Brand Animations Modifiers */
         @keyframes corePulse {
             0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 17, 17, 0.6)) drop-shadow(0 0 30px rgba(0, 255, 204, 0.3)); }
             50% { transform: scale(1.03); filter: drop-shadow(0 0 22px rgba(255, 17, 17, 0.8)) drop-shadow(0 0 40px rgba(0, 255, 204, 0.5)); }
@@ -232,57 +225,47 @@
 
     <div class="mainframe-wrapper">
         
-        <!-- Updated Arcade Header Configuration -->
+        <!-- Main Hub Header: Zaeem Labs -->
         <header class="hub-header">
-            <img src="logo.png" alt="Zaeem Labs Logo" class="lab-logo">
-            <h1 class="lab-title">GAME CENTER</h1>
-            <div class="lab-subtitle">1st Hub // Zaeem Labs</div>
+            <img src="logo.png" alt="Zaeem Labs" class="lab-logo">
+            <h1 class="lab-title">ZAEEM LABS</h1>
+            <div class="lab-subtitle">Experimental Engineering & Simulation Workspace</div>
         </header>
 
-        <!-- Games Grid System -->
+        <!-- Tools Grid Initialization -->
         <main class="modules-grid">
             
-            <!-- CORE 01: ACTIVE RETRO 3D SHOOTER SYSTEM -->
+            <!-- TOOL 01: THE GAME CENTER COMPONENT -->
             <section class="module-card online">
-                <div class="status-flag online">READY</div>
+                <div class="status-flag online">TOOL 01</div>
                 <div class="module-meta">
-                    <h2 class="module-name">DARK CORE // FPS</h2>
-                    <p class="module-desc">Mathematical 3D Pseudo-Raycasting engine framework. Features real-time projection vector geometry maps, responsive dual-stick inputs, custom weapon configurations inventory, and localized dynamic audio context synthesis loops.</p>
+                    <h2 class="module-name">GAME CENTER</h2>
+                    <p class="module-desc">Active gaming simulation deck running **DARK CORE // FPS**. Houses clean asset-free raycasting mathematics, responsive dual-stick touch overrides, modular weapon swapping configurations, and smooth real-time telemetry minimaps.</p>
                 </div>
-                <a href="tools/game.html" class="launch-anchor">BOOT CORE</a>
+                <a href="tools/game.html" class="launch-anchor">BOOT GAME CENTER</a>
             </section>
 
-            <!-- CORE 02: FUTURE GAME PREPARATION SLOT CONTAINER -->
+            <!-- FUTURE TOOL SITES -->
             <section class="module-card offline">
                 <div class="status-flag encrypted">LOCKED</div>
                 <div class="module-meta">
-                    <h2 class="module-name">VECTOR DRIFT MATRIX</h2>
-                    <p class="module-desc">Top-down hardware-accelerated fluid friction momentum simulation racing module block. High-spec lateral friction calculation tracks mapping. Awaiting secondary code expansion registries compile sets.</p>
+                    <h2 class="module-name">LAB UTILITY 02</h2>
+                    <p class="module-desc">Secondary lab tool slot allocation buffer. Security protocols active. Matrix registers configured to accept clean web deployment source scripts instantly upon code runtime integration.</p>
                 </div>
-                <button class="lock-anchor" disabled>SECURE MODULE</button>
-            </section>
-
-            <!-- CORE 03: FUTURE GAME PREPARATION SLOT CONTAINER -->
-            <section class="module-card offline">
-                <div class="status-flag encrypted">LOCKED</div>
-                <div class="module-meta">
-                    <h2 class="module-name">SIMULATION MODULE 03</h2>
-                    <p class="module-desc">Unallocated core memory buffer registry sector slot configuration. Infrastructure framework initialized to accept complete self-contained lightweight canvas code script inputs instantly.</p>
-                </div>
-                <button class="lock-anchor" disabled>SECURE MODULE</button>
+                <button class="lock-anchor" disabled>SECURE NODE</button>
             </section>
 
         </main>
 
-        <!-- Terminal Framework Diagnostics Footer Telemetry Logs -->
+        <!-- Telemetry Logs -->
         <footer class="hub-telemetry-footer">
             <div class="telemetry-row">
-                <span>SYSTEM STATUS: <span style="color: #00ffcc; font-weight:900;">SECURED</span></span>
-                <span>COMPILATION ENGINES: <span class="telemetry-value">HTML5 CANVAS VECTORS</span></span>
+                <span>SYSTEM REGISTRY: <span style="color: #00ffcc; font-weight:900;">ACTIVE</span></span>
+                <span>ENGINE ARCHITECTURE: <span class="telemetry-value">CORE CANVAS MATRICES</span></span>
             </div>
             <div class="telemetry-row">
-                <span>HARDWARE SYNC: <span class="telemetry-value">120HZ PROMOTION PLATFORMS OK</span></span>
-                <span>REGISTRY VERSION: <span class="telemetry-value">ALPHA_CORE.4.1</span></span>
+                <span>HARDWARE ENVIRONMENT: <span class="telemetry-value">iPad ProMotion Sync OK</span></span>
+                <span>REGISTRY SCHEMATIC: <span class="telemetry-value">VERSION_LAB.1.0</span></span>
             </div>
         </footer>
 
