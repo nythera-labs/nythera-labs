@@ -185,7 +185,7 @@
 
     <div id="boot-overlay">
         <h1 style="font-size: 2.4rem; color: #ff1111; text-shadow: 0 0 20px rgba(255,17,17,0.4); font-weight: 900; letter-spacing: 2px;">DARK CORE: ADVANCED</h1>
-        <p style="color: #555e6b; margin-top: 8px; font-weight: 500; font-family: monospace;">True Dual-Stick Mapping • Optimized Touch Registers</p>
+        <p style="color: #555e6b; margin-top: 8px; font-weight: 500; font-family: monospace;">Premium Audio Overhaul • Cinematic 3D Raycasting</p>
         <button class="boot-btn" onclick="bootDarkCoreEngine()">INITIALIZE WORKSPACE</button>
     </div>
 
@@ -211,7 +211,7 @@
     </div>
 
     <script>
-        // --- PROCEDURAL AUDIO GENERATION CIRCUIT ---
+        // --- PREMIUM PROCEDURAL AUDIO SYSTEM (NO HARSH BUZZ CORES) ---
         class SynthAudioEngine {
             constructor() { this.ctx = null; this.ambience = null; }
             init() {
@@ -222,56 +222,84 @@
             playPlasma() {
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(400, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(60, this.ctx.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+                
+                // Deep triangle pulse sweeps downward smoothly
+                osc.type = 'triangle'; 
+                osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.15);
+                
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+                
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.15);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.16);
             }
             playShotgun() {
                 if (!this.ctx) return;
-                for(let k=0; k<2; k++) {
+                // Layered clean heavy thuds for hydraulic impact pressure simulation
+                for(let k=0; k<3; k++) {
                     let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                    osc.type = k === 0 ? 'sawtooth' : 'triangle';
-                    osc.frequency.setValueAtTime(180 - (k*60), this.ctx.currentTime);
-                    osc.frequency.linearRampToValueAtTime(30, this.ctx.currentTime + 0.25);
+                    osc.type = (k === 0) ? 'triangle' : 'sine';
+                    
+                    let baseFreq = 160 - (k * 40);
+                    osc.frequency.setValueAtTime(baseFreq, this.ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(10, this.ctx.currentTime + 0.22);
+                    
                     gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
+                    
                     osc.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(); osc.stop(this.ctx.currentTime + 0.25);
+                    osc.start(); osc.stop(this.ctx.currentTime + 0.23);
                 }
             }
             playExplode() {
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(95, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(20, this.ctx.currentTime + 0.4);
-                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+                
+                // Sub-bass frequency plunge creates a cinematic rumble explosion
+                osc.type = 'triangle'; 
+                osc.frequency.setValueAtTime(90, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(10, this.ctx.currentTime + 0.45);
+                
+                gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.45);
+                
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.4);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.46);
             }
             playHurt() {
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(65, this.ctx.currentTime);
-                gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+                
+                // Clean low frequency impact punch warning
+                osc.type = 'triangle'; 
+                osc.frequency.setValueAtTime(75, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(20, this.ctx.currentTime + 0.18);
+                
+                gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.18);
+                
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.19);
             }
             startDrone() {
                 this.ambience = setInterval(() => {
                     if (!this.ctx || !gameActive) return;
                     let osc = this.ctx.createOscillator(), gain = this.ctx.createGain(), filter = this.ctx.createBiquadFilter();
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(50 + Math.random() * 5, this.ctx.currentTime);
-                    filter.type = 'lowpass'; filter.frequency.setValueAtTime(100, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(0.14, this.ctx.currentTime);
+                    
+                    // Smooth shifting sine engine roar humming comfortably in the background
+                    osc.type = 'sine'; 
+                    osc.frequency.setValueAtTime(45 + Math.random() * 3, this.ctx.currentTime);
+                    
+                    filter.type = 'lowpass'; 
+                    filter.frequency.setValueAtTime(80, this.ctx.currentTime);
+                    
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
                     gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 1.4);
+                    
                     osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
                     osc.start(); osc.stop(this.ctx.currentTime + 1.5);
-                }, 1500);
+                }, 1450);
             }
         }
 
@@ -283,7 +311,7 @@
             launchEngineCircuit();
         }
 
-        // --- RAYCASTING VECTOR ENGINE ENGINE CORES ---
+        // --- RAYCASTING VECTOR ENGINE CORES ---
         let canvas, ctx;
         let lastTime = performance.now();
         let gameActive = true;
@@ -317,7 +345,6 @@
         let colsCount = 240;
         let muzzleFlash = 0;
 
-        // True Touch ID Assignments (Fixes overlap/dropouts completely)
         let forwardInput = 0;
         let strafeInput = 0;
         let joyActive = false;
@@ -375,7 +402,6 @@
             const thumb = document.getElementById('joystick-thumb');
             const fireBtn = document.getElementById('fire-btn');
 
-            // --- LINK SPECIFIC TOUCH TO JOYSTICK SYSTEM ---
             bound.addEventListener('touchstart', (e) => {
                 for (let i = 0; i < e.changedTouches.length; i++) {
                     let touch = e.changedTouches[i];
@@ -389,11 +415,9 @@
                 }
             }, {passive: true});
 
-            // --- LINK SPECIFIC TOUCH TO RIGHT SCENE MOUSEPAD LOOK ---
             window.addEventListener('touchstart', (e) => {
                 for (let i = 0; i < e.changedTouches.length; i++) {
                     let touch = e.changedTouches[i];
-                    // Verify touch hit right side and doesn't belong to any button frames
                     if (touch.clientX > window.innerWidth / 2 && lookTouchId === null) {
                         if (touch.target.tagName === 'BUTTON') continue;
                         lookTouchId = touch.identifier;
@@ -402,14 +426,11 @@
                 }
             }, {passive: true});
 
-            // --- CORE FLOW: CAPTURE AND KILL SAFARI BACKGROUND ACTIONS ---
             window.addEventListener('touchmove', (e) => {
-                // If either system is active, freeze the web page from shifting!
                 if (joyActive || lookTouchId !== null) {
                     e.preventDefault(); 
                 }
 
-                // 1. Evaluate Joystick Vector Tracking
                 if (joyActive && moveTouchId !== null) {
                     let activeJoystickTouch = null;
                     for (let i = 0; i < e.touches.length; i++) {
@@ -428,7 +449,6 @@
                     }
                 }
 
-                // 2. Evaluate Swipe Camera Matrix Tracking
                 if (lookTouchId !== null) {
                     let activeLookTouch = null;
                     for (let i = 0; i < e.touches.length; i++) {
@@ -438,13 +458,12 @@
                     }
                     if (activeLookTouch) {
                         let deltaX = activeLookTouch.clientX - lastLookX;
-                        player.angle += deltaX * 0.007; // Smooth precision scale factor
+                        player.angle += deltaX * 0.007; 
                         lastLookX = activeLookTouch.clientX;
                     }
                 }
-            }, {passive: false}); // passive: false allows preventDefault to fire!
+            }, {passive: false});
 
-            // --- DETACH FINGER LIFTS CLEANLY ---
             window.addEventListener('touchend', (e) => {
                 for (let i = 0; i < e.changedTouches.length; i++) {
                     let touch = e.changedTouches[i];
@@ -475,7 +494,6 @@
 
             fireBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dischargeActiveWeapon(); });
 
-            // Keyboard fallbacks 
             window.addEventListener('keydown', (e) => {
                 if (e.key === ' ' || e.key === 'Spacebar') dischargeActiveWeapon();
                 if (e.key.toLowerCase() === 'w') forwardInput = 1;
@@ -790,7 +808,7 @@
                 ctx.beginPath();
                 ctx.moveTo(-50, recoilY); ctx.lineTo(-30, -95 + recoilY);
                 ctx.lineTo(30, -95 + recoilY); ctx.lineTo(50, recoilY);
-                ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.closePath(); ctx.fill(); stroke();
 
                 ctx.fillStyle = '#050507';
                 ctx.fillRect(-14, -90 + recoilY, 10, 20);
