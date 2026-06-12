@@ -3,195 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zaeem Labs // Hub</title>
+    <title>Zaeem Labs // Mainframe Suite</title>
+    
+    <link rel="icon" type="image/png" href="logo.png">
+
     <style>
-        :root {
-            --bg-base: #0a0c12;
-            --bg-surface: #121622;
-            --bg-card: #171d2f;
-            --accent: #00e5ff;
-            --text-main: #ffffff;
-            --text-muted: #8a90a6;
-            --border: rgba(0, 229, 255, 0.15);
-            --neon-glow: 0 0 15px rgba(0, 229, 255, 0.25);
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #020205;
+            color: #ffffff;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            overflow-x: hidden;
         }
 
-        /* Light Mode Variables via Dataset Toggle */
-        [data-theme="light"] {
-            --bg-base: #f4f6f9;
-            --bg-surface: #ffffff;
-            --bg-card: #eaeef5;
-            --accent: #00838f;
-            --text-main: #1a1d24;
-            --text-muted: #60677a;
-            --border: rgba(0, 131, 143, 0.2);
-            --neon-glow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        /* Ambient Digital Grid Backdrop Layer */
+        .grid-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 17, 17, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 17, 17, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+            pointer-events: none;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-base); color: var(--text-main); transition: background-color 0.3s, color 0.3s; padding: 20px; min-height: 100vh; }
+        /* Hub Interface Scanner Container */
+        .mainframe-wrapper {
+            position: relative;
+            z-index: 2;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-        /* Navigation Header */
-        header { max-width: 1200px; margin: 0 auto 40px auto; display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
-        .logo-group h1 { font-size: 1.8rem; letter-spacing: 3px; font-weight: 900; color: var(--text-main); }
-        .logo-group span { color: var(--accent); }
-        
-        .theme-toggle-btn { background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main); padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem; box-shadow: var(--neon-glow); transition: all 0.2s ease; }
-        .theme-toggle-btn:hover { transform: translateY(-2px); }
+        /* Brand Main Header Panel Layout */
+        .hub-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            border-bottom: 1px dashed rgba(255, 17, 17, 0.2);
+        }
+        .lab-logo {
+            width: 115px;
+            height: 115px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(255, 17, 17, 0.6)) 
+                    drop-shadow(0 0 30px rgba(0, 255, 204, 0.3));
+            margin-bottom: 20px;
+            animation: corePulse 4s infinite ease-in-out;
+        }
+        .lab-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 17, 17, 0.4);
+        }
+        .lab-subtitle {
+            font-size: 0.85rem;
+            color: #556275;
+            margin-top: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
-        /* Main Grid Layout */
-        .dashboard-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        /* Custom Project Modular Matrix Grid Layout */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            flex-grow: 1;
+            margin-bottom: 40px;
+        }
 
-        /* Base Card Styling */
-        .card { background-color: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px; padding: 25px; box-shadow: var(--neon-glow); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s ease; }
-        .card:hover { transform: translateY(-4px); }
-        .card-header h2 { font-size: 1.4rem; margin-bottom: 8px; letter-spacing: 1px; }
-        .card-header p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.4; }
+        /* High-Tech Engine Card Components Layout */
+        .module-card {
+            background: rgba(5, 6, 12, 0.85);
+            border: 1px solid rgba(255, 17, 17, 0.15);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-        /* Action Buttons */
-        .launch-btn { background: var(--accent); color: #0a0c12; text-decoration: none; text-align: center; padding: 14px; border-radius: 8px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: opacity 0.2s; margin-top: 15px; }
-        .launch-btn:hover { opacity: 0.9; }
+        /* Interactive Card Glow-ups */
+        .module-card.online {
+            border: 1px solid rgba(0, 255, 204, 0.25);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+        .module-card.online:hover {
+            transform: translateY(-4px);
+            border-color: #00ffcc;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.25);
+        }
 
-        /* Functional UI Widgets inside Cards */
-        .widget-box { background: var(--bg-card); border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        input[type="text"], input[type="number"] { width: 100%; background: var(--bg-base); border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: var(--text-main); font-size: 1rem; margin-bottom: 12px; outline: none; }
-        
-        .result-output { word-break: break-all; font-family: monospace; font-size: 0.85rem; color: var(--accent); margin-top: 8px; min-height: 20px; }
+        .module-card.offline {
+            border: 1px solid rgba(255, 17, 17, 0.1);
+            opacity: 0.45;
+        }
 
-        /* Calculator Interface Layout */
-        .calc-grid { display: grid; grid-template-columns: repeat(4, ifr); gap: 8px; margin-top: 10px; }
-        .calc-screen { width: 100%; background: var(--bg-base); text-align: right; padding: 12px; font-family: monospace; font-size: 1.2rem; color: var(--accent); border-radius: 6px; border: 1px solid var(--border); margin-bottom: 10px; min-height: 45px; }
-        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .calc-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 1rem; }
-        .calc-btn:hover { background: var(--accent); color: #0a0c12; }
+        /* Module Status Flag Layout Indication markers */
+        .status-flag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            padding: 4px 10px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+        }
+        .status-flag.online { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc;}
+        .status-flag.encrypted { background: rgba(255, 17, 17, 0.05); color: #ff3333; border: 1px solid rgba(255, 51, 51, 0.3);}
+
+        .module-meta {
+            margin-bottom: 25px;
+        }
+        .module-name {
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        .module-card.online .module-name {
+            text-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+        }
+        .module-desc {
+            font-size: 0.85rem;
+            color: #728196;
+            line-height: 1.5;
+        }
+
+        /* Mainframe Simulation Boots Actions Links Elements */
+        .launch-anchor {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 255, 204, 0.04);
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            font-size: 0.9rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .launch-anchor:block-active, .launch-anchor:hover {
+            background: #00ffcc;
+            color: #020205;
+            box-shadow: 0 0 15px #00ffcc;
+        }
+
+        .lock-anchor {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 1px dashed rgba(255, 51, 51, 0.2);
+            color: #553333;
+            font-size: 0.9rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            border-radius: 10px;
+            cursor: not-allowed;
+        }
+
+        /* Infrastructure Status Terminal Footer Layout */
+        .hub-telemetry-footer {
+            border-top: 1px dashed rgba(255, 17, 17, 0.2);
+            padding-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #434d5c;
+        }
+        .telemetry-row {
+            display: flex;
+            justify-content: space-between;
+        }
+        .telemetry-value {
+            color: #728196;
+        }
+
+        /* Core Brand Animations Modifiers */
+        @keyframes corePulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 17, 17, 0.6)) drop-shadow(0 0 30px rgba(0, 255, 204, 0.3)); }
+            50% { transform: scale(1.03); filter: drop-shadow(0 0 22px rgba(255, 17, 17, 0.8)) drop-shadow(0 0 40px rgba(0, 255, 204, 0.5)); }
+        }
     </style>
 </head>
-<body data-theme="dark">
+<body>
 
-    <header>
-        <div class="logo-group">
-            <h1>ZAEEM <span>LABS</span></h1>
-        </div>
-        <button class="theme-toggle-btn" id="theme-trigger">TOGGLE MATRIX MODE</button>
-    </header>
+    <div class="grid-backdrop"></div>
 
-    <main class="dashboard-grid">
+    <div class="mainframe-wrapper">
+        
+        <header class="hub-header">
+            <img src="logo.png" alt="Zaeem Labs Graphic Core Asset" class="lab-logo">
+            <h1 class="lab-title">ZAEEM LABS</h1>
+            <div class="lab-subtitle">Experimental Graphics Infrastructure Simulation Mainframe</div>
+        </header>
 
-        <div class="card">
-            <div class="card-header">
-                <h2 style="color: var(--accent);">MR KIM RUNNER</h2>
-                <p>Launch the production-grade 3D infinite runner system module. Built via Three.js with integrated ProMotion high-refresh tracking metrics and obstacle vector streaming.</p>
-            </div>
-            <a href="tools/game.html" class="launch-btn">INITIALIZE RUN ENGINE</a>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2>SHA-256 GENERATOR</h2>
-                <p>Encode plain text payloads directly into structured cryptographic signature strings execution layers locally inside the client environment frame.</p>
-                
-                <div class="widget-box">
-                    <input type="text" id="hash-input" placeholder="Enter plaintext string payload...">
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">CRYPTOGRAPHIC HASH OUTPUT:</div>
-                    <div class="result-output" id="hash-output">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2>CORE MATH MATRIX</h2>
-                <p>Standard quick-access arithmetic computer terminal layer supporting structural code calculations and general unit conversions.</p>
-                
-                <div class="widget-box">
-                    <div class="calc-screen" id="calc-display">0</div>
-                    <div class="calc-buttons">
-                        <button class="calc-btn" onclick="clearCalc()">C</button>
-                        <button class="calc-btn" onclick="pressCalc('/')">/</button>
-                        <button class="calc-btn" onclick="pressCalc('*')">*</button>
-                        <button class="calc-btn" onclick="pressCalc('-')">-</button>
-                        <button class="calc-btn" onclick="pressCalc('7')">7</button>
-                        <button class="calc-btn" onclick="pressCalc('8')">8</button>
-                        <button class="calc-btn" onclick="pressCalc('9')">9</button>
-                        <button class="calc-btn" onclick="pressCalc('+')">+</button>
-                        <button class="calc-btn" onclick="pressCalc('4')">4</button>
-                        <button class="calc-btn" onclick="pressCalc('5')">5</button>
-                        <button class="calc-btn" onclick="pressCalc('6')">6</button>
-                        <button class="calc-btn" onclick="calculateResult()">=</button>
-                        <button class="calc-btn" onclick="pressCalc('1')">1</button>
-                        <button class="calc-btn" onclick="pressCalc('2')">2</button>
-                        <button class="calc-btn" onclick="pressCalc('3')">3</button>
-                        <button class="calc-btn" onclick="pressCalc('0')">0</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <script>
-        // --- 1. CONFIGURATION SYSTEM TOGGLE ---
-        const themeBtn = document.getElementById('theme-trigger');
-        const bodyTag = document.body;
-
-        themeBtn.addEventListener('click', () => {
-            const currentMode = bodyTag.getAttribute('data-theme');
-            const targetMode = currentMode === 'dark' ? 'light' : 'dark';
-            bodyTag.setAttribute('data-theme', targetMode);
-        });
-
-        // --- 2. ASYNC CLIENT CRYPTO CONVERTER RUNTIME ENGINE ---
-        const hashInput = document.getElementById('hash-input');
-        const hashOutput = document.getElementById('hash-output');
-
-        hashInput.addEventListener('input', async () => {
-            const val = hashInput.value;
-            if(!val) {
-                hashOutput.innerText = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-                return;
-            }
+        <main class="modules-grid">
             
-            // Generate clean web native API text conversions using modern window cryptographic layers
-            const msgUint8 = new TextEncoder().encode(val);                           
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           
-            const hashArray = Array.from(new Uint8Array(hashBuffer));                     
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); 
-            
-            hashOutput.innerText = hashHex;
-        });
+            <section class="module-card online">
+                <div class="status-flag online">READY</div>
+                <div class="module-meta">
+                    <h2 class="module-name">DARK CORE // FPS</h2>
+                    <p class="module-desc">Mathematical 3D Pseudo-Raycasting engine framework. Features real-time projection vector geometry maps, responsive dual-stick inputs, custom weapon configurations inventory, and localized dynamic audio context synthesis loops.</p>
+                </div>
+                <a href="tools/game.html" class="launch-anchor">BOOT CORE</a>
+            </section>
 
-        // --- 3. WIDGET TERMINAL CALCULATOR ENGINE LOGIC ---
-        const calcDisplay = document.getElementById('calc-display');
-        let calcStateString = "";
+            <section class="module-card offline">
+                <div class="status-flag encrypted">LOCKED</div>
+                <div class="module-meta">
+                    <h2 class="module-name">VECTOR DRIFT MATRIX</h2>
+                    <p class="module-desc">Top-down hardware-accelerated fluid friction momentum simulation racing module block. High-spec lateral friction calculation tracks mapping. Awaiting secondary code expansion registries compile sets.</p>
+                </div>
+                <button class="lock-anchor" disabled>SECURE MODULE</button>
+            </section>
 
-        window.pressCalc = function(char) {
-            if (calcStateString === "0" && !isNaN(char)) {
-                calcStateString = char;
-            } else {
-                calcStateString += char;
-            }
-            updateCalcDisplay();
-        };
+            <section class="module-card offline">
+                <div class="status-flag encrypted">LOCKED</div>
+                <div class="module-meta">
+                    <h2 class="module-name">SIMULATION MODULE 03</h2>
+                    <p class="module-desc">Unallocated core memory buffer registry sector slot configuration. Infrastructure framework initialized to accept complete self-contained lightweight canvas code script inputs instantly.</p>
+                </div>
+                <button class="lock-anchor" disabled>SECURE MODULE</button>
+            </section>
 
-        window.clearCalc = function() {
-            calcStateString = "0";
-            updateCalcDisplay();
-        };
+        </main>
 
-        window.calculateResult = function() {
-            try {
-                // Evaluates the math string expressions safely inside local bounds
-                const result = Function('"use strict";return (' + calcStateString + ')')();
-                calcStateString = String(result);
-            } catch (err) {
-                calcStateString = "ERROR";
-            }
-            updateCalcDisplay();
-        };
+        <footer class="hub-telemetry-footer">
+            <div class="telemetry-row">
+                <span>SYSTEM STATUS: <span style="color: #00ffcc; font-weight:900;">SECURED</span></span>
+                <span>COMPILATION ENGINES: <span class="telemetry-value">HTML5 CANVAS VECTORS</span></span>
+            </div>
+            <div class="telemetry-row">
+                <span>HARDWARE SYNC: <span class="telemetry-value">120HZ PROMOTION PLATFORMS OK</span></span>
+                <span>REGISTRY VERSION: <span class="telemetry-value">ALPHA_CORE.4.0</span></span>
+            </div>
+        </footer>
 
-        function updateCalcDisplay() {
-            calcDisplay.innerText = calcStateString || "0";
-        }
-    </script>
+    </div>
+
 </body>
 </html>
