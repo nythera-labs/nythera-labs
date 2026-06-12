@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zaeem Labs // Game Center</title>
-    
-    <!-- Link to your official logo up one directory -->
     <link rel="icon" type="image/png" href="../logo.png">
-
     <style>
         * {
             box-sizing: border-box;
@@ -24,14 +21,9 @@
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
             overflow-x: hidden;
         }
-
-        /* Scanline matrix backdrop grid */
         .grid-backdrop {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-image: 
                 linear-gradient(rgba(0, 255, 204, 0.015) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 255, 204, 0.015) 1px, transparent 1px);
@@ -39,7 +31,6 @@
             z-index: 1;
             pointer-events: none;
         }
-
         .center-wrapper {
             position: relative;
             z-index: 2;
@@ -50,8 +41,6 @@
             flex-direction: column;
             min-height: 100vh;
         }
-
-        /* Back to Mainframe Navigation Anchor */
         .back-mainframe {
             align-self: flex-start;
             text-decoration: none;
@@ -64,11 +53,7 @@
             align-items: center;
             transition: color 0.2s ease;
         }
-        .back-mainframe:hover {
-            color: #ff1111;
-        }
-
-        /* Game Center Header Panel */
+        .back-mainframe:hover { color: #ff1111; }
         .center-header {
             display: flex;
             flex-direction: column;
@@ -86,7 +71,6 @@
             text-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
         }
         .center-subtitle {
-            font-size: 0.85rem;
             color: #ff1111;
             text-shadow: 0 0 8px rgba(255, 17, 17, 0.2);
             margin-top: 10px;
@@ -94,8 +78,6 @@
             text-transform: uppercase;
             font-weight: 700;
         }
-
-        /* Games Selection Cabinet Grid Layout */
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -103,7 +85,6 @@
             flex-grow: 1;
             margin-bottom: 40px;
         }
-
         .game-card {
             background: rgba(4, 5, 10, 0.9);
             border: 1px solid rgba(0, 255, 204, 0.12);
@@ -116,8 +97,6 @@
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
-        /* Online & Active Cabinet Animations */
         .game-card.online {
             border-color: rgba(0, 255, 204, 0.25);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
@@ -127,131 +106,62 @@
             border-color: #00ffcc;
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.25);
         }
-
-        /* Coming Soon Overlays Layout */
-        .game-card.coming-soon {
-            border-color: rgba(255, 17, 17, 0.08);
-            background: rgba(3, 3, 5, 0.5);
+        .game-card.online.purple-glow:hover {
+            border-color: #ff00ff;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.25);
         }
-        .game-card.coming-soon::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,17,17,0.02) 0%, transparent 100%);
-            pointer-events: none;
-        }
-
         .status-tag {
             position: absolute;
-            top: 18px;
-            right: 18px;
-            font-size: 0.65rem;
-            font-weight: 900;
-            padding: 5px 12px;
-            border-radius: 20px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            top: 18px; right: 18px; font-size: 0.65rem; font-weight: 900;
+            padding: 5px 12px; border-radius: 20px; letter-spacing: 1px; text-transform: uppercase;
         }
         .status-tag.online { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc; }
-        .status-tag.locked { background: rgba(255, 17, 17, 0.05); color: #ff3333; border: 1px solid rgba(255, 51, 51, 0.2); }
-
-        .game-title {
-            font-size: 1.4rem;
-            font-weight: 900;
-            letter-spacing: 1px;
-            color: #ffffff;
-            margin-bottom: 12px;
-            margin-top: 10px;
-        }
-        .game-card.online .game-title {
-            text-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
-        }
-        .game-desc {
-            font-size: 0.85rem;
-            color: #637285;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
+        .status-tag.purple { background: rgba(255, 0, 255, 0.1); color: #ff00ff; border: 1px solid #ff00ff; }
+        
+        .game-title { font-size: 1.4rem; font-weight: 900; letter-spacing: 1px; color: #ffffff; margin-bottom: 12px; margin-top: 10px; }
+        .game-card.online .game-title { text-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
+        .game-card.online.purple-glow .game-title { text-shadow: 0 0 10px rgba(255, 0, 255, 0.2); }
+        .game-desc { font-size: 0.85rem; color: #637285; line-height: 1.6; margin-bottom: 30px; }
+        
         .action-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 15px;
-            background: rgba(0, 255, 204, 0.03);
-            border: 1px solid #00ffcc;
-            color: #00ffcc;
-            font-size: 0.9rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-            border-radius: 10px;
-            text-decoration: none;
-            transition: all 0.2s ease;
+            display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 15px;
+            background: rgba(0, 255, 204, 0.03); border: 1px solid #00ffcc; color: #00ffcc;
+            font-size: 0.9rem; font-weight: 900; letter-spacing: 2px; border-radius: 10px; text-decoration: none; transition: all 0.2s ease;
         }
-        .action-btn:hover {
-            background: #00ffcc;
-            color: #020205;
-            box-shadow: 0 0 20px #00ffcc;
-        }
-
-        .disabled-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 15px;
-            background: transparent;
-            border: 1px dashed rgba(255, 51, 51, 0.15);
-            color: #4a2b2b;
-            font-size: 0.9rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-            border-radius: 10px;
-            cursor: not-allowed;
-        }
+        .action-btn:hover { background: #00ffcc; color: #020205; box-shadow: 0 0 20px #00ffcc; }
+        .action-btn.purple-btn { border-color: #ff00ff; color: #ff00ff; background: rgba(255, 0, 255, 0.03); }
+        .action-btn.purple-btn:hover { background: #ff00ff; color: #020205; box-shadow: 0 0 20px #ff00ff; }
     </style>
 </head>
 <body>
-
     <div class="grid-backdrop"></div>
-
     <div class="center-wrapper">
-        
-        <!-- Back navigation linking to root mainframe -->
         <a href="../index.html" class="back-mainframe">⚡ BACK_TO_MAINFRAME</a>
-
         <header class="center-header">
             <h1 class="center-title">GAME CENTER</h1>
             <div class="center-subtitle">Tool 01 // Zaeem Labs Deployment Suite</div>
         </header>
-
-        <!-- List of Games Inside the Cabinet Center -->
         <main class="games-grid">
             
-            <!-- GAME 1: DARK CORE (LIVE) -->
             <section class="game-card online">
                 <div class="status-tag online">Active Core</div>
                 <div>
-                    <h2 class="game-title">DARK CORE // FPS</h2>
-                    <p class="game-desc">Mathematical 3D Pseudo-Raycasting engine run entirely via raw HTML5 Canvas logic. Features 120Hz ProMotion layout fluid dynamics, custom tactical dual-stick controls optimization, shotgun/plasma weapon arrays, and dynamic lighting falloff.</p>
+                    <h2 class="game-title">MEADOW DASH</h2>
+                    <p class="game-desc">A beautiful, open-world 2D dashboard field running fluid drifting momentum physics. Collect elements, escape boundaries, and zoom around with kinetic neon dash trails to calming arpeggiated tracks.</p>
                 </div>
                 <a href="game.html" class="action-btn">LAUNCH SIMULATION</a>
             </section>
 
-            <!-- GAME 2: COMING SOON -->
-            <section class="game-card coming-soon">
-                <div class="status-tag locked">Coming Soon</div>
+            <section class="game-card online purple-glow">
+                <div class="status-tag purple">Relaxing Sim</div>
                 <div>
-                    <h2 class="game-title">VECTOR DRIFT ENGINE</h2>
-                    <p class="game-desc">Experimental physics module designed around top-down calculated drift momentum matrix profiles, tire slip coefficient tracking algorithms, and procedural track vectors layout parameters.</p>
+                    <h2 class="game-title">PARTICLE LAB // SANDBOX</h2>
+                    <p class="game-desc">A highly tactical, therapeutic physics environment. Manipulate elements like falling sand, streaming water, growing plants, and burning fire. Watch elements interact in real-time with zero stress and calming audio.</p>
                 </div>
-                <button class="disabled-btn" disabled>STANDBY_</button>
+                <a href="sand_lab.html" class="action-btn purple-btn">BOOT SANDBOX</a>
             </section>
 
         </main>
-
     </div>
-
 </body>
 </html>
