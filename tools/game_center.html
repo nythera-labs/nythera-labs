@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zaeem Labs // Dark Core Alpha</title>
+    <title>Zaeem Labs // Game Center</title>
+    
+    <!-- Link to your official logo up one directory -->
+    <link rel="icon" type="image/png" href="../logo.png">
+
     <style>
         * {
             box-sizing: border-box;
@@ -13,855 +17,252 @@
             padding: 0;
         }
         body, html {
-            overflow: hidden;
             width: 100%;
             height: 100%;
-            background-color: #010103;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        #game-canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-        
-        /* Initialization Interface Menu Overlay */
-        #boot-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #030306;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            background-color: #020205;
             color: #ffffff;
-            text-align: center;
-        }
-        .boot-btn {
-            margin-top: 25px;
-            padding: 16px 50px;
-            background: linear-gradient(135deg, #ff1111 0%, #880000 100%);
-            border: 2px solid #ff4444;
-            color: #ffffff;
-            font-weight: 900;
-            font-size: 1.2rem;
-            border-radius: 35px;
-            cursor: pointer;
-            box-shadow: 0 0 30px rgba(255, 17, 17, 0.4);
-            letter-spacing: 1px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            overflow-x: hidden;
         }
 
-        #ui-layer {
-            position: absolute;
+        /* Scanline matrix backdrop grid */
+        .grid-backdrop {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 10;
+            background-image: 
+                linear-gradient(rgba(0, 255, 204, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 204, 0.015) 1px, transparent 1px);
+            background-size: 35px 35px;
+            z-index: 1;
             pointer-events: none;
+        }
+
+        .center-wrapper {
+            position: relative;
+            z-index: 2;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 25px;
+            min-height: 100vh;
         }
-        .hud-element {
-            background: rgba(3, 3, 6, 0.9);
-            border: 2px solid #ff1111;
-            box-shadow: 0 0 15px rgba(255, 17, 17, 0.2);
-            padding: 12px 25px;
-            border-radius: 20px;
-            color: #ffffff;
-            backdrop-filter: blur(8px);
-            font-weight: 900;
-            font-size: 1.1rem;
+
+        /* Back to Mainframe Navigation Anchor */
+        .back-mainframe {
+            align-self: flex-start;
+            text-decoration: none;
+            color: #728196;
+            font-size: 0.85rem;
+            font-weight: 700;
             letter-spacing: 1px;
-            font-family: monospace;
-        }
-        #top-hud {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-        }
-        #stat-hp { color: #ff3333; text-shadow: 0 0 6px #ff3333; }
-        #stat-score { color: #00ffcc; text-shadow: 0 0 6px #00ffcc; }
-        #stat-weapon { color: #ffaa00; text-shadow: 0 0 6px #ffaa00; }
-        
-        /* Tactical iPad Mobile Controls Configuration Layout */
-        #controls-layer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            width: 100%;
-            padding-bottom: 15px;
-            pointer-events: none;
-        }
-        .touch-zone { pointer-events: auto; }
-        
-        #joystick-bound {
-            width: 135px;
-            height: 135px;
-            background: rgba(255, 255, 255, 0.01);
-            border: 3px dashed rgba(255, 17, 17, 0.3);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
+            margin-bottom: 20px;
+            display: inline-flex;
             align-items: center;
+            transition: color 0.2s ease;
         }
-        #joystick-thumb {
-            width: 52px;
-            height: 52px;
-            background: radial-gradient(circle, #ff3333 0%, #880000 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 20px #ff1111;
+        .back-mainframe:hover {
+            color: #ff1111;
         }
-        
-        #action-cluster {
+
+        /* Game Center Header Panel */
+        .center-header {
             display: flex;
             flex-direction: column;
-            gap: 15px;
             align-items: center;
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px dashed rgba(0, 255, 204, 0.15);
         }
-        #swap-btn {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 170, 0, 0.15);
-            border: 2px solid #ffaa00;
-            color: #ffaa00;
-            border-radius: 50%;
+        .center-title {
+            font-size: 2.6rem;
             font-weight: 900;
-            font-size: 0.9rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
-        }
-        #fire-btn {
-            width: 110px;
-            height: 110px;
-            background: rgba(255, 17, 17, 0.15);
-            border: 3px solid #ff1111;
+            letter-spacing: 7px;
             color: #ffffff;
-            border-radius: 50%;
-            font-weight: 900;
-            font-size: 1.3rem;
+            text-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        }
+        .center-subtitle {
+            font-size: 0.85rem;
+            color: #ff1111;
+            text-shadow: 0 0 8px rgba(255, 17, 17, 0.2);
+            margin-top: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* Games Selection Cabinet Grid Layout */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            flex-grow: 1;
+            margin-bottom: 40px;
+        }
+
+        .game-card {
+            background: rgba(4, 5, 10, 0.9);
+            border: 1px solid rgba(0, 255, 204, 0.12);
+            border-radius: 16px;
+            padding: 25px;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 25px rgba(255, 17, 17, 0.3);
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        #fire-btn:active {
-            background: #ff1111;
-            transform: scale(0.95);
+
+        /* Online & Active Cabinet Animations */
+        .game-card.online {
+            border-color: rgba(0, 255, 204, 0.25);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
-        
-        #crosshair {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 14px;
-            height: 14px;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 5;
+        .game-card.online:hover {
+            transform: translateY(-5px);
+            border-color: #00ffcc;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.25);
         }
-        #crosshair::before, #crosshair::after {
+
+        /* Coming Soon Overlays Layout */
+        .game-card.coming-soon {
+            border-color: rgba(255, 17, 17, 0.08);
+            background: rgba(3, 3, 5, 0.5);
+        }
+        .game-card.coming-soon::before {
             content: '';
             position: absolute;
-            background: rgba(255, 17, 17, 0.5);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(255,17,17,0.02) 0%, transparent 100%);
+            pointer-events: none;
         }
-        #crosshair::before { top: 6px; left: -6px; width: 26px; height: 2px; }
-        #crosshair::after { top: -6px; left: 6px; width: 2px; height: 26px; }
+
+        .status-tag {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            font-size: 0.65rem;
+            font-weight: 900;
+            padding: 5px 12px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .status-tag.online { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc; }
+        .status-tag.locked { background: rgba(255, 17, 17, 0.05); color: #ff3333; border: 1px solid rgba(255, 51, 51, 0.2); }
+
+        .game-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #ffffff;
+            margin-bottom: 12px;
+            margin-top: 10px;
+        }
+        .game-card.online .game-title {
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        }
+        .game-desc {
+            font-size: 0.85rem;
+            color: #637285;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 255, 204, 0.03);
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            font-size: 0.9rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .action-btn:hover {
+            background: #00ffcc;
+            color: #020205;
+            box-shadow: 0 0 20px #00ffcc;
+        }
+
+        .disabled-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px dashed rgba(255, 51, 51, 0.15);
+            color: #4a2b2b;
+            font-size: 0.9rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            border-radius: 10px;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
 
-    <div id="boot-overlay">
-        <h1 style="font-size: 2.4rem; color: #ff1111; text-shadow: 0 0 20px rgba(255,17,17,0.4); font-weight: 900; letter-spacing: 2px;">DARK CORE: ADVANCED</h1>
-        <p style="color: #555e6b; margin-top: 8px; font-weight: 500; font-family: monospace;">Premium Audio Overhaul • Cinematic 3D Raycasting</p>
-        <button class="boot-btn" onclick="bootDarkCoreEngine()">INITIALIZE WORKSPACE</button>
-    </div>
+    <div class="grid-backdrop"></div>
 
-    <div id="crosshair"></div>
-    <canvas id="game-canvas"></canvas>
-
-    <div id="ui-layer">
-        <div id="top-hud">
-            <div class="hud-element">VITAL STATUS: <span id="stat-hp">100%</span></div>
-            <div class="hud-element">WEAPON: <span id="stat-weapon">PLASMA</span></div>
-            <div class="hud-element">CORES PURGED: <span id="stat-score">0</span></div>
-        </div>
-
-        <div id="controls-layer">
-            <div id="joystick-bound" class="touch-zone">
-                <div id="joystick-thumb"></div>
-            </div>
-            <div id="action-cluster">
-                <button id="swap-btn" class="touch-zone" onclick="switchWeaponLoadout()">SWAP</button>
-                <button id="fire-btn" class="touch-zone">FIRE</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- PREMIUM PROCEDURAL AUDIO SYSTEM (NO HARSH BUZZ CORES) ---
-        class SynthAudioEngine {
-            constructor() { this.ctx = null; this.ambience = null; }
-            init() {
-                if (this.ctx) return;
-                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                this.startDrone();
-            }
-            playPlasma() {
-                if (!this.ctx) return;
-                let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                
-                // Deep triangle pulse sweeps downward smoothly
-                osc.type = 'triangle'; 
-                osc.frequency.setValueAtTime(320, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.15);
-                
-                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
-                
-                osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.16);
-            }
-            playShotgun() {
-                if (!this.ctx) return;
-                // Layered clean heavy thuds for hydraulic impact pressure simulation
-                for(let k=0; k<3; k++) {
-                    let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                    osc.type = (k === 0) ? 'triangle' : 'sine';
-                    
-                    let baseFreq = 160 - (k * 40);
-                    osc.frequency.setValueAtTime(baseFreq, this.ctx.currentTime);
-                    osc.frequency.linearRampToValueAtTime(10, this.ctx.currentTime + 0.22);
-                    
-                    gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
-                    
-                    osc.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(); osc.stop(this.ctx.currentTime + 0.23);
-                }
-            }
-            playExplode() {
-                if (!this.ctx) return;
-                let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                
-                // Sub-bass frequency plunge creates a cinematic rumble explosion
-                osc.type = 'triangle'; 
-                osc.frequency.setValueAtTime(90, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(10, this.ctx.currentTime + 0.45);
-                
-                gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.45);
-                
-                osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.46);
-            }
-            playHurt() {
-                if (!this.ctx) return;
-                let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                
-                // Clean low frequency impact punch warning
-                osc.type = 'triangle'; 
-                osc.frequency.setValueAtTime(75, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(20, this.ctx.currentTime + 0.18);
-                
-                gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.18);
-                
-                osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.19);
-            }
-            startDrone() {
-                this.ambience = setInterval(() => {
-                    if (!this.ctx || !gameActive) return;
-                    let osc = this.ctx.createOscillator(), gain = this.ctx.createGain(), filter = this.ctx.createBiquadFilter();
-                    
-                    // Smooth shifting sine engine roar humming comfortably in the background
-                    osc.type = 'sine'; 
-                    osc.frequency.setValueAtTime(45 + Math.random() * 3, this.ctx.currentTime);
-                    
-                    filter.type = 'lowpass'; 
-                    filter.frequency.setValueAtTime(80, this.ctx.currentTime);
-                    
-                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 1.4);
-                    
-                    osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(); osc.stop(this.ctx.currentTime + 1.5);
-                }, 1450);
-            }
-        }
-
-        const audio = new SynthAudioEngine();
-
-        function bootDarkCoreEngine() {
-            document.getElementById('boot-overlay').style.display = 'none';
-            audio.init();
-            launchEngineCircuit();
-        }
-
-        // --- RAYCASTING VECTOR ENGINE CORES ---
-        let canvas, ctx;
-        let lastTime = performance.now();
-        let gameActive = true;
-        let score = 0;
-        let health = 100;
-
-        const mapW = 14;
-        const mapH = 14;
-        const map = [
-            1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-            1,0,0,0,0,0,1,0,0,0,0,0,0,1,
-            1,0,1,1,1,0,1,0,1,1,1,1,0,1,
-            1,0,1,0,0,0,0,0,0,0,0,1,0,1,
-            1,0,1,0,1,1,0,1,1,1,0,1,0,1,
-            1,0,0,0,1,0,0,0,0,1,0,0,0,1,
-            1,1,1,0,1,0,0,0,0,1,0,1,1,1,
-            1,0,0,0,1,0,0,0,0,1,0,0,0,1,
-            1,0,1,0,1,1,1,1,1,1,0,1,0,1,
-            1,0,1,0,0,0,0,0,0,0,0,1,0,1,
-            1,0,1,1,1,0,1,0,1,1,1,1,0,1,
-            1,0,0,0,0,0,1,0,0,0,0,0,0,1,
-            1,1,1,1,1,1,1,1,1,1,1,1,1,1
-        ];
-
-        let player = { x: 2.5, y: 2.5, angle: 0, fov: Math.PI / 3, speed: 4.2, rotSpeed: 1.5 };
-        let currentWeapon = "PLASMA"; 
-        let drones = [];
-        let projectiles = [];
-        let particles = [];
+    <div class="center-wrapper">
         
-        let colsCount = 240;
-        let muzzleFlash = 0;
+        <!-- Back navigation linking to root mainframe -->
+        <a href="../index.html" class="back-mainframe">⚡ BACK_TO_MAINFRAME</a>
 
-        let forwardInput = 0;
-        let strafeInput = 0;
-        let joyActive = false;
-        let joyOrigin = { x:0, y:0 };
-        const maxJoyDist = 50;
+        <header class="center-header">
+            <h1 class="center-title">GAME CENTER</h1>
+            <div class="center-subtitle">Tool 01 // Zaeem Labs Deployment Suite</div>
+        </header>
 
-        let moveTouchId = null;
-        let lookTouchId = null;
-        let lastLookX = 0;
-
-        function launchEngineCircuit() {
-            canvas = document.getElementById('game-canvas');
-            ctx = canvas.getContext('2d');
-            recomputeViewportResolution();
-
-            window.addEventListener('resize', recomputeViewportResolution);
-            setupHardwareInputBindings();
-
-            for(let i=0; i<4; i++) spawnMatrixDrone();
-
-            requestAnimationFrame(engineFrameStep);
-        }
-
-        function recomputeViewportResolution() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            colsCount = Math.min(280, Math.floor(canvas.width / 4)); 
-        }
-
-        function spawnMatrixDrone() {
-            let placed = false;
-            while(!placed) {
-                let tx = Math.floor(Math.random() * mapW);
-                let ty = Math.floor(Math.random() * mapH);
-                if(map[ty * mapW + tx] === 0 && (Math.hypot(tx - player.x, ty - player.y) > 4)) {
-                    drones.push({
-                        x: tx + 0.5, y: ty + 0.5,
-                        alive: true, speed: 1.5,
-                        shootCooldown: 1.0 + Math.random() * 2,
-                        bobSeed: Math.random() * 10
-                    });
-                    placed = true;
-                }
-            }
-        }
-
-        function switchWeaponLoadout() {
-            currentWeapon = currentWeapon === "PLASMA" ? "SHOTGUN" : "PLASMA";
-            document.getElementById('stat-weapon').innerText = currentWeapon;
-            document.getElementById('stat-weapon').style.color = currentWeapon === "SHOTGUN" ? "#ffaa00" : "#00ffcc";
-        }
-
-        function setupHardwareInputBindings() {
-            const bound = document.getElementById('joystick-bound');
-            const thumb = document.getElementById('joystick-thumb');
-            const fireBtn = document.getElementById('fire-btn');
-
-            bound.addEventListener('touchstart', (e) => {
-                for (let i = 0; i < e.changedTouches.length; i++) {
-                    let touch = e.changedTouches[i];
-                    if (moveTouchId === null) {
-                        moveTouchId = touch.identifier;
-                        joyActive = true;
-                        const rect = bound.getBoundingClientRect();
-                        joyOrigin.x = rect.left + rect.width / 2;
-                        joyOrigin.y = rect.top + rect.height / 2;
-                    }
-                }
-            }, {passive: true});
-
-            window.addEventListener('touchstart', (e) => {
-                for (let i = 0; i < e.changedTouches.length; i++) {
-                    let touch = e.changedTouches[i];
-                    if (touch.clientX > window.innerWidth / 2 && lookTouchId === null) {
-                        if (touch.target.tagName === 'BUTTON') continue;
-                        lookTouchId = touch.identifier;
-                        lastLookX = touch.clientX;
-                    }
-                }
-            }, {passive: true});
-
-            window.addEventListener('touchmove', (e) => {
-                if (joyActive || lookTouchId !== null) {
-                    e.preventDefault(); 
-                }
-
-                if (joyActive && moveTouchId !== null) {
-                    let activeJoystickTouch = null;
-                    for (let i = 0; i < e.touches.length; i++) {
-                        if (e.touches[i].identifier === moveTouchId) {
-                            activeJoystickTouch = e.touches[i];
-                        }
-                    }
-                    if (activeJoystickTouch) {
-                        let offset = { x: activeJoystickTouch.clientX - joyOrigin.x, y: activeJoystickTouch.clientY - joyOrigin.y };
-                        let len = Math.hypot(offset.x, offset.y);
-                        if (len > maxJoyDist) { offset.x = (offset.x / len) * maxJoyDist; offset.y = (offset.y / len) * maxJoyDist; }
-                        thumb.style.transform = `translate(${offset.x}px, ${offset.y}px)`;
-                        
-                        strafeInput = offset.x / maxJoyDist;
-                        forwardInput = -offset.y / maxJoyDist;
-                    }
-                }
-
-                if (lookTouchId !== null) {
-                    let activeLookTouch = null;
-                    for (let i = 0; i < e.touches.length; i++) {
-                        if (e.touches[i].identifier === lookTouchId) {
-                            activeLookTouch = e.touches[i];
-                        }
-                    }
-                    if (activeLookTouch) {
-                        let deltaX = activeLookTouch.clientX - lastLookX;
-                        player.angle += deltaX * 0.007; 
-                        lastLookX = activeLookTouch.clientX;
-                    }
-                }
-            }, {passive: false});
-
-            window.addEventListener('touchend', (e) => {
-                for (let i = 0; i < e.changedTouches.length; i++) {
-                    let touch = e.changedTouches[i];
-                    if (touch.identifier === lookTouchId) {
-                        lookTouchId = null;
-                    }
-                    if (touch.identifier === moveTouchId) {
-                        moveTouchId = null;
-                        joyActive = false;
-                        thumb.style.transform = 'translate(0px, 0px)';
-                        forwardInput = 0;
-                        strafeInput = 0;
-                    }
-                }
-            });
-
-            window.addEventListener('touchcancel', (e) => {
-                for (let i = 0; i < e.changedTouches.length; i++) {
-                    let touch = e.changedTouches[i];
-                    if (touch.identifier === lookTouchId) lookTouchId = null;
-                    if (touch.identifier === moveTouchId) {
-                        moveTouchId = null; joyActive = false;
-                        thumb.style.transform = 'translate(0px, 0px)';
-                        forwardInput = 0; strafeInput = 0;
-                    }
-                }
-            });
-
-            fireBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dischargeActiveWeapon(); });
-
-            window.addEventListener('keydown', (e) => {
-                if (e.key === ' ' || e.key === 'Spacebar') dischargeActiveWeapon();
-                if (e.key.toLowerCase() === 'w') forwardInput = 1;
-                if (e.key.toLowerCase() === 's') forwardInput = -1;
-                if (e.key.toLowerCase() === 'a') strafeInput = -1;
-                if (e.key.toLowerCase() === 'd') strafeInput = 1;
-                if (e.key === 'ArrowLeft') player.angle -= 0.1;
-                if (e.key === 'ArrowRight') player.angle += 0.1;
-            });
-            window.addEventListener('keyup', (e) => {
-                if (['w', 's'].includes(e.key.toLowerCase())) forwardInput = 0;
-                if (['a', 'd'].includes(e.key.toLowerCase())) strafeInput = 0;
-            });
-        }
-
-        function dischargeActiveWeapon() {
-            if(!gameActive || health <= 0) return;
+        <!-- List of Games Inside the Cabinet Center -->
+        <main class="games-grid">
             
-            muzzleFlash = 0.12; 
-            let hitsRegistered = [];
+            <!-- GAME 1: DARK CORE (LIVE) -->
+            <section class="game-card online">
+                <div class="status-tag online">Active Core</div>
+                <div>
+                    <h2 class="game-title">DARK CORE // FPS</h2>
+                    <p class="game-desc">Mathematical 3D Pseudo-Raycasting engine run entirely via raw HTML5 Canvas logic. Features 120Hz ProMotion layout fluid dynamics, custom tactical dual-stick controls optimization, shotgun/plasma weapon arrays, and dynamic lighting falloff.</p>
+                </div>
+                <!-- Since game.html is in the same folder, link directly -->
+                <a href="game.html" class="action-btn">LAUNCH SIMULATION</a>
+            </section>
 
-            if (currentWeapon === "PLASMA") {
-                audio.playPlasma();
-                evaluateRayHit(0, 6.0, hitsRegistered);
-            } else {
-                audio.playShotgun();
-                let spreads = [-0.16, -0.08, 0, 0.08, 0.16];
-                spreads.forEach(angleOffset => {
-                    evaluateRayHit(angleOffset, 3.8, hitsRegistered);
-                });
-            }
+            <!-- GAME 2: COMING SOON -->
+            <section class="game-card coming-soon">
+                <div class="status-tag locked">Coming Soon</div>
+                <div>
+                    <h2 class="game-title">VECTOR DRIFT ENGINE</h2>
+                    <p class="game-desc">Experimental physics module designed around top-down calculated drift momentum matrix profiles, tire slip coefficient tracking algorithms, and procedural track vectors layout parameters.</p>
+                </div>
+                <button class="disabled-btn" disabled>STANDBY_</button>
+            </section>
 
-            hitsRegistered.forEach(target => {
-                if (target.alive) {
-                    target.alive = false;
-                    audio.playExplode();
-                    score++;
-                    document.getElementById('stat-score').innerText = score;
-                    spawnExplosionSparks(target.x, target.y, '#ff3355');
+            <!-- GAME 3: COMING SOON -->
+            <section class="game-card coming-soon">
+                <div class="status-tag locked">Coming Soon</div>
+                <div>
+                    <h2 class="game-title">CYBER DECK REZ</h2>
+                    <p class="game-desc">Unallocated gaming memory registry sector block. Infrastructure pipeline configured to deploy next retro arcade title module directly upon canvas build initialization updates.</p>
+                </div>
+                <button class="disabled-btn" disabled>STANDBY_</button>
+            </section>
 
-                    setTimeout(() => {
-                        drones = drones.filter(e => e !== target);
-                        spawnMatrixDrone();
-                    }, 900);
-                }
-            });
-        }
+        </main>
 
-        function evaluateRayHit(angleOffset, maxRange, hitList) {
-            let testAngle = player.angle + angleOffset;
-            let closestDrone = null;
-            let bestDistance = maxRange;
+    </div>
 
-            drones.forEach(d => {
-                if (!d.alive || hitList.includes(d)) return;
-                let ang = Math.atan2(d.y - player.y, d.x - player.x) - testAngle;
-                while (ang < -Math.PI) ang += Math.PI * 2;
-                while (ang > Math.PI) ang -= Math.PI * 2;
-
-                if (Math.abs(ang) < 0.18) {
-                    let distance = Math.hypot(d.x - player.x, d.y - player.y);
-                    if (distance < bestDistance) { bestDistance = distance; closestDrone = d; }
-                }
-            });
-
-            if (closestDrone && !hitList.includes(closestDrone)) {
-                hitList.push(closestDrone);
-            }
-        }
-
-        function spawnExplosionSparks(x, y, color) {
-            for(let i=0; i<16; i++) {
-                particles.push({
-                    x: x, y: y,
-                    vx: (Math.random() - 0.5) * 2.2, vy: (Math.random() - 0.5) * 2.2,
-                    life: 1.0, color: color
-                });
-            }
-        }
-
-        function engineFrameStep(timestamp) {
-            requestAnimationFrame(engineFrameStep);
-            let dt = (timestamp - lastTime) / 1000;
-            lastTime = timestamp;
-            if (dt > 0.1) dt = 0.1; 
-
-            if (gameActive && health > 0) {
-                if(muzzleFlash > 0) muzzleFlash -= dt;
-
-                while (player.angle < 0) player.angle += Math.PI * 2;
-                while (player.angle > Math.PI * 2) player.angle -= Math.PI * 2;
-
-                let fwdX = Math.cos(player.angle) * forwardInput;
-                let fwdY = Math.sin(player.angle) * forwardInput;
-                
-                let sideX = -Math.sin(player.angle) * strafeInput;
-                let sideY = Math.cos(player.angle) * strafeInput;
-
-                let stepX = (fwdX + sideX) * player.speed * dt;
-                let stepY = (fwdY + sideY) * player.speed * dt;
-                
-                let nextX = player.x + stepX, nextY = player.y + stepY;
-                if (map[Math.floor(player.y) * mapW + Math.floor(nextX)] === 0) player.x = nextX;
-                if (map[Math.floor(nextY) * mapW + Math.floor(player.x)] === 0) player.y = nextY;
-
-                drones.forEach(d => {
-                    if (!d.alive) return;
-                    let dx = player.x - d.x, dy = player.y - d.y;
-                    let dist = Math.hypot(dx, dy);
-                    
-                    if(dist > 2.2) {
-                        d.x += (dx / dist) * d.speed * dt;
-                        d.y += (dy / dist) * d.speed * dt;
-                    }
-
-                    d.shootCooldown -= dt;
-                    if(d.shootCooldown <= 0 && dist < 8.5) {
-                        let projAngle = Math.atan2(dy, dx);
-                        projectiles.push({
-                            x: d.x, y: d.y,
-                            vx: Math.cos(projAngle) * 4.4, vy: Math.sin(projAngle) * 4.4
-                        });
-                        d.shootCooldown = 1.8 + Math.random() * 2.2;
-                    }
-                });
-
-                for (let i = projectiles.length - 1; i >= 0; i--) {
-                    let p = projectiles[i];
-                    p.x += p.vx * dt; p.y += p.vy * dt;
-
-                    let pDist = Math.hypot(player.x - p.x, player.y - p.y);
-                    if(pDist < 0.35) {
-                        health = Math.max(0, health - 20);
-                        document.getElementById('stat-hp').innerText = health + "%";
-                        audio.playHurt();
-                        projectiles.splice(i, 1);
-                        if(health <= 0) gameActive = false;
-                        continue;
-                    }
-
-                    if(map[Math.floor(p.y) * mapW + Math.floor(p.x)] > 0) {
-                        projectiles.splice(i, 1);
-                    }
-                }
-
-                for(let i=particles.length-1; i>=0; i--) {
-                    let p = particles[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt * 1.6;
-                    if(p.life <= 0) particles.splice(i, 1);
-                }
-            }
-
-            renderGraphicsCircuit();
-        }
-
-        function renderGraphicsCircuit() {
-            ctx.fillStyle = '#010103';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#0b0612';
-            ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
-
-            let sliceW = canvas.width / colsCount;
-            let depthBuffer = [];
-
-            for (let i = 0; i < colsCount; i++) {
-                let rayAngle = (player.angle - player.fov / 2) + (i / colsCount) * player.fov;
-                let distanceToWall = 0, hitWall = false, sideHit = false;
-
-                let eyeX = Math.cos(rayAngle), eyeY = Math.sin(rayAngle);
-                let gridX = Math.floor(player.x), gridY = Math.floor(player.y);
-
-                let deltaX = Math.abs(1 / eyeX), deltaY = Math.abs(1 / eyeY);
-                let stepX, stepY, sideX, sideY;
-
-                if (eyeX < 0) { stepX = -1; sideX = (player.x - gridX) * deltaX; } 
-                else { stepX = 1; sideX = (gridX + 1.0 - player.x) * deltaX; }
-                if (eyeY < 0) { stepY = -1; sideY = (player.y - gridY) * deltaY; } 
-                else { stepY = 1; sideY = (gridY + 1.0 - player.y) * deltaY; }
-
-                while (!hitWall && distanceToWall < 14.0) {
-                    if (sideX < sideY) { sideX += deltaX; gridX += stepX; sideHit = false; } 
-                    else { sideY += deltaY; gridY += stepY; sideHit = true; }
-
-                    if (gridX >= 0 && gridX < mapW && gridY >= 0 && gridY < mapH) {
-                        if (map[gridY * mapW + gridX] > 0) {
-                            hitWall = true;
-                            distanceToWall = sideHit ? (sideY - deltaY) : (sideX - deltaX);
-                        }
-                    }
-                }
-
-                let correctedDist = distanceToWall * Math.cos(rayAngle - player.angle);
-                depthBuffer.push(correctedDist);
-
-                let wallH = Math.min(canvas.height, (canvas.height / correctedDist));
-
-                let angleDiff = Math.abs(rayAngle - player.angle);
-                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-
-                let beamWidth = 0.42; 
-                let intensity = 0;
-                if(angleDiff < beamWidth) {
-                    intensity = (1.0 - (angleDiff / beamWidth)) * (1.0 - (correctedDist / 11.5));
-                    intensity = Math.max(0, intensity);
-                }
-
-                let r = Math.floor((sideHit ? 40 : 20) * intensity);
-                let g = Math.floor((sideHit ? 50 : 25) * intensity);
-                let b = Math.floor((sideHit ? 160 : 100) * intensity);
-
-                ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-                ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), sliceW + 1, wallH);
-            }
-
-            let spriteQueue = [];
-            drones.forEach(d => { spriteQueue.push({ obj: d, type: 'drone', x: d.x, y: d.y }); });
-            projectiles.forEach(p => { spriteQueue.push({ obj: p, type: 'fireball', x: p.x, y: p.y }); });
-
-            spriteQueue.sort((a, b) => {
-                let dA = Math.hypot(player.x - a.x, player.y - a.y);
-                let dB = Math.hypot(player.x - b.x, player.y - b.y);
-                return dB - dA;
-            });
-
-            spriteQueue.forEach(sprite => {
-                let sx = sprite.x - player.x, sy = sprite.y - player.y;
-                let dist = Math.hypot(sx, sy);
-
-                let viewAng = Math.atan2(sy, sx) - player.angle;
-                while (viewAng < -Math.PI) viewAng += Math.PI * 2;
-                while (viewAng > Math.PI) viewAng -= Math.PI * 2;
-
-                if (Math.abs(viewAng) > player.fov * 1.3) return;
-
-                let projX = (canvas.width / 2) + (Math.tan(viewAng) * (canvas.width / 2));
-                let projSize = Math.min(canvas.height, (canvas.height / dist));
-
-                let colIdx = Math.floor((projX / canvas.width) * colsCount);
-                if (colIdx >= 0 && colIdx < colsCount && depthBuffer[colIdx] < dist) return;
-
-                let angleDiff = Math.abs((player.angle + viewAng) - player.angle);
-                let illumination = angleDiff < 0.42 ? (1.0 - (dist / 11.0)) : 0.08;
-                illumination = Math.max(0.04, illumination);
-
-                ctx.save();
-                ctx.translate(projX, canvas.height / 2);
-                ctx.globalAlpha = illumination;
-
-                if (sprite.type === 'drone') {
-                    let d = sprite.obj;
-                    let bob = Math.sin(performance.now() * 0.008 + d.bobSeed) * (projSize * 0.06);
-                    if (d.alive) {
-                        ctx.fillStyle = '#ff1155';
-                        ctx.shadowBlur = projSize * 0.15; ctx.shadowColor = '#ff1155';
-                        ctx.beginPath(); ctx.arc(0, bob, projSize * 0.14, 0, Math.PI * 2); ctx.fill();
-                        ctx.fillStyle = '#1b1d26';
-                        ctx.fillRect(-projSize*0.22, bob - 2, projSize*0.44, 4);
-                    } else {
-                        ctx.fillStyle = '#ff6600'; ctx.beginPath(); ctx.arc(0, projSize*0.1, projSize*0.18, 0, Math.PI*2); ctx.fill();
-                    }
-                } else if (sprite.type === 'fireball') {
-                    ctx.fillStyle = '#ffcc00';
-                    ctx.shadowBlur = projSize * 0.35; ctx.shadowColor = '#ff3300';
-                    ctx.beginPath(); ctx.arc(0, 0, projSize * 0.08, 0, Math.PI * 2); ctx.fill();
-                }
-
-                ctx.restore();
-            });
-            ctx.globalAlpha = 1.0;
-
-            particles.forEach(p => {
-                let px = p.x - player.x, py = p.y - player.y;
-                let pDist = Math.hypot(px, py), pAng = Math.atan2(py, px) - player.angle;
-                if (Math.abs(pAng) > player.fov) return;
-                let scrX = (canvas.width / 2) + (Math.tan(pAng) * (canvas.width / 2));
-                let sz = Math.min(canvas.height, (canvas.height / pDist)) * 0.05;
-                ctx.fillStyle = p.color; ctx.globalAlpha = p.life;
-                ctx.fillRect(scrX - sz/2, (canvas.height/2) - sz/2, sz, sz);
-            });
-            ctx.globalAlpha = 1.0;
-
-            renderActiveWeaponHUD();
-            renderIntegratedTelemetryMinimap();
-
-            if (health <= 0) {
-                ctx.fillStyle = 'rgba(100, 0, 0, 0.88)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#ffffff'; ctx.font = '900 2.2rem monospace'; ctx.textAlign = 'center';
-                ctx.fillText("VITAL MATRIX DESTROYED", canvas.width / 2, canvas.height / 2);
-                ctx.font = '500 1.1rem monospace';
-                ctx.fillText("Tap refresh page link parameters to restart workspace.", canvas.width / 2, canvas.height / 2 + 45);
-            }
-        }
-
-        function renderActiveWeaponHUD() {
-            ctx.save();
-            ctx.translate(canvas.width / 2, canvas.height);
-            
-            let recoilY = muzzleFlash > 0 ? (currentWeapon === "SHOTGUN" ? 35 : 20) : 0;
-            ctx.fillStyle = '#14171d'; ctx.strokeStyle = currentWeapon === "SHOTGUN" ? '#ffaa00' : '#00ffcc';
-            ctx.lineWidth = 3;
-
-            if (currentWeapon === "PLASMA") {
-                ctx.beginPath();
-                ctx.moveTo(-35, recoilY); ctx.lineTo(-18, -115 + recoilY);
-                ctx.lineTo(18, -115 + recoilY); ctx.lineTo(35, recoilY);
-                ctx.closePath(); ctx.fill(); ctx.stroke();
-                
-                ctx.fillStyle = muzzleFlash > 0 ? '#ffffff' : '#00aaff';
-                ctx.fillRect(-5, -105 + recoilY, 10, 35);
-            } else {
-                ctx.beginPath();
-                ctx.moveTo(-50, recoilY); ctx.lineTo(-30, -95 + recoilY);
-                ctx.lineTo(30, -95 + recoilY); ctx.lineTo(50, recoilY);
-                ctx.closePath(); ctx.fill(); stroke();
-
-                ctx.fillStyle = '#050507';
-                ctx.fillRect(-14, -90 + recoilY, 10, 20);
-                ctx.fillRect(4, -90 + recoilY, 10, 20);
-            }
-
-            if (muzzleFlash > 0) {
-                ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 45;
-                ctx.shadowColor = currentWeapon === "SHOTGUN" ? '#ffaa00' : '#ff3333';
-                ctx.beginPath(); 
-                ctx.arc(0, currentWeapon === "SHOTGUN" ? -105 : -125, currentWeapon === "SHOTGUN" ? 42 : 28, 0, Math.PI * 2); 
-                ctx.fill();
-            }
-            ctx.restore();
-        }
-
-        function renderIntegratedTelemetryMinimap() {
-            ctx.save();
-            let mapScale = 7; 
-            let offsetBoxX = canvas.width - (mapW * mapScale) - 25;
-            let offsetBoxY = 85; 
-
-            ctx.fillStyle = 'rgba(5, 7, 15, 0.8)'; ctx.strokeStyle = '#ff1111'; ctx.lineWidth = 2;
-            ctx.fillRect(offsetBoxX - 5, offsetBoxY - 5, (mapW * mapScale) + 10, (mapH * mapScale) + 10);
-            ctx.strokeRect(offsetBoxX - 5, offsetBoxY - 5, (mapW * mapScale) + 10, (mapH * mapScale) + 10);
-
-            ctx.fillStyle = 'rgba(0, 255, 204, 0.4)';
-            for(let ty=0; ty<mapH; ty++) {
-                for(let tx=0; tx<mapW; tx++) {
-                    if (map[ty * mapW + tx] > 0) ctx.fillRect(offsetBoxX + (tx * mapScale), offsetBoxY + (ty * mapScale), mapScale - 0.5, mapScale - 0.5);
-                }
-            }
-
-            ctx.fillStyle = '#ff0055';
-            drones.forEach(d => {
-                if(d.alive) { ctx.beginPath(); ctx.arc(offsetBoxX + (d.x * mapScale), offsetBoxY + (d.y * mapScale), 2.2, 0, Math.PI*2); ctx.fill(); }
-            });
-
-            ctx.save();
-            ctx.translate(offsetBoxX + (player.x * mapScale), offsetBoxY + (player.y * mapScale));
-            ctx.rotate(player.angle);
-
-            ctx.strokeStyle = 'rgba(255, 170, 0, 0.35)'; ctx.lineWidth = 1.2;
-            ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(25, -10); ctx.moveTo(0,0); ctx.lineTo(25, 10); ctx.stroke();
-
-            ctx.fillStyle = '#00ffcc';
-            ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, Math.PI*2); ctx.fill();
-            
-            ctx.restore();
-            ctx.restore();
-        }
-
-        function onWindowResize() { recomputeViewportResolution(); }
-    </script>
 </body>
 </html>
