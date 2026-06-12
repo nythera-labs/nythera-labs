@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zaeem Labs // Media Deck</title>
+    <link rel="icon" type="image/png" href="../logo.png">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: ui-monospace, Consolas, Monaco, monospace;
+        }
+        body {
+            background-color: #030308;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 30px 15px;
+            overflow-x: hidden;
+        }
+        .grid-backdrop {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 0, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 255, 0.015) 1px, transparent 1px);
+            background-size: 30px 35px;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+        .back-btn {
+            color: #728196;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 25px;
+            transition: color 0.2s ease;
+        }
+        .back-btn:hover { color: #ff00ff; }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px dashed rgba(255, 0, 255, 0.2);
+            padding-bottom: 25px;
+        }
+        h1 {
+            font-size: 2.3rem;
+            letter-spacing: 5px;
+            text-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #00ffcc;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Modular Tab Switching Panel */
+        .tab-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: rgba(10, 11, 25, 0.6);
+            border: 1px solid rgba(255, 0, 255, 0.15);
+            color: #728196;
+            font-weight: 900;
+            cursor: pointer;
+            border-radius: 12px;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            background: rgba(255, 0, 255, 0.08);
+            border-color: #ff00ff;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.15);
+        }
+
+        .panel-card {
+            background: rgba(8, 9, 20, 0.85);
+            border: 1px solid rgba(255, 0, 255, 0.15);
+            border-radius: 16px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: none;
+        }
+        .panel-card.active { display: block; }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-size: 0.8rem;
+            color: #00ffcc;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 16px;
+            background: #020205;
+            border: 1px solid rgba(255, 0, 255, 0.2);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        input[type="text"]:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        }
+        select {
+            padding: 16px;
+            background: #020205;
+            border: 1px solid rgba(255, 0, 255, 0.2);
+            border-radius: 10px;
+            color: #ffffff;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .action-btn {
+            padding: 16px 30px;
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid #ff00ff;
+            color: #ff00ff;
+            font-weight: 900;
+            border-radius: 10px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+        .action-btn:hover {
+            background: #ff00ff;
+            color: #000000;
+            box-shadow: 0 0 15px #ff00ff;
+        }
+
+        /* Embedded Streaming Player Matrix Screen */
+        .video-box {
+            margin-top: 25px;
+            display: none;
+            border: 2px solid #00ffcc;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #000000;
+            position: relative;
+            padding-bottom: 56.25%; /* Fixed 16:9 Aspect Ratio Container */
+            height: 0;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
+        }
+        .video-box iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: none;
+        }
+
+        /* Scraped Preview Metrics Panels */
+        .preview-box {
+            margin-top: 25px;
+            background: #020205;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            display: none;
+        }
+        .preview-flex {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .preview-thumb {
+            width: 150px;
+            height: 90px;
+            background: #111222;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .preview-info h3 {
+            font-size: 1.1rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        .preview-info p {
+            font-size: 0.8rem;
+            color: #556275;
+            margin-bottom: 12px;
+        }
+        .dl-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .dl-node {
+            padding: 12px;
+            background: rgba(0, 255, 204, 0.05);
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        .dl-node:hover {
+            background: #00ffcc;
+            color: #020205;
+            box-shadow: 0 0 10px #00ffcc;
+        }
+        
+        .tv-row {
+            display: none;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .tv-row input {
+            width: 90px;
+            padding: 12px;
+            background: #020205;
+            border: 1px solid rgba(255,0,255,0.2);
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid-backdrop"></div>
+
+    <div class="container">
+        
+        <a href="../index.html" class="back-btn">⚡ RETURN TO MAIN PORTAL</a>
+
+        <header>
+            <h1>MEDIA DECK</h1>
+            <div class="subtitle">Zaeem Labs // Stream & Download Controller</div>
+        </header>
+
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchPanel('imdb-panel', this)">IMDb MOVIE MATRIX</button>
+            <button class="tab-btn" onclick="switchPanel('dl-panel', this)">SOCIAL SCRAPER SUITE</button>
+        </div>
+
+        <div id="imdb-panel" class="panel-card active">
+            <div class="input-group">
+                <label>Target Entry ID or Link</label>
+                <div class="input-row">
+                    <select id="imdb-type" onchange="toggleTvFields()">
+                        <option value="movie">MOVIE</option>
+                        <option value="tv">TV SHOW</option>
+                    </select>
+                    <input type="text" id="imdb-input" placeholder="Paste IMDb URL or ID (e.g. tt1375666)">
+                    <button class="action-btn" onclick="injectImdbStream()">PLAY STREAM</button>
+                </div>
+                
+                <div id="tv-config-row" class="tv-row">
+                    <div>
+                        <label>Season</label>
+                        <input type="number" id="imdb-season" value="1" min="1">
+                    </div>
+                    <div>
+                        <label>Episode</label>
+                        <input type="number" id="imdb-episode" value="1" min="1">
+                    </div>
+                </div>
+            </div>
+
+            <div id="imdb-video-box" class="video-box">
+                <iframe id="imdb-frame" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+            </div>
+        </div>
+
+        <div id="dl-panel" class="panel-card">
+            <div class="input-group">
+                <label>Media Source Link parameters</label>
+                <div class="input-row">
+                    <input type="text" id="dl-input" placeholder="Paste YouTube, Instagram, or Facebook URL">
+                    <button class="action-btn" onclick="processSocialLink()">EXTRACT PARAMETERS</button>
+                </div>
+            </div>
+
+            <div id="dl-preview-box" class="preview-box">
+                <div class="preview-flex">
+                    <div id="meta-icon" class="preview-thumb">📺</div>
+                    <div class="preview-info">
+                        <h3 id="meta-title">Extracted Media Core Stream</h3>
+                        <p id="meta-source">Source: Parsing Verified</p>
+                        <div style="color: #00ffcc; font-size: 0.75rem; font-weight: 900;">STATUS: EXTRACTION RECONFIGURED</div>
+                    </div>
+                </div>
+                
+                <label style="margin-top: 20px;">Available Media Assets Containers</label>
+                <div class="dl-grid" id="download-nodes-grid">
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Tab switching controller
+        function switchPanel(panelId, btnElement) {
+            document.querySelectorAll('.panel-card').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(panelId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        function toggleTvFields() {
+            let type = document.getElementById('imdb-type').value;
+            document.getElementById('tv-config-row').style.display = (type === 'tv') ? 'flex' : 'none';
+        }
+
+        // --- IMDb AUTOMATED STREAM PARSER & INJECTOR ---
+        function injectImdbStream() {
+            let inputVal = document.getElementById('imdb-input').value.trim();
+            let mediaType = document.getElementById('imdb-type').value;
+            
+            // Regular expression extracting raw ID values (tt followed by numbers)
+            let idMatch = inputVal.match(/tt\d+/);
+            let imdbId = idMatch ? idMatch[0] : inputVal;
+
+            if (!imdbId || !imdbId.startsWith('tt')) {
+                alert("ERROR: Please insert a valid IMDb identification string or full resource URL (ttXXXXXXX).");
+                return;
+            }
+
+            let embeddedMirrorUrl = "";
+            if (mediaType === 'movie') {
+                // Generates direct high speed mirror streaming overlay links
+                embeddedMirrorUrl = `https://vidsrc.to/embed/movie/${imdbId}`;
+            } else {
+                let season = document.getElementById('imdb-season').value || 1;
+                let episode = document.getElementById('imdb-episode').value || 1;
+                embeddedMirrorUrl = `https://vidsrc.to/embed/tv/${imdbId}/${season}/${episode}`;
+            }
+
+            // Inject compiled source arrays directly into layout sandboxed frame
+            let frame = document.getElementById('imdb-frame');
+            let box = document.getElementById('imdb-video-box');
+            
+            frame.src = embeddedMirrorUrl;
+            box.style.display = 'block';
+        }
+
+        // --- CLIENT SIDE SOCIAL MEDIA PREVIEW & DOWNLOAD DECK CONTAINER ---
+        function processSocialLink() {
+            let url = document.getElementById('dl-input').value.trim();
+            if (!url) return alert("ERROR: Input address field cannot settle empty entries.");
+
+            let title = "Media Asset Stream Resource";
+            let platformIcon = "🔗";
+            let cleanDlLink = "";
+
+            // Evaluate tracking headers configuration
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                title = "YouTube Video Stream Array";
+                platformIcon = "🎥";
+                // Route parameters through highly stable open high speed client conversion mirrors safely
+                cleanDlLink = `https://ssyoutube.com/zh20/download?url=${encodeURIComponent(url)}`;
+            } else if (url.includes('instagram.com')) {
+                title = "Instagram Media Profile Reel";
+                platformIcon = "📸";
+                cleanDlLink = `https://saveig.app/en?url=${encodeURIComponent(url)}`;
+            } else if (url.includes('facebook.com') || url.includes('fb.watch')) {
+                title = "Facebook Video Payload Package";
+                platformIcon = "🌐";
+                cleanDlLink = `https://fdown.net/download.php?url=${encodeURIComponent(url)}`;
+            } else {
+                title = "External Web Stream Matrix Node";
+                platformIcon = "🔗";
+                cleanDlLink = `https://www.google.com/search?q=download+video+${encodeURIComponent(url)}`;
+            }
+
+            // Populate preview nodes structures
+            document.getElementById('meta-title').innerText = title;
+            document.getElementById('meta-icon').innerText = platformIcon;
+            document.getElementById('meta-source').innerText = `Target Link: ${url.substring(0, 50)}...`;
+
+            let grid = document.getElementById('download-nodes-grid');
+            grid.innerHTML = `
+                <a href="${cleanDlLink}" target="_blank" class="dl-node">⬇️ DOWNLOAD VIDEO (HD)</a>
+                <a href="${cleanDlLink}" target="_blank" class="dl-node">🎵 EXTRACT AUDIO (MP3)</a>
+                <a href="${url}" target="_blank" class="dl-node">📺 ORIGINAL STREAM LINK</a>
+            `;
+
+            document.getElementById('dl-preview-box').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
