@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zaeem Labs // Sunny Meadow Cruise</title>
+    <title>Zaeem Labs // Open Meadow Horizon</title>
     <style>
         * {
             box-sizing: border-box;
@@ -185,8 +185,8 @@
 <body>
 
     <div id="boot-overlay">
-        <h1 style="font-size: 2.6rem; color: #1e5c2b; font-weight: 900; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.05);">MEADOW CRUISE</h1>
-        <p style="color: #4b7d56; margin-top: 8px; font-weight: 600; font-family: monospace;">Procedural Melodies • Happy Environment Stack</p>
+        <h1 style="font-size: 2.6rem; color: #1e5c2b; font-weight: 900; letter-spacing: 1px;">HORIZON FIELD</h1>
+        <p style="color: #4b7d56; margin-top: 8px; font-weight: 600; font-family: monospace;">Open World Canvas • Celestial Sky Shifting</p>
         <button class="boot-btn" onclick="bootDarkCoreEngine()">START WORKSPACE</button>
     </div>
 
@@ -222,10 +222,9 @@
             }
             playPlasma() {
                 if (!this.ctx) return;
-                // Soft magical wand chime sound effect
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
                 osc.type = 'sine'; 
-                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // High C chime
+                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(1200, this.ctx.currentTime + 0.12);
                 gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
                 gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
@@ -234,11 +233,10 @@
             }
             playShotgun() {
                 if (!this.ctx) return;
-                // Sparkling splash bubble harp sound effect
                 for(let k=0; k<3; k++) {
                     let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
                     osc.type = 'sine';
-                    let freq = 392.00 * (k + 1); // G Major harmonic spread notes
+                    let freq = 392.00 * (k + 1);
                     osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
                     gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
@@ -248,10 +246,9 @@
             }
             playExplode() {
                 if (!this.ctx) return;
-                // Happy little arcade sound burst when pop occurs
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
                 osc.type = 'sine'; 
-                osc.frequency.setValueAtTime(659.25, this.ctx.currentTime); // E5 Note pop
+                osc.frequency.setValueAtTime(659.25, this.ctx.currentTime);
                 osc.frequency.linearRampToValueAtTime(880, this.ctx.currentTime + 0.2);
                 gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
@@ -269,7 +266,6 @@
                 osc.start(); osc.stop(this.ctx.currentTime + 0.16);
             }
             startCoolMusicLoop() {
-                // Happy upbeat pentatonic arpeggio sequence chord arrays loop
                 let chords = [
                     [60, 64, 67, 72], // C Major
                     [62, 65, 69, 74], // D Minor
@@ -287,10 +283,10 @@
                     let freq = 440 * Math.pow(2, (midiNote - 69) / 12);
                     
                     let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                    osc.type = 'sine'; // Completely clean smooth wave tones
+                    osc.type = 'sine'; 
                     osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
                     
-                    gain.gain.setValueAtTime(0.04, this.ctx.currentTime); // Gentle low baseline volume
+                    gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
                     gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
                     
                     osc.connect(gain); gain.connect(this.ctx.destination);
@@ -300,7 +296,7 @@
                     if (step % 4 === 0) {
                         currentChordIdx = (currentChordIdx + 1) % chords.length;
                     }
-                }, 250); // Fluid 120BPM soft musical step tracking progression
+                }, 250);
             }
         }
 
@@ -312,7 +308,7 @@
             launchEngineCircuit();
         }
 
-        // --- RAYCASTING GEOMETRY ENGINES ---
+        // --- OPEN WORLD HORIZON GRID CONFIG ---
         let canvas, ctx;
         let lastTime = performance.now();
         let gameActive = true;
@@ -321,24 +317,27 @@
 
         const mapW = 14;
         const mapH = 14;
+        
+        // OPEN WORLD UPGRADE: Blew out all inside maze walls entirely!
+        // Only the bounding edges remain to keep player tracking safe.
         const map = [
             1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-            1,0,0,0,0,0,1,0,0,0,0,0,0,1,
-            1,0,1,1,1,0,1,0,1,1,1,1,0,1,
-            1,0,1,0,0,0,0,0,0,0,0,1,0,1,
-            1,0,1,0,1,1,0,1,1,1,0,1,0,1,
-            1,0,0,0,1,0,0,0,0,1,0,0,0,1,
-            1,1,1,0,1,0,0,0,0,1,0,1,1,1,
-            1,0,0,0,1,0,0,0,0,1,0,0,0,1,
-            1,0,1,0,1,1,1,1,1,1,0,1,0,1,
-            1,0,1,0,0,0,0,0,0,0,0,1,0,1,
-            1,0,1,1,1,0,1,0,1,1,1,1,0,1,
-            1,0,0,0,0,0,1,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+            1,0,0,0,0,0,0,0,0,0,0,0,0,1,
             1,1,1,1,1,1,1,1,1,1,1,1,1,1
         ];
 
-        // COZY SPAWN SAFE ZONE FIXED: Dropped right in clear emerald pathways 
-        let player = { x: 1.5, y: 1.5, angle: 0, fov: Math.PI / 3, speed: 4.2, rotSpeed: 1.5 };
+        let player = { x: 2.5, y: 2.5, angle: 0, fov: Math.PI / 3, speed: 4.2, rotSpeed: 1.5 };
         let currentWeapon = "PLASMA"; 
         let drones = [];
         let projectiles = [];
@@ -357,6 +356,9 @@
         let lookTouchId = null;
         let lastLookX = 0;
 
+        // Static sun target coordinates angle parameters
+        const celestialSunAngle = Math.PI * 1.75; 
+
         function launchEngineCircuit() {
             canvas = document.getElementById('game-canvas');
             ctx = canvas.getContext('2d');
@@ -365,8 +367,8 @@
             window.addEventListener('resize', recomputeViewportResolution);
             setupHardwareInputBindings();
 
-            // Populate the meadow with cute scenery items and smile clusters
-            for(let i=0; i<6; i++) spawnMatrixDrone();
+            // Populate meadow coordinates completely with static scenery trees and smiling units
+            for(let i=0; i<18; i++) spawnMatrixDrone();
 
             requestAnimationFrame(engineFrameStep);
         }
@@ -382,15 +384,14 @@
             while(!placed) {
                 let tx = Math.floor(Math.random() * mapW);
                 let ty = Math.floor(Math.random() * mapH);
-                if(map[ty * mapW + tx] === 0 && (Math.hypot(tx - player.x, ty - player.y) > 2.5)) {
-                    // Randomly alternate layout tracking variables between happy smiles and green field items
+                if(map[ty * mapW + tx] === 0 && (Math.hypot(tx - player.x, ty - player.y) > 2.0)) {
                     let itemPool = ['🙃', '🙂', '🌻', '🌲', '🌸', '🌳'];
                     let chosenItem = itemPool[Math.floor(Math.random() * itemPool.length)];
                     let isScenery = ['🌻', '🌲', '🌸', '🌳'].includes(chosenItem);
 
                     drones.push({
                         x: tx + 0.5, y: ty + 0.5,
-                        alive: true, speed: isScenery ? 0 : 1.4, // Trees stand peacefully
+                        alive: true, speed: isScenery ? 0 : 1.4, 
                         shootCooldown: 1.5 + Math.random() * 2.5,
                         bobSeed: Math.random() * 10,
                         emoji: chosenItem,
@@ -540,7 +541,6 @@
                 if (target.alive) {
                     target.alive = false;
                     audio.playExplode();
-                    // Don't purge static field trees from score parameters
                     if(!target.isStatic) {
                         score++;
                         document.getElementById('stat-score').innerText = score;
@@ -639,7 +639,6 @@
 
                     let pDist = Math.hypot(player.x - p.x, player.y - p.y);
                     if(pDist < 0.35) {
-                        // Soft impact deduction checks
                         health = Math.max(0, health - 10);
                         document.getElementById('stat-hp').innerText = health + "%";
                         audio.playHurt();
@@ -663,11 +662,11 @@
         }
 
         function renderGraphicsCircuit() {
-            // FLOOR SETTING OVERHAUL: Beautiful green pasture meadow baseline tones
+            // Bright green grass meadow base floor
             ctx.fillStyle = '#44bd66';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // SKY ENVIRONMENT OVERHAUL: Warm bright daylight vector linear spectrum profiles
+            // Daytime sky base linear background
             let skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
             skyGrad.addColorStop(0, '#7ce4ff');
             skyGrad.addColorStop(0.7, '#bceeff');
@@ -675,7 +674,46 @@
             ctx.fillStyle = skyGrad;
             ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
 
-            // Horizon accent divider layer link line
+            // --- ADVANCED CELESTIAL SKY INJECTOR ENGINE (ANTI-BLANK OVERRIDE) ---
+            let sunDiff = celestialSunAngle - player.angle;
+            while (sunDiff < -Math.PI) sunDiff += Math.PI * 2;
+            while (sunDiff > Math.PI) sunDiff -= Math.PI * 2;
+
+            // Compute direct pixel pan positioning dynamically relative to camera angle tracking
+            let sunX = (canvas.width / 2) + (Math.tan(sunDiff) * (canvas.width / 2));
+            let sunY = canvas.height * 0.18;
+
+            if (Math.abs(sunDiff) < player.fov * 1.5) {
+                ctx.save();
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowBlur = 60; ctx.shadowColor = '#fff17a';
+                ctx.beginPath(); ctx.arc(sunX, sunY, 45, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            }
+
+            // Draw interactive clouds layer drifting coordinates naturally
+            let cloudOffsets = [-0.6, 0.2, 0.9];
+            cloudOffsets.forEach((offsetAngle, idx) => {
+                let cloudDiff = (celestialSunAngle + offsetAngle) - player.angle;
+                while (cloudDiff < -Math.PI) cloudDiff += Math.PI * 2;
+                while (cloudDiff > Math.PI) cloudDiff -= Math.PI * 2;
+
+                if (Math.abs(cloudDiff) < player.fov * 1.8) {
+                    let cx = (canvas.width / 2) + (Math.tan(cloudDiff) * (canvas.width / 2));
+                    let cy = canvas.height * (0.08 + (idx * 0.04));
+                    
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 35, 0, Math.PI * 2);
+                    ctx.arc(cx + 25, cy - 10, 42, 0, Math.PI * 2);
+                    ctx.arc(cx + 55, cy, 30, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            });
+
+            // Horizon accent break divider
             ctx.fillStyle = '#9be364';
             ctx.fillRect(0, (canvas.height / 2) - 1, canvas.width, 2);
 
@@ -722,12 +760,12 @@
                 let intensity = 0;
                 if(angleDiff < beamWidth) {
                     intensity = (1.0 - (angleDiff / beamWidth)) * (1.0 - (correctedDist / 12.0));
-                    intensity = Math.max(0.35, intensity); // High visibility brightness scale
+                    intensity = Math.max(0.35, intensity); 
                 } else {
                     intensity = 0.35;
                 }
 
-                // WALL VISUALS OVERHAUL: Crisp, sunny emerald leaf garden maze values
+                // Emerald hedge boundary values
                 let r = Math.floor((sideHit ? 34 : 68) * intensity);
                 let g = Math.floor((sideHit ? 112 : 189) * intensity);
                 let b = Math.floor((sideHit ? 57 : 102) * intensity);
@@ -735,7 +773,6 @@
                 ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
                 ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), sliceW + 1, wallH);
 
-                // Hedge leaf structural matrix outline markers array
                 ctx.fillStyle = `rgba(255, 255, 255, ${0.08 * intensity})`;
                 ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), 1, wallH);
             }
@@ -784,7 +821,6 @@
                         ctx.fillText('💥', 0, 0);
                     }
                 } else if (sprite.type === 'spark_orb') {
-                    // Floating bright target balloons instead of burning projectiles
                     ctx.font = `${projSize * 0.22}px Arial, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
@@ -827,7 +863,6 @@
             ctx.lineWidth = 3;
 
             if (currentWeapon === "PLASMA") {
-                // Shiny clean gold magical casting wand shape
                 ctx.fillStyle = '#ffec3d';
                 ctx.beginPath();
                 ctx.moveTo(-10, recoilY); ctx.lineTo(-6, -130 + recoilY);
@@ -839,7 +874,6 @@
                 ctx.arc(0, -130 + recoilY, 12, 0, Math.PI * 2);
                 ctx.fill(); ctx.stroke();
             } else {
-                // Flower power casting dynamic vector layout
                 ctx.fillStyle = '#ff99cc';
                 ctx.beginPath();
                 ctx.moveTo(-15, recoilY); ctx.lineTo(-10, -110 + recoilY);
@@ -853,7 +887,6 @@
             }
 
             if (muzzleFlash > 0) {
-                // Exploding bright starburst rainbow effects sparkles
                 ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 40;
                 ctx.shadowColor = '#fff37a';
                 ctx.beginPath(); 
