@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zaeem Labs // Media Deck</title>
+    <title>Zaeem Labs // Media Deck Suite</title>
     <link rel="icon" type="image/png" href="../logo.png">
     <style>
         * {
@@ -65,7 +65,6 @@
             text-transform: uppercase;
         }
 
-        /* Modular Tab Switching Panel */
         .tab-bar {
             display: flex;
             gap: 10px;
@@ -157,7 +156,57 @@
             box-shadow: 0 0 15px #ff00ff;
         }
 
-        /* Embedded Streaming Player Matrix Screen */
+        /* LIVE SEARCH RESULT CONTAINER GRID */
+        #search-results-tray {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 5px;
+            border-radius: 10px;
+            background: rgba(2, 2, 5, 0.6);
+            border: 1px dashed rgba(0, 255, 204, 0.1);
+            display: none;
+        }
+        .search-node-card {
+            background: #0a0b19;
+            border: 1px solid rgba(255, 0, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .search-node-card:hover {
+            border-color: #00ffcc;
+            background: rgba(0, 255, 204, 0.05);
+            transform: scale(1.02);
+        }
+        .search-node-thumb {
+            width: 45px;
+            height: 65px;
+            object-fit: cover;
+            background: #111;
+            border-radius: 5px;
+        }
+        .search-node-meta h4 {
+            font-size: 0.85rem;
+            color: #ffffff;
+            margin-bottom: 3px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .search-node-meta p {
+            font-size: 0.75rem;
+            color: #728196;
+        }
+
         .video-box {
             margin-top: 25px;
             display: none;
@@ -166,7 +215,7 @@
             overflow: hidden;
             background: #000000;
             position: relative;
-            padding-bottom: 56.25%; /* Fixed 16:9 Aspect Ratio Container */
+            padding-bottom: 56.25%; 
             height: 0;
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
         }
@@ -176,7 +225,6 @@
             border: none;
         }
 
-        /* Scraped Preview Metrics Panels */
         .preview-box {
             margin-top: 25px;
             background: #020205;
@@ -270,14 +318,23 @@
         </div>
 
         <div id="imdb-panel" class="panel-card active">
+            
+            <div class="input-group" style="margin-bottom: 30px; border-bottom: 1px dashed rgba(0, 255, 204, 0.15); padding-bottom: 25px;">
+                <label>Built-In Title Search Engine</label>
+                <div class="input-row">
+                    <input type="text" id="deck-search-bar" placeholder="Type movie or show name to search instantly..." oninput="triggerLiveDeckSearch()">
+                </div>
+                <div id="search-results-tray"></div>
+            </div>
+
             <div class="input-group">
-                <label>Target Entry ID or Link</label>
+                <label>Target Entry ID / Source Registry</label>
                 <div class="input-row">
                     <select id="imdb-type" onchange="toggleTvFields()">
                         <option value="movie">MOVIE</option>
                         <option value="tv">TV SHOW</option>
                     </select>
-                    <input type="text" id="imdb-input" placeholder="Paste IMDb URL or ID (e.g. tt1375666)">
+                    <input type="text" id="imdb-input" placeholder="IMDb Identification Key (e.g. tt1375666)">
                     <button class="action-btn" onclick="injectImdbStream()">PLAY STREAM</button>
                 </div>
                 
@@ -318,19 +375,18 @@
                 </div>
                 
                 <label style="margin-top: 20px;">Available Media Assets Containers</label>
-                <div class="dl-grid" id="download-nodes-grid">
-                    </div>
+                <div class="dl-grid" id="download-nodes-grid"></div>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Tab switching controller
+        let searchDebounceTimeout = null;
+
         function switchPanel(panelId, btnElement) {
             document.querySelectorAll('.panel-card').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
             document.getElementById(panelId).classList.add('active');
             btnElement.classList.add('active');
         }
@@ -340,23 +396,94 @@
             document.getElementById('tv-config-row').style.display = (type === 'tv') ? 'flex' : 'none';
         }
 
+        // --- CHILL CLIENT-SIDE LIVE INTERACTIVE IMDB SEARCH ENGINE ---
+        function triggerLiveDeckSearch() {
+            clearTimeout(searchDebounceTimeout);
+            let query = document.getElementById('deck-search-bar').value.trim();
+            let tray = document.getElementById('search-results-tray');
+
+            if (query.length < 2) {
+                tray.style.display = 'none';
+                return;
+            }
+
+            // Debounce stops redundant server requests on iPad keyboards
+            searchDebounceTimeout = setTimeout(() => {
+                let sanitizedQuery = query.toLowerCase().replace(/[^a-z0-9 ]/g, '');
+                let targetLetter = sanitizedQuery[0];
+                
+                // Remove existing instances of search handles scripts
+                let oldScript = document.getElementById('imdb-jsonp-bridge');
+                if (oldScript) oldScript.remove();
+
+                // Advanced JSONP Injection bridge mapping to crawl autocomplete suggestions cleanly
+                let script = document.createElement('script');
+                script.id = 'imdb-jsonp-bridge';
+                script.src = `https://sg.media-imdb.com/suggests/${targetLetter}/${encodeURIComponent(sanitizedQuery)}.json`;
+                document.body.appendChild(script);
+            }, 300);
+        }
+
+        // Dynamic target function receiver triggered automatically by the JSONP callback script
+        window.imdb$jsonp = function(data) {
+            let tray = document.getElementById('search-results-tray');
+            tray.innerHTML = '';
+
+            if (!data || !data.d || data.d.length === 0) {
+                tray.style.display = 'none';
+                return;
+            }
+
+            // Process matches array limits safely
+            data.d.forEach(node => {
+                // Ensure element maps strictly to media blocks (Movies or TV series)
+                if (!node.id.startsWith('tt') || !['feature', 'tv_series', 'tv_miniseries', 'movie'].includes(node.q)) return;
+
+                let card = document.createElement('div');
+                card.className = 'search-node-card';
+                
+                let thumbSrc = (node.i && node.i[0]) ? node.i[0] : 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=120&auto=format&fit=crop';
+                let releaseYear = node.y ? node.y : 'N/A';
+                let contentTypeLabel = (node.q.startsWith('tv')) ? '🎬 TV SHOW' : '🎥 MOVIE';
+
+                card.innerHTML = `
+                    <img class="search-node-thumb" src="${thumbSrc}" alt="poster">
+                    <div class="search-node-meta">
+                        <h4>${node.l}</h4>
+                        <p>${releaseYear} • ${contentTypeLabel}</p>
+                    </div>
+                `;
+
+                // Tapping card pushes selection data instantly into core inject stream fields
+                card.onclick = function() {
+                    document.getElementById('imdb-input').value = node.id;
+                    document.getElementById('imdb-type').value = (node.q.startsWith('tv')) ? 'tv' : 'movie';
+                    toggleTvFields();
+                    tray.style.display = 'none';
+                    injectImdbStream();
+                };
+
+                tray.appendChild(card);
+            });
+
+            tray.style.display = (tray.children.length > 0) ? 'grid' : 'none';
+        };
+
         // --- IMDb AUTOMATED STREAM PARSER & INJECTOR ---
         function injectImdbStream() {
             let inputVal = document.getElementById('imdb-input').value.trim();
             let mediaType = document.getElementById('imdb-type').value;
             
-            // Regular expression extracting raw ID values (tt followed by numbers)
             let idMatch = inputVal.match(/tt\d+/);
             let imdbId = idMatch ? idMatch[0] : inputVal;
 
             if (!imdbId || !imdbId.startsWith('tt')) {
-                alert("ERROR: Please insert a valid IMDb identification string or full resource URL (ttXXXXXXX).");
+                alert("ERROR: Please insert a valid IMDb identification string or selection card (ttXXXXXXX).");
                 return;
             }
 
             let embeddedMirrorUrl = "";
             if (mediaType === 'movie') {
-                // Generates direct high speed mirror streaming overlay links
                 embeddedMirrorUrl = `https://vidsrc.to/embed/movie/${imdbId}`;
             } else {
                 let season = document.getElementById('imdb-season').value || 1;
@@ -364,12 +491,12 @@
                 embeddedMirrorUrl = `https://vidsrc.to/embed/tv/${imdbId}/${season}/${episode}`;
             }
 
-            // Inject compiled source arrays directly into layout sandboxed frame
             let frame = document.getElementById('imdb-frame');
             let box = document.getElementById('imdb-video-box');
             
             frame.src = embeddedMirrorUrl;
             box.style.display = 'block';
+            box.scrollIntoView({ behavior: 'smooth' });
         }
 
         // --- CLIENT SIDE SOCIAL MEDIA PREVIEW & DOWNLOAD DECK CONTAINER ---
@@ -381,11 +508,9 @@
             let platformIcon = "🔗";
             let cleanDlLink = "";
 
-            // Evaluate tracking headers configuration
             if (url.includes('youtube.com') || url.includes('youtu.be')) {
                 title = "YouTube Video Stream Array";
                 platformIcon = "🎥";
-                // Route parameters through highly stable open high speed client conversion mirrors safely
                 cleanDlLink = `https://ssyoutube.com/zh20/download?url=${encodeURIComponent(url)}`;
             } else if (url.includes('instagram.com')) {
                 title = "Instagram Media Profile Reel";
@@ -401,7 +526,6 @@
                 cleanDlLink = `https://www.google.com/search?q=download+video+${encodeURIComponent(url)}`;
             }
 
-            // Populate preview nodes structures
             document.getElementById('meta-title').innerText = title;
             document.getElementById('meta-icon').innerText = platformIcon;
             document.getElementById('meta-source').innerText = `Target Link: ${url.substring(0, 50)}...`;
