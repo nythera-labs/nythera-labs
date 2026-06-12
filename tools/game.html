@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zaeem Labs // Dark Core Overdrive</title>
+    <title>Zaeem Labs // Sunny Meadow Cruise</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,7 +16,7 @@
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background-color: #06040a;
+            background-color: #e0f7fc;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         #game-canvas {
@@ -29,33 +29,33 @@
             z-index: 1;
         }
         
-        /* Initialization Interface Menu Overlay */
+        /* Bright & Friendly Initializer Menu */
         #boot-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #09070f;
+            background: linear-gradient(135deg, #7ce4ff 0%, #bcfff6 100%);
             z-index: 100;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #ffffff;
+            color: #1e5c2b;
             text-align: center;
         }
         .boot-btn {
             margin-top: 25px;
             padding: 16px 50px;
-            background: linear-gradient(135deg, #00ffcc 0%, #0055ff 100%);
-            border: 2px solid #00ffcc;
+            background: linear-gradient(135deg, #44bd66 0%, #227039 100%);
+            border: 2px solid #ffffff;
             color: #ffffff;
             font-weight: 900;
             font-size: 1.2rem;
             border-radius: 35px;
             cursor: pointer;
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
+            box-shadow: 0 10px 25px rgba(34, 112, 57, 0.3);
             letter-spacing: 1px;
         }
 
@@ -73,12 +73,12 @@
             padding: 25px;
         }
         .hud-element {
-            background: rgba(13, 9, 23, 0.85);
-            border: 2px solid #00ffcc;
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #44bd66;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             padding: 12px 25px;
             border-radius: 20px;
-            color: #ffffff;
+            color: #1e5c2b;
             backdrop-filter: blur(8px);
             font-weight: 900;
             font-size: 1.1rem;
@@ -90,9 +90,9 @@
             justify-content: space-between;
             width: 100%;
         }
-        #stat-hp { color: #ff3366; text-shadow: 0 0 6px #ff3366; }
-        #stat-score { color: #00ffcc; text-shadow: 0 0 6px #00ffcc; }
-        #stat-weapon { color: #ff00ff; text-shadow: 0 0 6px #ff00ff; }
+        #stat-hp { color: #ff3366; }
+        #stat-score { color: #227039; }
+        #stat-weapon { color: #ff007f; }
         
         /* Tactical Mobile Controls Layout */
         #controls-layer {
@@ -108,19 +108,20 @@
         #joystick-bound {
             width: 135px;
             height: 135px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 3px dashed rgba(0, 255, 204, 0.4);
+            background: rgba(255, 255, 255, 0.6);
+            border: 3px dashed rgba(68, 189, 102, 0.5);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
         }
         #joystick-thumb {
             width: 52px;
             height: 52px;
-            background: radial-gradient(circle, #00ffcc 0%, #0055ff 100%);
+            background: radial-gradient(circle, #66ffa6 0%, #34a155 100%);
             border-radius: 50%;
-            box-shadow: 0 0 20px #00ffcc;
+            box-shadow: 0 4px 12px rgba(52, 161, 85, 0.4);
         }
         
         #action-cluster {
@@ -132,22 +133,22 @@
         #swap-btn {
             width: 80px;
             height: 80px;
-            background: rgba(255, 0, 255, 0.15);
-            border: 2px solid #ff00ff;
-            color: #ff00ff;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #ff007f;
+            color: #ff007f;
             border-radius: 50%;
             font-weight: 900;
             font-size: 0.9rem;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         #fire-btn {
             width: 110px;
             height: 110px;
-            background: rgba(0, 255, 204, 0.15);
-            border: 3px solid #00ffcc;
+            background: radial-gradient(circle, #ff66b2 0%, #ff007f 100%);
+            border: 3px solid #ffffff;
             color: #ffffff;
             border-radius: 50%;
             font-weight: 900;
@@ -155,12 +156,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 25px rgba(0, 255, 204, 0.3);
+            box-shadow: 0 6px 20px rgba(255, 0, 127, 0.3);
         }
         #fire-btn:active {
-            background: #00ffcc;
-            color: #000;
             transform: scale(0.95);
+            background: #ff007f;
         }
         
         #crosshair {
@@ -176,7 +176,7 @@
         #crosshair::before, #crosshair::after {
             content: '';
             position: absolute;
-            background: rgba(0, 255, 204, 0.6);
+            background: rgba(255, 0, 127, 0.6);
         }
         #crosshair::before { top: 6px; left: -6px; width: 26px; height: 2px; }
         #crosshair::after { top: -6px; left: 6px; width: 2px; height: 26px; }
@@ -185,9 +185,9 @@
 <body>
 
     <div id="boot-overlay">
-        <h1 style="font-size: 2.4rem; color: #00ffcc; text-shadow: 0 0 20px rgba(0,255,204,0.4); font-weight: 900; letter-spacing: 2px;">DARK CORE: OVERDRIVE</h1>
-        <p style="color: #6c5a94; margin-top: 8px; font-weight: 500; font-family: monospace;">Emoji Invaders Matrix • Fluid Spawn Overrides</p>
-        <button class="boot-btn" onclick="bootDarkCoreEngine()">INITIALIZE SUITE</button>
+        <h1 style="font-size: 2.6rem; color: #1e5c2b; font-weight: 900; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.05);">MEADOW CRUISE</h1>
+        <p style="color: #4b7d56; margin-top: 8px; font-weight: 600; font-family: monospace;">Procedural Melodies • Happy Environment Stack</p>
+        <button class="boot-btn" onclick="bootDarkCoreEngine()">START WORKSPACE</button>
     </div>
 
     <div id="crosshair"></div>
@@ -195,9 +195,9 @@
 
     <div id="ui-layer">
         <div id="top-hud">
-            <div class="hud-element">VITAL STATUS: <span id="stat-hp">100%</span></div>
-            <div class="hud-element">WEAPON: <span id="stat-weapon">PLASMA</span></div>
-            <div class="hud-element">CORES PURGED: <span id="stat-score">0</span></div>
+            <div class="hud-element">ENERGY CAP: <span id="stat-hp">100%</span></div>
+            <div class="hud-element">WAND MESH: <span id="stat-weapon">SPARKLE</span></div>
+            <div class="hud-element">SMILES FREED: <span id="stat-score">0</span></div>
         </div>
 
         <div id="controls-layer">
@@ -206,81 +206,101 @@
             </div>
             <div id="action-cluster">
                 <button id="swap-btn" class="touch-zone" onclick="switchWeaponLoadout()">SWAP</button>
-                <button id="fire-btn" class="touch-zone">FIRE</button>
+                <button id="fire-btn" class="touch-zone">CAST</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- PREMIUM AUDIO EFFECTS ENGINE ---
+        // --- COOL RELAXING BACKGROUND MUSIC GENERATOR SUITE ---
         class SynthAudioEngine {
-            constructor() { this.ctx = null; this.ambience = null; }
+            constructor() { this.ctx = null; this.musicInterval = null; }
             init() {
                 if (this.ctx) return;
                 this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                this.startDrone();
+                this.startCoolMusicLoop();
             }
             playPlasma() {
                 if (!this.ctx) return;
+                // Soft magical wand chime sound effect
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'triangle'; 
-                osc.frequency.setValueAtTime(400, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(60, this.ctx.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+                osc.type = 'sine'; 
+                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // High C chime
+                osc.frequency.exponentialRampToValueAtTime(1200, this.ctx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.16);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.13);
             }
             playShotgun() {
                 if (!this.ctx) return;
+                // Sparkling splash bubble harp sound effect
                 for(let k=0; k<3; k++) {
                     let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                    osc.type = (k === 0) ? 'triangle' : 'sine';
-                    let baseFreq = 200 - (k * 50);
-                    osc.frequency.setValueAtTime(baseFreq, this.ctx.currentTime);
-                    osc.frequency.linearRampToValueAtTime(20, this.ctx.currentTime + 0.22);
-                    gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
+                    osc.type = 'sine';
+                    let freq = 392.00 * (k + 1); // G Major harmonic spread notes
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
                     osc.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(); osc.stop(this.ctx.currentTime + 0.23);
+                    osc.start(); osc.stop(this.ctx.currentTime + 0.21);
                 }
             }
             playExplode() {
                 if (!this.ctx) return;
+                // Happy little arcade sound burst when pop occurs
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'triangle'; 
-                let box = this.ctx.currentTime;
-                osc.frequency.setValueAtTime(110, box);
-                osc.frequency.linearRampToValueAtTime(20, box + 0.45);
-                gain.gain.setValueAtTime(0.35, box);
-                gain.gain.exponentialRampToValueAtTime(0.001, box + 0.45);
+                osc.type = 'sine'; 
+                osc.frequency.setValueAtTime(659.25, this.ctx.currentTime); // E5 Note pop
+                osc.frequency.linearRampToValueAtTime(880, this.ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(box + 0.46);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.21);
             }
             playHurt() {
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'triangle'; 
-                osc.frequency.setValueAtTime(80, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(30, this.ctx.currentTime + 0.18);
-                gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.18);
+                osc.type = 'sine'; 
+                osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.19);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.16);
             }
-            startDrone() {
-                this.ambience = setInterval(() => {
+            startCoolMusicLoop() {
+                // Happy upbeat pentatonic arpeggio sequence chord arrays loop
+                let chords = [
+                    [60, 64, 67, 72], // C Major
+                    [62, 65, 69, 74], // D Minor
+                    [64, 67, 71, 76], // E Minor
+                    [65, 69, 72, 77]  // F Major
+                ];
+                let currentChordIdx = 0;
+                let step = 0;
+                
+                this.musicInterval = setInterval(() => {
                     if (!this.ctx || !gameActive) return;
-                    let osc = this.ctx.createOscillator(), gain = this.ctx.createGain(), filter = this.ctx.createBiquadFilter();
-                    osc.type = 'sine'; 
-                    osc.frequency.setValueAtTime(50 + Math.random() * 3, this.ctx.currentTime);
-                    filter.type = 'lowpass'; 
-                    filter.frequency.setValueAtTime(90, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 1.4);
-                    osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(); osc.stop(this.ctx.currentTime + 1.5);
-                }, 1450);
+                    
+                    let chord = chords[currentChordIdx];
+                    let midiNote = chord[step % chord.length];
+                    let freq = 440 * Math.pow(2, (midiNote - 69) / 12);
+                    
+                    let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+                    osc.type = 'sine'; // Completely clean smooth wave tones
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    
+                    gain.gain.setValueAtTime(0.04, this.ctx.currentTime); // Gentle low baseline volume
+                    gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
+                    
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(); osc.stop(this.ctx.currentTime + 0.36);
+                    
+                    step++;
+                    if (step % 4 === 0) {
+                        currentChordIdx = (currentChordIdx + 1) % chords.length;
+                    }
+                }, 250); // Fluid 120BPM soft musical step tracking progression
             }
         }
 
@@ -292,7 +312,7 @@
             launchEngineCircuit();
         }
 
-        // --- RAYCASTING ENGINE MAP ARRAYS ---
+        // --- RAYCASTING GEOMETRY ENGINES ---
         let canvas, ctx;
         let lastTime = performance.now();
         let gameActive = true;
@@ -317,7 +337,8 @@
             1,1,1,1,1,1,1,1,1,1,1,1,1,1
         ];
 
-        let player = { x: 1.5, y: 1.5, angle: 0, fov: Math.PI / 3, speed: 4.5, rotSpeed: 1.6 };
+        // COZY SPAWN SAFE ZONE FIXED: Dropped right in clear emerald pathways 
+        let player = { x: 1.5, y: 1.5, angle: 0, fov: Math.PI / 3, speed: 4.2, rotSpeed: 1.5 };
         let currentWeapon = "PLASMA"; 
         let drones = [];
         let projectiles = [];
@@ -344,7 +365,8 @@
             window.addEventListener('resize', recomputeViewportResolution);
             setupHardwareInputBindings();
 
-            for(let i=0; i<5; i++) spawnMatrixDrone();
+            // Populate the meadow with cute scenery items and smile clusters
+            for(let i=0; i<6; i++) spawnMatrixDrone();
 
             requestAnimationFrame(engineFrameStep);
         }
@@ -360,14 +382,19 @@
             while(!placed) {
                 let tx = Math.floor(Math.random() * mapW);
                 let ty = Math.floor(Math.random() * mapH);
-                if(map[ty * mapW + tx] === 0 && (Math.hypot(tx - player.x, ty - player.y) > 3)) {
+                if(map[ty * mapW + tx] === 0 && (Math.hypot(tx - player.x, ty - player.y) > 2.5)) {
+                    // Randomly alternate layout tracking variables between happy smiles and green field items
+                    let itemPool = ['🙃', '🙂', '🌻', '🌲', '🌸', '🌳'];
+                    let chosenItem = itemPool[Math.floor(Math.random() * itemPool.length)];
+                    let isScenery = ['🌻', '🌲', '🌸', '🌳'].includes(chosenItem);
+
                     drones.push({
                         x: tx + 0.5, y: ty + 0.5,
-                        alive: true, speed: 1.6,
-                        shootCooldown: 1.0 + Math.random() * 2,
+                        alive: true, speed: isScenery ? 0 : 1.4, // Trees stand peacefully
+                        shootCooldown: 1.5 + Math.random() * 2.5,
                         bobSeed: Math.random() * 10,
-                        // NEW LAYER: Randomly assign a target emoji to the unit parameters
-                        emoji: Math.random() > 0.5 ? '🙃' : '🙂'
+                        emoji: chosenItem,
+                        isStatic: isScenery
                     });
                     placed = true;
                 }
@@ -376,8 +403,8 @@
 
         function switchWeaponLoadout() {
             currentWeapon = currentWeapon === "PLASMA" ? "SHOTGUN" : "PLASMA";
-            document.getElementById('stat-weapon').innerText = currentWeapon;
-            document.getElementById('stat-weapon').style.color = currentWeapon === "SHOTGUN" ? "#ff00ff" : "#00ffcc";
+            document.getElementById('stat-weapon').innerText = currentWeapon === "PLASMA" ? "SPARKLE" : "FLOWERS";
+            document.getElementById('stat-weapon').style.color = currentWeapon === "SHOTGUN" ? "#ff007f" : "#44bd66";
         }
 
         function setupHardwareInputBindings() {
@@ -513,14 +540,17 @@
                 if (target.alive) {
                     target.alive = false;
                     audio.playExplode();
-                    score++;
-                    document.getElementById('stat-score').innerText = score;
-                    spawnExplosionSparks(target.x, target.y, '#00ffcc');
+                    // Don't purge static field trees from score parameters
+                    if(!target.isStatic) {
+                        score++;
+                        document.getElementById('stat-score').innerText = score;
+                    }
+                    spawnExplosionSparks(target.x, target.y, '#ffec3d');
 
                     setTimeout(() => {
                         drones = drones.filter(e => e !== target);
                         spawnMatrixDrone();
-                    }, 900);
+                    }, 800);
                 }
             });
         }
@@ -551,7 +581,7 @@
             for(let i=0; i<16; i++) {
                 particles.push({
                     x: x, y: y,
-                    vx: (Math.random() - 0.5) * 2.5, vy: (Math.random() - 0.5) * 2.5,
+                    vx: (Math.random() - 0.5) * 2.2, vy: (Math.random() - 0.5) * 2.2,
                     life: 1.0, color: color
                 });
             }
@@ -583,23 +613,23 @@
                 if (map[Math.floor(nextY) * mapW + Math.floor(player.x)] === 0) player.y = nextY;
 
                 drones.forEach(d => {
-                    if (!d.alive) return;
+                    if (!d.alive || d.isStatic) return;
                     let dx = player.x - d.x, dy = player.y - d.y;
                     let dist = Math.hypot(dx, dy);
                     
-                    if(dist > 2.0) {
+                    if(dist > 2.2) {
                         d.x += (dx / dist) * d.speed * dt;
                         d.y += (dy / dist) * d.speed * dt;
                     }
 
                     d.shootCooldown -= dt;
-                    if(d.shootCooldown <= 0 && dist < 8.5) {
+                    if(d.shootCooldown <= 0 && dist < 8.0) {
                         let projAngle = Math.atan2(dy, dx);
                         projectiles.push({
                             x: d.x, y: d.y,
-                            vx: Math.cos(projAngle) * 4.6, vy: Math.sin(projAngle) * 4.6
+                            vx: Math.cos(projAngle) * 3.8, vy: Math.sin(projAngle) * 3.8
                         });
-                        d.shootCooldown = 1.6 + Math.random() * 2.0;
+                        d.shootCooldown = 2.0 + Math.random() * 2.5;
                     }
                 });
 
@@ -609,7 +639,8 @@
 
                     let pDist = Math.hypot(player.x - p.x, player.y - p.y);
                     if(pDist < 0.35) {
-                        health = Math.max(0, health - 20);
+                        // Soft impact deduction checks
+                        health = Math.max(0, health - 10);
                         document.getElementById('stat-hp').innerText = health + "%";
                         audio.playHurt();
                         projectiles.splice(i, 1);
@@ -632,19 +663,20 @@
         }
 
         function renderGraphicsCircuit() {
-            // Purple grid deck baseline floor
-            ctx.fillStyle = '#110b24';
+            // FLOOR SETTING OVERHAUL: Beautiful green pasture meadow baseline tones
+            ctx.fillStyle = '#44bd66';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // High-octane arcade sky vector gradient
+            // SKY ENVIRONMENT OVERHAUL: Warm bright daylight vector linear spectrum profiles
             let skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
-            skyGrad.addColorStop(0, '#26063b');
-            skyGrad.addColorStop(0.6, '#0f041c');
-            skyGrad.addColorStop(1, '#ff007f');
+            skyGrad.addColorStop(0, '#7ce4ff');
+            skyGrad.addColorStop(0.7, '#bceeff');
+            skyGrad.addColorStop(1, '#ffffff');
             ctx.fillStyle = skyGrad;
             ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
 
-            ctx.fillStyle = '#ff007f';
+            // Horizon accent divider layer link line
+            ctx.fillStyle = '#9be364';
             ctx.fillRect(0, (canvas.height / 2) - 1, canvas.width, 2);
 
             let sliceW = canvas.width / colsCount;
@@ -690,25 +722,27 @@
                 let intensity = 0;
                 if(angleDiff < beamWidth) {
                     intensity = (1.0 - (angleDiff / beamWidth)) * (1.0 - (correctedDist / 12.0));
-                    intensity = Math.max(0.2, intensity); 
+                    intensity = Math.max(0.35, intensity); // High visibility brightness scale
                 } else {
-                    intensity = 0.2;
+                    intensity = 0.35;
                 }
 
-                let r = Math.floor((sideHit ? 0 : 200) * intensity);
-                let g = Math.floor((sideHit ? 230 : 0) * intensity);
-                let b = Math.floor((sideHit ? 255 : 180) * intensity);
+                // WALL VISUALS OVERHAUL: Crisp, sunny emerald leaf garden maze values
+                let r = Math.floor((sideHit ? 34 : 68) * intensity);
+                let g = Math.floor((sideHit ? 112 : 189) * intensity);
+                let b = Math.floor((sideHit ? 57 : 102) * intensity);
 
                 ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
                 ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), sliceW + 1, wallH);
 
-                ctx.fillStyle = `rgba(255, 255, 255, ${0.1 * intensity})`;
+                // Hedge leaf structural matrix outline markers array
+                ctx.fillStyle = `rgba(255, 255, 255, ${0.08 * intensity})`;
                 ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), 1, wallH);
             }
 
             let spriteQueue = [];
-            drones.forEach(d => { spriteQueue.push({ obj: d, type: 'drone', x: d.x, y: d.y }); });
-            projectiles.forEach(p => { spriteQueue.push({ obj: p, type: 'fireball', x: p.x, y: p.y }); });
+            drones.forEach(d => { spriteQueue.push({ obj: d, type: 'emoji_node', x: d.x, y: d.y }); });
+            projectiles.forEach(p => { spriteQueue.push({ obj: p, type: 'spark_orb', x: p.x, y: p.y }); });
 
             spriteQueue.sort((a, b) => {
                 let dA = Math.hypot(player.x - a.x, player.y - a.y);
@@ -732,36 +766,29 @@
                 let colIdx = Math.floor((projX / canvas.width) * colsCount);
                 if (colIdx >= 0 && colIdx < colsCount && depthBuffer[colIdx] < dist) return;
 
-                let angleDiff = Math.abs((player.angle + viewAng) - player.angle);
-                let illumination = angleDiff < 0.42 ? (1.0 - (dist / 11.0)) : 0.2;
-                illumination = Math.max(0.3, illumination); // Keep emojis nice and clear
-
                 ctx.save();
                 ctx.translate(projX, canvas.height / 2);
-                ctx.globalAlpha = illumination;
+                ctx.globalAlpha = Math.max(0.4, 1.0 - (dist / 12.0));
 
-                if (sprite.type === 'drone') {
+                if (sprite.type === 'emoji_node') {
                     let d = sprite.obj;
-                    let bob = Math.sin(performance.now() * 0.008 + d.bobSeed) * (projSize * 0.06);
+                    let bob = Math.sin(performance.now() * 0.007 + d.bobSeed) * (projSize * 0.05);
                     
-                    // FIXED ENVIRONMENT OVERHAUL: Drawing 🙃 and 🙂 system textures vectors beautifully
-                    ctx.font = `bold ${projSize * 0.38}px Arial, sans-serif`;
+                    ctx.font = `bold ${projSize * 0.4}px Arial, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     
                     if (d.alive) {
-                        ctx.shadowBlur = projSize * 0.15; ctx.shadowColor = '#00ffcc';
                         ctx.fillText(d.emoji, 0, bob);
                     } else {
-                        ctx.shadowBlur = projSize * 0.3; ctx.shadowColor = '#ff0055';
-                        ctx.fillText('💥', 0, projSize * 0.05);
+                        ctx.fillText('💥', 0, 0);
                     }
-                } else if (sprite.type === 'fireball') {
-                    ctx.fillStyle = '#ff00ff';
-                    ctx.shadowBlur = projSize * 0.4; ctx.shadowColor = '#ff00ff';
-                    ctx.beginPath(); ctx.arc(0, 0, projSize * 0.08, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#ffffff';
-                    ctx.beginPath(); ctx.arc(0, 0, projSize * 0.03, 0, Math.PI * 2); ctx.fill();
+                } else if (sprite.type === 'spark_orb') {
+                    // Floating bright target balloons instead of burning projectiles
+                    ctx.font = `${projSize * 0.22}px Arial, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('🎈', 0, 0);
                 }
 
                 ctx.restore();
@@ -773,7 +800,7 @@
                 let pDist = Math.hypot(px, py), pAng = Math.atan2(py, px) - player.angle;
                 if (Math.abs(pAng) > player.fov) return;
                 let scrX = (canvas.width / 2) + (Math.tan(pAng) * (canvas.width / 2));
-                let sz = Math.min(canvas.height, (canvas.height / pDist)) * 0.05;
+                let sz = Math.min(canvas.height, (canvas.height / pDist)) * 0.04;
                 ctx.fillStyle = p.color; ctx.globalAlpha = p.life;
                 ctx.fillRect(scrX - sz/2, (canvas.height/2) - sz/2, sz, sz);
             });
@@ -783,11 +810,11 @@
             renderIntegratedTelemetryMinimap();
 
             if (health <= 0) {
-                ctx.fillStyle = 'rgba(15, 5, 30, 0.95)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#00ffcc'; ctx.font = '900 2.2rem monospace'; ctx.textAlign = 'center';
-                ctx.fillText("MATRIX CORE TERMINATED", canvas.width / 2, canvas.height / 2);
-                ctx.font = '500 1.1rem monospace'; ctx.fillStyle = '#ffffff';
-                ctx.fillText("Tap workspace reload links to recompile frame systems.", canvas.width / 2, canvas.height / 2 + 45);
+                ctx.fillStyle = 'rgba(240, 255, 245, 0.96)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#1e5c2b'; ctx.font = '900 2.2rem monospace'; ctx.textAlign = 'center';
+                ctx.fillText("SIMULATION SLEEP MODE", canvas.width / 2, canvas.height / 2);
+                ctx.font = '600 1.1rem monospace'; ctx.fillStyle = '#4b7d56';
+                ctx.fillText("Refresh browser link to reset configuration registers loop.", canvas.width / 2, canvas.height / 2 + 45);
             }
         }
 
@@ -795,34 +822,42 @@
             ctx.save();
             ctx.translate(canvas.width / 2, canvas.height);
             
-            let recoilY = muzzleFlash > 0 ? (currentWeapon === "SHOTGUN" ? 35 : 20) : 0;
-            ctx.fillStyle = '#0a0814'; ctx.strokeStyle = currentWeapon === "SHOTGUN" ? '#ff00ff' : '#00ffcc';
+            let recoilY = muzzleFlash > 0 ? (currentWeapon === "SHOTGUN" ? 30 : 18) : 0;
+            ctx.fillStyle = '#ffffff'; ctx.strokeStyle = currentWeapon === "SHOTGUN" ? '#ff007f' : '#44bd66';
             ctx.lineWidth = 3;
 
             if (currentWeapon === "PLASMA") {
+                // Shiny clean gold magical casting wand shape
+                ctx.fillStyle = '#ffec3d';
                 ctx.beginPath();
-                ctx.moveTo(-35, recoilY); ctx.lineTo(-18, -115 + recoilY);
-                ctx.lineTo(18, -115 + recoilY); ctx.lineTo(35, recoilY);
+                ctx.moveTo(-10, recoilY); ctx.lineTo(-6, -130 + recoilY);
+                ctx.lineTo(6, -130 + recoilY); ctx.lineTo(10, recoilY);
                 ctx.closePath(); ctx.fill(); ctx.stroke();
                 
-                ctx.fillStyle = muzzleFlash > 0 ? '#ffffff' : '#00ffcc';
-                ctx.fillRect(-5, -105 + recoilY, 10, 35);
-            } else {
+                ctx.fillStyle = '#ffffff';
                 ctx.beginPath();
-                ctx.moveTo(-50, recoilY); ctx.lineTo(-30, -95 + recoilY);
-                ctx.lineTo(30, -95 + recoilY); ctx.lineTo(50, recoilY);
+                ctx.arc(0, -130 + recoilY, 12, 0, Math.PI * 2);
+                ctx.fill(); ctx.stroke();
+            } else {
+                // Flower power casting dynamic vector layout
+                ctx.fillStyle = '#ff99cc';
+                ctx.beginPath();
+                ctx.moveTo(-15, recoilY); ctx.lineTo(-10, -110 + recoilY);
+                ctx.lineTo(10, -110 + recoilY); ctx.lineTo(15, recoilY);
                 ctx.closePath(); ctx.fill(); ctx.stroke();
 
-                ctx.fillStyle = '#160d29';
-                ctx.fillRect(-14, -90 + recoilY, 10, 20);
-                ctx.fillRect(4, -90 + recoilY, 10, 20);
+                ctx.fillStyle = '#ff007f';
+                ctx.beginPath();
+                ctx.arc(0, -110 + recoilY, 16, 0, Math.PI * 2);
+                ctx.fill();
             }
 
             if (muzzleFlash > 0) {
-                ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 45;
-                ctx.shadowColor = currentWeapon === "SHOTGUN" ? '#ff00ff' : '#00ffcc';
+                // Exploding bright starburst rainbow effects sparkles
+                ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 40;
+                ctx.shadowColor = '#fff37a';
                 ctx.beginPath(); 
-                ctx.arc(0, currentWeapon === "SHOTGUN" ? -105 : -125, currentWeapon === "SHOTGUN" ? 42 : 28, 0, Math.PI * 2); 
+                ctx.arc(0, currentWeapon === "SHOTGUN" ? -110 : -130, 35, 0, Math.PI * 2); 
                 ctx.fill();
             }
             ctx.restore();
@@ -834,18 +869,18 @@
             let offsetBoxX = canvas.width - (mapW * mapScale) - 25;
             let offsetBoxY = 85; 
 
-            ctx.fillStyle = 'rgba(10, 6, 20, 0.85)'; ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 2;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.strokeStyle = '#44bd66'; ctx.lineWidth = 2;
             ctx.fillRect(offsetBoxX - 5, offsetBoxY - 5, (mapW * mapScale) + 10, (mapH * mapScale) + 10);
             ctx.strokeRect(offsetBoxX - 5, offsetBoxY - 5, (mapW * mapScale) + 10, (mapH * mapScale) + 10);
 
-            ctx.fillStyle = 'rgba(0, 255, 204, 0.25)';
+            ctx.fillStyle = 'rgba(68, 189, 102, 0.3)';
             for(let ty=0; ty<mapH; ty++) {
                 for(let tx=0; tx<mapW; tx++) {
                     if (map[ty * mapW + tx] > 0) ctx.fillRect(offsetBoxX + (tx * mapScale), offsetBoxY + (ty * mapScale), mapScale - 0.5, mapScale - 0.5);
                 }
             }
 
-            ctx.fillStyle = '#ff00ff';
+            ctx.fillStyle = '#ff007f';
             drones.forEach(d => {
                 if(d.alive) { ctx.beginPath(); ctx.arc(offsetBoxX + (d.x * mapScale), offsetBoxY + (d.y * mapScale), 2.5, 0, Math.PI*2); ctx.fill(); }
             });
@@ -854,10 +889,10 @@
             ctx.translate(offsetBoxX + (player.x * mapScale), offsetBoxY + (player.y * mapScale));
             ctx.rotate(player.angle);
 
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; ctx.lineWidth = 1.2;
+            ctx.strokeStyle = 'rgba(34, 112, 57, 0.3)'; ctx.lineWidth = 1.2;
             ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(25, -10); ctx.moveTo(0,0); ctx.lineTo(25, 10); ctx.stroke();
 
-            ctx.fillStyle = '#00ffcc';
+            ctx.fillStyle = '#44bd66';
             ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, Math.PI*2); ctx.fill();
             
             ctx.restore();
