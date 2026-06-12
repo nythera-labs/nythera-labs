@@ -186,7 +186,7 @@
 
     <div id="boot-overlay">
         <h1 style="font-size: 2.4rem; color: #00ffcc; text-shadow: 0 0 20px rgba(0,255,204,0.4); font-weight: 900; letter-spacing: 2px;">DARK CORE: OVERDRIVE</h1>
-        <p style="color: #6c5a94; margin-top: 8px; font-weight: 500; font-family: monospace;">Vibrant Arcade Pipeline • Fluid Spawn Overrides</p>
+        <p style="color: #6c5a94; margin-top: 8px; font-weight: 500; font-family: monospace;">Emoji Invaders Matrix • Fluid Spawn Overrides</p>
         <button class="boot-btn" onclick="bootDarkCoreEngine()">INITIALIZE SUITE</button>
     </div>
 
@@ -292,7 +292,7 @@
             launchEngineCircuit();
         }
 
-        // --- RAYCASTING ENGINE COMPONENT ---
+        // --- RAYCASTING ENGINE MAP ARRAYS ---
         let canvas, ctx;
         let lastTime = performance.now();
         let gameActive = true;
@@ -317,7 +317,6 @@
             1,1,1,1,1,1,1,1,1,1,1,1,1,1
         ];
 
-        // FIXED CRITICAL SPAWN BUG: Moved coordinates from inside a wall to a wide-open hallway lane
         let player = { x: 1.5, y: 1.5, angle: 0, fov: Math.PI / 3, speed: 4.5, rotSpeed: 1.6 };
         let currentWeapon = "PLASMA"; 
         let drones = [];
@@ -366,7 +365,9 @@
                         x: tx + 0.5, y: ty + 0.5,
                         alive: true, speed: 1.6,
                         shootCooldown: 1.0 + Math.random() * 2,
-                        bobSeed: Math.random() * 10
+                        bobSeed: Math.random() * 10,
+                        // NEW LAYER: Randomly assign a target emoji to the unit parameters
+                        emoji: Math.random() > 0.5 ? '🙃' : '🙂'
                     });
                     placed = true;
                 }
@@ -631,11 +632,11 @@
         }
 
         function renderGraphicsCircuit() {
-            // Bright floor clean purple-tint baseline
+            // Purple grid deck baseline floor
             ctx.fillStyle = '#110b24';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // OVERHAUL VISUALS: Gorgeous sky gradient instead of eerie void blackness
+            // High-octane arcade sky vector gradient
             let skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
             skyGrad.addColorStop(0, '#26063b');
             skyGrad.addColorStop(0.6, '#0f041c');
@@ -643,7 +644,6 @@
             ctx.fillStyle = skyGrad;
             ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
 
-            // Draw a neat neon laser line across the split screen horizon
             ctx.fillStyle = '#ff007f';
             ctx.fillRect(0, (canvas.height / 2) - 1, canvas.width, 2);
 
@@ -690,12 +690,11 @@
                 let intensity = 0;
                 if(angleDiff < beamWidth) {
                     intensity = (1.0 - (angleDiff / beamWidth)) * (1.0 - (correctedDist / 12.0));
-                    intensity = Math.max(0.15, intensity); // Brightened ambient baseline lighting
+                    intensity = Math.max(0.2, intensity); 
                 } else {
-                    intensity = 0.15;
+                    intensity = 0.2;
                 }
 
-                // OVERHAUL VISUALS: Electric Cyber Cyan & Magenta matrix wall hues instead of dingy grey shadows
                 let r = Math.floor((sideHit ? 0 : 200) * intensity);
                 let g = Math.floor((sideHit ? 230 : 0) * intensity);
                 let b = Math.floor((sideHit ? 255 : 180) * intensity);
@@ -703,7 +702,6 @@
                 ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
                 ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), sliceW + 1, wallH);
 
-                // Adding a quick grid wireframe border layer on the columns for depth
                 ctx.fillStyle = `rgba(255, 255, 255, ${0.1 * intensity})`;
                 ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), 1, wallH);
             }
@@ -736,7 +734,7 @@
 
                 let angleDiff = Math.abs((player.angle + viewAng) - player.angle);
                 let illumination = angleDiff < 0.42 ? (1.0 - (dist / 11.0)) : 0.2;
-                illumination = Math.max(0.2, illumination);
+                illumination = Math.max(0.3, illumination); // Keep emojis nice and clear
 
                 ctx.save();
                 ctx.translate(projX, canvas.height / 2);
@@ -745,25 +743,20 @@
                 if (sprite.type === 'drone') {
                     let d = sprite.obj;
                     let bob = Math.sin(performance.now() * 0.008 + d.bobSeed) * (projSize * 0.06);
+                    
+                    // FIXED ENVIRONMENT OVERHAUL: Drawing 🙃 and 🙂 system textures vectors beautifully
+                    ctx.font = `bold ${projSize * 0.38}px Arial, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
                     if (d.alive) {
-                        // RE-SKINNED DRONES: Removed dark depressing blocks completely. 
-                        // Drones are now bright neon energy orbs with glowing core stabilization rings.
-                        ctx.fillStyle = '#00ffcc';
-                        ctx.shadowBlur = projSize * 0.25; ctx.shadowColor = '#00ffcc';
-                        ctx.beginPath(); ctx.arc(0, bob, projSize * 0.13, 0, Math.PI * 2); ctx.fill();
-                        
-                        // Radiant central power matrix nucleus
-                        ctx.fillStyle = '#ffffff';
-                        ctx.beginPath(); ctx.arc(0, bob, projSize * 0.05, 0, Math.PI * 2); ctx.fill();
-                        
-                        // Cyber containment vector cross shield rings
-                        ctx.strokeStyle = '#ff00ff'; ctx.lineWidth = 2;
-                        ctx.strokeRect(-projSize * 0.18, bob - projSize * 0.18, projSize * 0.36, projSize * 0.36);
+                        ctx.shadowBlur = projSize * 0.15; ctx.shadowColor = '#00ffcc';
+                        ctx.fillText(d.emoji, 0, bob);
                     } else {
-                        ctx.fillStyle = '#ff0055'; ctx.beginPath(); ctx.arc(0, projSize*0.1, projSize*0.18, 0, Math.PI*2); ctx.fill();
+                        ctx.shadowBlur = projSize * 0.3; ctx.shadowColor = '#ff0055';
+                        ctx.fillText('💥', 0, projSize * 0.05);
                     }
                 } else if (sprite.type === 'fireball') {
-                    // Hyper glowing laser projectile orb meshes
                     ctx.fillStyle = '#ff00ff';
                     ctx.shadowBlur = projSize * 0.4; ctx.shadowColor = '#ff00ff';
                     ctx.beginPath(); ctx.arc(0, 0, projSize * 0.08, 0, Math.PI * 2); ctx.fill();
