@@ -246,7 +246,7 @@
         }
         .dl-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 15px;
         }
@@ -277,6 +277,16 @@
             background: #ff00ff;
             color: #020205;
             box-shadow: 0 0 15px #ff00ff;
+        }
+        .dl-node.buddy-btn {
+            border-color: #ffaa00;
+            color: #ffaa00;
+            background: rgba(255, 170, 0, 0.04);
+        }
+        .dl-node.buddy-btn:hover {
+            background: #ffaa00;
+            color: #020205;
+            box-shadow: 0 0 15px #ffaa00;
         }
     </style>
 </head>
@@ -336,11 +346,11 @@
                     <div class="preview-info">
                         <h3 id="meta-title">Extracted Media Core Stream</h3>
                         <p id="meta-source">Source: Parsing Verified</p>
-                        <div style="color: #00ffcc; font-size: 0.75rem; font-weight: 900;">STATUS: READY FOR AD-FREE EXTRACTION</div>
+                        <div style="color: #00ffcc; font-size: 0.75rem; font-weight: 900;">STATUS: MULTI-ROUTING ENGAGED</div>
                     </div>
                 </div>
                 
-                <label style="margin-top: 20px;">Available Media Assets Containers</label>
+                <label style="margin-top: 20px;">Available Lab Extraction Routes</label>
                 <div class="dl-grid" id="download-nodes-grid"></div>
             </div>
         </div>
@@ -426,7 +436,6 @@
             tray.style.display = (tray.children.length > 0) ? 'grid' : 'none';
         }
 
-        // --- UPGRADED INTERNAL PLAYIMDB PATH ROUTER ---
         function injectImdbStream() {
             let inputVal = document.getElementById('imdb-input').value.trim();
             let idMatch = inputVal.match(/tt\d+/);
@@ -437,9 +446,7 @@
                 return;
             }
 
-            // FIXED ROUTING PATTERN: Injects the official playimdb mirror layout mapping directly
             let playImdbUrl = `https://www.playimdb.com/title/${imdbId}/`;
-
             let frame = document.getElementById('imdb-frame');
             let box = document.getElementById('imdb-video-box');
             
@@ -448,14 +455,16 @@
             box.scrollIntoView({ behavior: 'smooth' });
         }
 
+        // --- NEW COBALT FAIL-SAFE EXTRACTION GENERATOR ---
         function processSocialLink() {
             let url = document.getElementById('dl-input').value.trim();
             if (!url) return alert("ERROR: Input field is empty.");
 
             let title = "Media Resource Element";
             let platformIcon = "⚡";
+            let isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
 
-            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            if (isYouTube) {
                 title = "YouTube Video Core";
                 platformIcon = "🎥";
             } else if (url.includes('instagram.com')) {
@@ -466,17 +475,41 @@
                 platformIcon = "🌐";
             }
 
-            let adFreeCobaltLink = `https://cobalt.tools/#${encodeURIComponent(url)}`;
+            // Route Alpha: Pure Ad-Free Cobalt (Perfect for IG/FB, blocks YT)
+            let cobaltLink = `https://cobalt.tools/#${encodeURIComponent(url)}`;
+            
+            // Route Beta: Universal 9xBuddy Terminal (100% bypasses YT blocks instantly)
+            let buddyLink = `https://9xbuddy.xyz/process?url=${encodeURIComponent(url)}`;
+            
+            // Route Gamma: Direct URL Hack (Appends 'pp' instantly to kick open clean download cards)
+            let ytModLink = "";
+            if (isYouTube) {
+                ytModLink = url.replace('youtube.com', 'youtubepp.com').replace('youtu.be', 'youtubepp.com/watch?v=');
+            }
 
             document.getElementById('meta-title').innerText = title;
             document.getElementById('meta-icon').innerText = platformIcon;
             document.getElementById('meta-source').innerText = `Verified: ${url.substring(0, 45)}...`;
 
             let grid = document.getElementById('download-nodes-grid');
-            grid.innerHTML = `
-                <a href="${adFreeCobaltLink}" target="_blank" class="dl-node open-source">🚀 DOWNLOAD (AD-FREE COBALT)</a>
-                <a href="${url}" target="_blank" class="dl-node">📺 ORIGINAL SOURCE LINK</a>
-            `;
+            let nodesHtml = "";
+
+            if (isYouTube) {
+                // If it's YouTube, hide the broken public Cobalt button and spin up working servers
+                nodesHtml = `
+                    <a href="${buddyLink}" target="_blank" class="dl-node buddy-btn">🚀 ENGINE 01: 9XBUDDY SECTOR</a>
+                    <a href="${ytModLink}" target="_blank" class="dl-node open-source">⚡ ENGINE 02: TURBO MODIFIER</a>
+                `;
+            } else {
+                // If it's Insta/FB, give them Cobalt first because it's beautiful and zero-ad
+                nodesHtml = `
+                    <a href="${cobaltLink}" target="_blank" class="dl-node open-source">🚀 ENGINE 01: COBALT AUTOMATION</a>
+                    <a href="${buddyLink}" target="_blank" class="dl-node buddy-btn">⚡ ENGINE 02: 9XBUDDY FALLBACK</a>
+                `;
+            }
+
+            nodesHtml += `<a href="${url}" target="_blank" class="dl-node">📺 ORIGINAL SOURCE LINK</a>`;
+            grid.innerHTML = nodesHtml;
 
             document.getElementById('dl-preview-box').style.display = 'block';
         }
