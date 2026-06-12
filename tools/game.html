@@ -67,7 +67,7 @@
         .card-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 10px; color: #00ffcc; }
         .card-desc { font-size: 0.8rem; color: #637285; line-height: 1.5; }
 
-        /* INTERACTIVE RESPONSIVE SPLIT PANELS */
+        /* INTERACTIVE SPLIT PANELS */
         .game-split-layout { display: flex; flex: 1; gap: 40px; align-items: center; justify-content: center; }
         @media (max-width: 850px) { .game-split-layout { flex-direction: column; gap: 20px; } }
         
@@ -75,7 +75,7 @@
             background: #000000; border: 2px solid #00ffcc; border-radius: 14px;
             box-shadow: 0 0 35px rgba(0, 255, 204, 0.15); overflow: hidden;
         }
-        #snake-canvas { display: block; }
+        canvas { display: block; }
         
         .control-pad {
             display: grid; grid-template-columns: repeat(3, 75px); grid-template-rows: repeat(3, 75px);
@@ -111,26 +111,13 @@
         .tile-512 { background: #18335a; color: #ff7ebb; box-shadow: 0 0 15px #ff00ff; }
         .tile-1024 { background: #3c185a; color: #e60067; box-shadow: 0 0 20px #ff00ff; }
         .tile-2048 { background: #5a004b; color: #ffffff; box-shadow: 0 0 25px #ffffff; }
-
-        /* STRATEGY CHESS DECK */
-        .chess-board {
-            width: 450px; height: 440px; display: grid; grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr); border: 3px solid #00ffcc; border-radius: 12px;
-            overflow: hidden; box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
-        }
-        @media (max-width: 480px) { .chess-board { width: 330px; height: 320px; } }
-        .chess-square {
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.2rem; cursor: pointer; position: relative;
-        }
-        @media (max-width: 480px) { .chess-square { font-size: 1.6rem; } }
-        .square-light { background: #131424; }
-        .square-dark { background: #06070d; }
-        .square-selected { background: rgba(255, 0, 255, 0.35) !important; border: 2px solid #ff00ff; }
         
         .score-panel {
             font-size: 1.1rem; font-weight: bold; color: #00ffcc; margin-bottom: 12px;
-            text-transform: uppercase; text-spacing: 1px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .paddle-pad {
+            display: flex; gap: 20px; width: 100%; max-width: 250px; margin-top: 15px;
         }
     </style>
 </head>
@@ -156,9 +143,9 @@
                     <h2 class="card-title">🔢 FIXED 2048 CALIBRATION</h2>
                     <p class="card-desc">Zero-inversion slider array module. Directly maps vertical tracking rows so controls translate flawlessly without flips.</p>
                 </div>
-                <div class="menu-card" onclick="launchGameModule('chess')">
-                    <h2 class="card-title">🤖 CHESS DECK ENGINE // VS AI</h2>
-                    <p class="card-desc">Play white pieces against the automated local capture response bot. Features smart move valuation processing tracking metrics.</p>
+                <div class="menu-card" onclick="launchGameModule('breaker')">
+                    <h2 class="card-title">🧱 NEON BRICK BREAKER</h2>
+                    <p class="card-desc">Deflect the high-velocity energy ball with your sliding paddle to shatter neon brick matrices. Smooth touch-drag tracking.</p>
                 </div>
             </div>
         </div>
@@ -193,11 +180,17 @@
             </div>
         </div>
 
-        <div id="panel-chess" class="cabinet-panel">
+        <div id="panel-breaker" class="cabinet-panel">
             <div class="game-split-layout">
-                <div style="text-align: center;">
-                    <div class="score-panel" id="chess-turn-status" style="color: #00ffcc;">USER MATCH: WHITE TURN</div>
-                    <div class="chess-board" id="chess-board-root"></div>
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <div class="score-panel">BRICKS SHATTERED: <span id="breaker-score-val">0</span></div>
+                    <div class="canvas-area">
+                        <canvas id="breaker-canvas" width="340" height="340"></canvas>
+                    </div>
+                    <div class="paddle-pad">
+                        <button class="pad-btn" style="flex:1; padding: 10px;" id="break-left-btn">◀</button>
+                        <button class="pad-btn" style="flex:1; padding: 10px;" id="break-right-btn">▶</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -221,12 +214,13 @@
 
             if (gameType === 'snake') initSnakeEngine();
             if (gameType === '2048') init2048Engine();
-            if (gameType === 'chess') initChessEngine();
+            if (gameType === 'breaker') initBreakerEngine();
         }
 
         function resetArcadeMainframe(e) {
             if(e) e.preventDefault();
             if (snakeClockInterval) clearInterval(snakeClockInterval);
+            if (breakerInterval) clearInterval(breakerInterval);
             
             document.querySelectorAll('.cabinet-panel').forEach(el => el.classList.remove('active'));
             document.getElementById('panel-menu').classList.add('active');
@@ -242,7 +236,7 @@
         }
 
         // =========================================================================
-        // --- SNAKE REALISM / JUICED GRAPHICS MATRIX ENGINE ---
+        // --- SNAKE REALISM MATRIX ENGINE ---
         // =========================================================================
         let snakeCanvas = document.getElementById('snake-canvas');
         let snakeCtx = snakeCanvas.getContext('2d');
@@ -291,7 +285,6 @@
 
         function updateSnakeFrameLoop() {
             let head = { x: snakeBody[0].x + snakeDx, y: snakeBody[0].y + snakeDy };
-            
             if (head.x < 0) head.x = sCellCount - 1;
             if (head.x >= sCellCount) head.x = 0;
             if (head.y < 0) head.y = sCellCount - 1;
@@ -305,7 +298,6 @@
             }
 
             snakeBody.unshift(head);
-
             if (head.x === snakeFood.x && head.y === snakeFood.y) {
                 snakeScore += 10;
                 document.getElementById('snake-score-val').innerText = snakeScore;
@@ -315,18 +307,15 @@
                 snakeBody.pop();
             }
 
-            // --- REALISTIC GRAPHICS PROCESSING CIRCUIT ---
             snakeCtx.fillStyle = '#020206';
             snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
 
-            // Tech arcade backdrop grid grid lines mesh
             snakeCtx.strokeStyle = 'rgba(255, 255, 255, 0.02)'; snakeCtx.lineWidth = 1;
             for(let g=0; g<sCellCount; g++) {
                 snakeCtx.beginPath(); snakeCtx.moveTo(g*sCellSize, 0); snakeCtx.lineTo(g*sCellSize, snakeCanvas.height); snakeCtx.stroke();
                 snakeCtx.beginPath(); snakeCtx.moveTo(0, g*sCellSize); snakeCtx.lineTo(snakeCanvas.width, g*sCellSize); snakeCtx.stroke();
             }
 
-            // Draw glowing food particle mesh
             snakeCtx.save();
             snakeCtx.shadowBlur = 15; snakeCtx.shadowColor = '#ff00ff';
             snakeCtx.fillStyle = '#ff00ff';
@@ -335,15 +324,12 @@
             snakeCtx.fill();
             snakeCtx.restore();
 
-            // Draw vector segments trails
             snakeBody.forEach((seg, index) => {
                 let intensityRatio = 1.0 - (index / snakeBody.length);
                 snakeCtx.save();
-                // Color interpolation gradient logic (Fades smoothly along the body vector)
                 snakeCtx.fillStyle = `rgba(0, 255, 204, ${0.4 + (0.6 * intensityRatio)})`;
                 snakeCtx.shadowBlur = index === 0 ? 12 : 4;
                 snakeCtx.shadowColor = '#00ffcc';
-                
                 let radius = (sCellSize/2 - 1) * (0.6 + 0.4 * intensityRatio);
                 snakeCtx.beginPath();
                 snakeCtx.arc(seg.x * sCellSize + sCellSize/2, seg.y * sCellSize + sCellSize/2, radius, 0, Math.PI * 2);
@@ -351,22 +337,16 @@
                 snakeCtx.restore();
             });
 
-            // Process dynamic explosion physics arrays
             for (let i = snakeParticles.length - 1; i >= 0; i--) {
-                let p = snakeParticles[i];
-                p.x += p.vx; p.y += p.vy; p.alpha -= 0.06;
+                let p = snakeParticles[i]; p.x += p.vx; p.y += p.vy; p.alpha -= 0.06;
                 if (p.alpha <= 0) { snakeParticles.splice(i, 1); continue; }
-                
-                snakeCtx.save();
-                snakeCtx.globalAlpha = p.alpha;
-                snakeCtx.fillStyle = p.color;
-                snakeCtx.fillRect(p.x, p.y, 3, 3);
-                snakeCtx.restore();
+                snakeCtx.save(); snakeCtx.globalAlpha = p.alpha; snakeCtx.fillStyle = p.color;
+                snakeCtx.fillRect(p.x, p.y, 3, 3); snakeCtx.restore();
             }
         }
 
         // =========================================================================
-        // --- 2048 FLUID ALGORITHMS MATRIX (ANTI-INVERSION UPGRADE) ---
+        // --- 2048 FLUID ALGORITHMS MATRIX ---
         // =========================================================================
         let grid2048 = new Array(16).fill(0);
         let score2048 = 0;
@@ -394,20 +374,15 @@
             }
         }
 
-        // FIXED AXIS ROUTING: Processes indexing logic directly to avoid inversion bugs entirely
         function shift2048(direction) {
             let changed = false;
-
-            // Transpose matrix processing helpers
             const getIndex = (row, col) => row * 4 + col;
-
             if (direction === 'LEFT' || direction === 'RIGHT') {
                 for (let r = 0; r < 4; r++) {
                     let row = [grid2048[getIndex(r,0)], grid2048[getIndex(r,1)], grid2048[getIndex(r,2)], grid2048[getIndex(r,3)]];
                     if (direction === 'RIGHT') row.reverse();
                     let compressed = processCollapseSequence(row);
                     if (direction === 'RIGHT') compressed.reverse();
-                    
                     for (let c = 0; c < 4; c++) {
                         let targetIdx = getIndex(r, c);
                         if (grid2048[targetIdx] !== compressed[c]) { grid2048[targetIdx] = compressed[c]; changed = true; }
@@ -419,178 +394,156 @@
                     if (direction === 'DOWN') col.reverse();
                     let compressed = processCollapseSequence(col);
                     if (direction === 'DOWN') compressed.reverse();
-                    
                     for (let r = 0; r < 4; r++) {
                         let targetIdx = getIndex(r, c);
                         if (grid2048[targetIdx] !== compressed[r]) { grid2048[targetIdx] = compressed[r]; changed = true; }
                     }
                 }
             }
-
-            if (changed) {
-                injectRandom2048Tile();
-                document.getElementById('score-2048-val').innerText = score2048;
-                render2048LayoutGrid();
-            }
+            if (changed) { injectRandom2048Tile(); document.getElementById('score-2048-val').innerText = score2048; render2048LayoutGrid(); }
         }
 
         function processCollapseSequence(line) {
             let filtered = line.filter(v => v !== 0);
             for (let i = 0; i < filtered.length - 1; i++) {
-                if (filtered[i] === filtered[i+1]) {
-                    filtered[i] *= 2; score2048 += filtered[i]; filtered[i+1] = 0;
-                }
+                if (filtered[i] === filtered[i+1]) { filtered[i] *= 2; score2048 += filtered[i]; filtered[i+1] = 0; }
             }
-            filtered = filtered.filter(v => v !== 0);
-            while (filtered.length < 4) filtered.push(0);
-            return filtered;
+            filtered = filtered.filter(v => v !== 0); while (filtered.length < 4) filtered.push(0); return filtered;
         }
 
         // =========================================================================
-        // --- CHESS INTELLIGENCE ENGINE MODULE // SMART BOT OVERRIDE ---
+        // --- 100% TRAUMA-FREE NEON BRICK BREAKER PHYSICS ENGINE ---
         // =========================================================================
-        let chessBoardGridState = [
-            'bR','bN','bB','bQ','bK','bB','bN','bR',
-            'bP','bP','bP','bP','bP','bP','bP','bP',
-            '','','','','','','','',
-            '','','','','','','','',
-            '','','','','','','','',
-            '','','','','','','','',
-            'wP','wP','wP','wP','wP','wP','wP','wP',
-            'wR','wN','wB','wQ','wK','wB','wN','wR'
-        ];
+        let breakerCanvas = document.getElementById('breaker-canvas');
+        let breakerCtx = breakerCanvas.getContext('2d');
+        let breakerInterval = null;
 
-        const piecesGlyphs = {
-            'wK': '♔', 'wQ': '♕', 'wR': '♖', 'wB': '♗', 'wN': '♘', 'wP': '♙',
-            'bK': '♚', 'bQ': '♛', 'bR': '♜', 'bB': '♝', 'bN': '♞', 'bP': '♟', '': ''
-        };
+        let paddleW = 75; let paddleH = 10; let paddleX = 132;
+        let ballX = 170; let ballY = 240;
+        let ballVx = 3.5; let ballVy = -3.5;
+        let ballRadius = 6;
 
-        let activeSelectedChessIndex = null;
-        let activeTurnMatrixSymbol = 'w'; 
+        let brickRows = 4; let brickCols = 6;
+        let brickW = 46; let brickH = 16;
+        let brickPadding = 6; let brickOffsetTop = 35; let brickOffsetLeft = 16;
+        let bricks = [];
+        let breakerScore = 0;
 
-        function initChessEngine() {
-            chessBoardGridState = [
-                'bR','bN','bB','bQ','bK','bB','bN','bR',
-                'bP','bP','bP','bP','bP','bP','bP','bP',
-                '','','','','','','','',
-                '','','','','','','','',
-                '','','','','','','','',
-                '','','','','','','','',
-                'wP','wP','wP','wP','wP','wP','wP','wP',
-                'wR','wN','wB','wQ','wK','wB','wN','wR'
-            ];
-            activeSelectedChessIndex = null; activeTurnMatrixSymbol = 'w';
-            document.getElementById('chess-turn-status').innerText = "USER MATCH: WHITE TURN";
-            document.getElementById('chess-turn-status').style.color = "#00ffcc";
-            renderChessLayoutBoard();
-        }
-
-        function renderChessLayoutBoard() {
-            let root = document.getElementById('chess-board-root'); root.innerHTML = '';
-            for (let i = 0; i < 64; i++) {
-                let square = document.createElement('div');
-                let r = Math.floor(i / 8); let c = i % 8;
-                square.className = 'chess-square ' + ((r + c) % 2 === 0 ? 'square-light' : 'square-dark');
-                if (i === activeSelectedChessIndex) square.classList.add('square-selected');
-
-                let piece = chessBoardGridState[i];
-                square.innerText = piecesGlyphs[piece] || '';
-                
-                if (piece.startsWith('w')) { square.style.color = '#00ffcc'; square.style.textShadow = '0 0 5px rgba(0,255,204,0.3)'; } 
-                else if (piece.startsWith('b')) { square.style.color = '#ff00ff'; square.style.textShadow = '0 0 5px rgba(255,0,255,0.3)'; }
-
-                square.onclick = () => handleUserChessInput(i);
-                root.appendChild(square);
-            }
-        }
-
-        function handleUserChessInput(idx) {
-            if (activeTurnMatrixSymbol !== 'w') return; // Enforce lock structure when AI calculations process
-
-            let piece = chessBoardGridState[idx];
-            if (activeSelectedChessIndex === null) {
-                if (piece !== '' && piece.startsWith('w')) { activeSelectedChessIndex = idx; renderChessLayoutBoard(); }
-            } else {
-                if (idx === activeSelectedChessIndex) { activeSelectedChessIndex = null; renderChessLayoutBoard(); }
-                else if (piece !== '' && piece.startsWith('w')) { activeSelectedChessIndex = idx; renderChessLayoutBoard(); }
-                else {
-                    executeMoveBlock(activeSelectedChessIndex, idx);
-                    activeSelectedChessIndex = null;
-                    activeTurnMatrixSymbol = 'b';
-                    document.getElementById('chess-turn-status').innerText = "AI THINKING INTERFACE...";
-                    document.getElementById('chess-turn-status').style.color = "#ff00ff";
-                    setTimeout(triggerChessAIComputePass, 600); // Artificial thinking delay looks smoother
-                }
-            }
-        }
-
-        function executeMoveBlock(from, to) {
-            chessBoardGridState[to] = chessBoardGridState[from];
-            chessBoardGridState[from] = '';
-            renderChessLayoutBoard();
-        }
-
-        // --- TACTICAL CHESS INTELLIGENCE AI CORE ---
-        function triggerChessAIComputePass() {
-            if (!currentActiveGame || activeTurnMatrixSymbol !== 'b') return;
-
-            let legalMoves = [];
+        function initBreakerEngine() {
+            breakerScore = 0;
+            document.getElementById('breaker-score-val').innerText = breakerScore;
+            paddleX = (breakerCanvas.width - paddleW) / 2;
+            ballX = breakerCanvas.width / 2; ballY = 240;
+            ballVx = 3.5; ballVy = -4.0;
             
-            // Step 1: Scan whole matrix board arrays evaluating structural paths
-            for (let from = 0; from < 64; from++) {
-                let piece = chessBoardGridState[from];
-                if (piece === '' || !piece.startsWith('b')) continue;
-
-                // Simple pseudo-move directional scans to check legal parameters
-                let r = Math.floor(from / 8); let c = from % 8;
-                let pieceType = piece[1];
-
-                // Pawn forward vectors maps checking
-                if (pieceType === 'P' && r < 7) {
-                    let step = (r + 1) * 8 + c;
-                    if (chessBoardGridState[step] === '') legalMoves.push({ from, to: step, value: 1 });
-                    
-                    // Attack diagonals logic thresholds mapping variables
-                    let diagLeft = (r + 1) * 8 + (c - 1);
-                    let diagRight = (r + 1) * 8 + (c + 1);
-                    if (c > 0 && chessBoardGridState[diagLeft].startsWith('w')) legalMoves.push({ from, to: diagLeft, value: 10 });
-                    if (c < 7 && chessBoardGridState[diagRight].startsWith('w')) legalMoves.push({ from, to: diagRight, value: 10 });
+            bricks = [];
+            for (let c = 0; c < brickCols; c++) {
+                bricks[c] = [];
+                for (let r = 0; r < brickRows; r++) {
+                    bricks[c][r] = { x: 0, y: 0, status: 1, color: ['#00ffcc', '#ff00ff', '#ffaa00', '#ff3366'][r] };
                 }
-                
-                // Knight / King / Sliders generic valid targets sweeps checking profiles
-                let standardOffsets = [-8, 8, -1, 1, -9, -7, 7, 9];
-                if (['R', 'B', 'Q', 'K', 'N'].includes(pieceType)) {
-                    standardOffsets.forEach(offset => {
-                        let target = from + offset;
-                        if (target >= 0 && target < 64) {
-                            let destPiece = chessBoardGridState[target];
-                            if (destPiece === '') {
-                                legalMoves.push({ from, to: target, value: 1 });
-                            } else if (destPiece.startsWith('w')) {
-                                // Assign heavy value weight vectors if move triggers piece captures
-                                let capVal = destPiece[1] === 'Q' ? 90 : (destPiece[1] === 'R' ? 50 : 30);
-                                legalMoves.push({ from, to: target, value: capVal });
+            }
+            if (breakerInterval) clearInterval(breakerInterval);
+            breakerInterval = setInterval(updateBreakerCircuit, 1000 / 60); // 60FPS lock
+        }
+
+        // Add iPad Touch drag control event listeners natively onto canvas box
+        let dragActive = false;
+        breakerCanvas.addEventListener('touchstart', (e) => { dragActive = true; movePaddleOnTouch(e); }, {passive:true});
+        breakerCanvas.addEventListener('touchmove', (e) => { if(dragActive) movePaddleOnTouch(e); }, {passive:true});
+        breakerCanvas.addEventListener('touchend', () => dragActive = false);
+
+        function movePaddleOnTouch(e) {
+            let rect = breakerCanvas.getBoundingClientRect();
+            let touchX = e.touches[0].clientX - rect.left;
+            paddleX = (touchX * (breakerCanvas.width / rect.width)) - paddleW / 2;
+            clampPaddleBoundary();
+        }
+
+        // Tap helper button configurations
+        document.getElementById('break-left-btn').addEventListener('touchstart', (e) => { e.preventDefault(); paddleX -= 25; clampPaddleBoundary(); });
+        document.getElementById('break-right-btn').addEventListener('touchstart', (e) => { e.preventDefault(); paddleX += 25; clampPaddleBoundary(); });
+
+        function clampPaddleBoundary() {
+            if (paddleX < 0) paddleX = 0;
+            if (paddleX > breakerCanvas.width - paddleW) paddleX = breakerCanvas.width - paddleW;
+        }
+
+        function updateBreakerCircuit() {
+            // Ball motion physics vectors incrementation steps
+            ballX += ballVx; ballY += ballVy;
+
+            // Lateral bounces mechanics
+            if (ballX + ballVx > breakerCanvas.width - ballRadius || ballX + ballVx < ballRadius) ballVx = -ballVx;
+            if (ballY + ballVy < ballRadius) ballVy = -ballVy;
+
+            // Paddle impact checks tracking
+            if (ballY + ballVy > breakerCanvas.height - ballRadius - paddleH) {
+                if (ballX > paddleX && ballX < paddleX + paddleW) {
+                    ballVy = -ballVy;
+                    // Add tactical angle spin velocity offsets depending on hit positioning offsets
+                    let hitCenterDiff = ballX - (paddleX + paddleW/2);
+                    ballVx = hitCenterDiff * 0.12;
+                } else if (ballY + ballVy > breakerCanvas.height - ballRadius) {
+                    // Out of bounds reset pass trigger
+                    document.getElementById('hud-status-node').innerText = "BALL_LOST";
+                    initBreakerEngine(); return;
+                }
+            }
+
+            // Brick destruction intersection loop parameters
+            for (let c = 0; c < brickCols; c++) {
+                for (let r = 0; r < brickRows; r++) {
+                    let b = bricks[c][r];
+                    if (b.status === 1) {
+                        if (ballX > b.x && ballX < b.x + brickW && ballY > b.y && ballY < b.y + brickH) {
+                            ballVy = -ballVy; b.status = 0;
+                            breakerScore++;
+                            document.getElementById('breaker-score-val').innerText = breakerScore;
+                            
+                            if (breakerScore === brickRows * brickCols) {
+                                document.getElementById('hud-status-node').innerText = "VICTORY";
+                                initBreakerEngine(); return;
                             }
                         }
-                    });
+                    }
                 }
             }
 
-            if (legalMoves.length > 0) {
-                // Sort array data dynamically to select the highest-value capture move
-                legalMoves.sort((x, y) => y.value - x.value);
-                let selectedAction = legalMoves[0]; // Fire highest weighted block path vector
-                
-                executeMoveBlock(selectedAction.from, selectedAction.to);
+            // --- RENDER MATRIX GRAPHICS CIRCUIT ---
+            breakerCtx.fillStyle = '#020206'; breakerCtx.fillRect(0, 0, breakerCanvas.width, breakerCanvas.height);
+
+            // Draw Bricks layer setup
+            for (let c = 0; c < brickCols; c++) {
+                for (let r = 0; r < brickRows; r++) {
+                    if (bricks[c][r].status === 1) {
+                        let brickX = (c * (brickW + brickPadding)) + brickOffsetLeft;
+                        let brickY = (r * (brickH + brickPadding)) + brickOffsetTop;
+                        bricks[c][r].x = brickX; bricks[c][r].y = brickY;
+                        
+                        breakerCtx.save();
+                        breakerCtx.fillStyle = bricks[c][r].color;
+                        breakerCtx.shadowBlur = 8; breakerCtx.shadowColor = bricks[c][r].color;
+                        breakerCtx.fillRect(brickX, brickY, brickW, brickH);
+                        breakerCtx.restore();
+                    }
+                }
             }
 
-            activeTurnMatrixSymbol = 'w';
-            document.getElementById('chess-turn-status').innerText = "USER MATCH: WHITE TURN";
-            document.getElementById('chess-turn-status').style.color = "#00ffcc";
-            renderChessLayoutBoard();
+            // Draw Paddle mesh
+            breakerCtx.save();
+            breakerCtx.fillStyle = '#ffffff'; breakerCtx.shadowBlur = 10; breakerCtx.shadowColor = '#ffffff';
+            breakerCtx.fillRect(paddleX, breakerCanvas.height - paddleH - 4, paddleW, paddleH);
+            breakerCtx.restore();
+
+            // Draw Ball node orb
+            breakerCtx.save();
+            breakerCtx.fillStyle = '#ff00ff'; breakerCtx.shadowBlur = 12; breakerCtx.shadowColor = '#ff00ff';
+            breakerCtx.beginPath(); breakerCtx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2); breakerCtx.fill();
+            breakerCtx.restore();
         }
 
-        // Full device system hardware keyboard interception mapping loops
+        // Global key capture loop backings
         window.addEventListener('keydown', (e) => {
             if (!currentActiveGame) return;
             let key = e.key.toLowerCase();
@@ -605,6 +558,10 @@
                 if (key === 'arrowdown' || key === 's') shift2048('DOWN');
                 if (key === 'arrowleft' || key === 'a') shift2048('LEFT');
                 if (key === 'arrowright' || key === 'd') shift2048('RIGHT');
+            }
+            if (currentActiveGame === 'breaker') {
+                if (key === 'arrowleft' || key === 'a') { paddleX -= 20; clampPaddleBoundary(); }
+                if (key === 'arrowright' || key === 'd') { paddleX += 20; clampPaddleBoundary(); }
             }
         });
     </script>
