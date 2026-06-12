@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zaeem Labs // Mainframe</title>
     
-    <!-- Official Branding Web Logo Tab Icon -->
     <link rel="icon" type="image/png" href="logo.png">
 
     <style>
@@ -119,10 +118,9 @@
             border-color: #00ffcc;
             box-shadow: 0 0 25px rgba(0, 255, 204, 0.25);
         }
-
-        .module-card.offline {
-            border: 1px solid rgba(255, 17, 17, 0.1);
-            opacity: 0.45;
+        .module-card.online.purple-glow:hover {
+            border-color: #ff00ff;
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.25);
         }
 
         .status-flag {
@@ -136,7 +134,7 @@
             letter-spacing: 1px;
         }
         .status-flag.online { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc;}
-        .status-flag.encrypted { background: rgba(255, 17, 17, 0.05); color: #ff3333; border: 1px solid rgba(255, 51, 51, 0.3);}
+        .status-flag.purple { background: rgba(255, 0, 255, 0.1); color: #ff00ff; border: 1px solid #ff00ff;}
 
         .module-meta {
             margin-bottom: 25px;
@@ -150,6 +148,9 @@
         }
         .module-card.online .module-name {
             text-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+        }
+        .module-card.online.purple-glow .module-name {
+            text-shadow: 0 0 8px rgba(255, 0, 255, 0.3);
         }
         .module-desc {
             font-size: 0.85rem;
@@ -178,21 +179,15 @@
             color: #020205;
             box-shadow: 0 0 15px #00ffcc;
         }
-
-        .lock-anchor {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 14px;
-            background: transparent;
-            border: 1px dashed rgba(255, 51, 51, 0.2);
-            color: #553333;
-            font-size: 0.9rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-            border-radius: 10px;
-            cursor: not-allowed;
+        .launch-anchor.purple-btn {
+            border-color: #ff00ff;
+            color: #ff00ff;
+            background: rgba(255, 0, 255, 0.04);
+        }
+        .launch-anchor.purple-btn:hover {
+            background: #ff00ff;
+            color: #020205;
+            box-shadow: 0 0 15px #ff00ff;
         }
 
         /* Telemetry Diagnostic Footer */
@@ -225,47 +220,42 @@
 
     <div class="mainframe-wrapper">
         
-        <!-- Main Hub Header: Zaeem Labs -->
         <header class="hub-header">
             <img src="logo.png" alt="Zaeem Labs" class="lab-logo">
             <h1 class="lab-title">ZAEEM LABS</h1>
             <div class="lab-subtitle">Experimental Engineering & Simulation Workspace</div>
         </header>
 
-        <!-- Tools Grid Initialization -->
         <main class="modules-grid">
             
-            <!-- TOOL 01: THE GAME CENTER COMPONENT -->
             <section class="module-card online">
                 <div class="status-flag online">TOOL 01</div>
                 <div class="module-meta">
                     <h2 class="module-name">GAME CENTER</h2>
-                    <p class="module-desc">Active gaming simulation deck running **DARK CORE // FPS**. Houses clean asset-free raycasting mathematics, responsive dual-stick touch overrides, modular weapon swapping configurations, and smooth real-time telemetry minimaps.</p>
+                    <p class="module-desc">Active gaming simulation deck running custom vector 2D momentum sandboxes. Houses clean asset-free layout loops, responsive full invisible mobile touch overrides, and smooth real-time telemetry processing.</p>
                 </div>
                 <a href="tools/game_center.html" class="launch-anchor">BOOT GAME CENTER</a>
             </section>
 
-            <!-- FUTURE LAB UTILITIES -->
-            <section class="module-card offline">
-                <div class="status-flag encrypted">LOCKED</div>
+            <section class="module-card online purple-glow">
+                <div class="status-flag purple">TOOL 02</div>
                 <div class="module-meta">
-                    <h2 class="module-name">LAB UTILITY 02</h2>
-                    <p class="module-desc">Secondary lab tool slot allocation buffer. Security protocols active. Matrix registers configured to accept clean web deployment source scripts instantly upon code runtime integration.</p>
+                    <h2 class="module-name">MEDIA DECK</h2>
+                    <p class="module-desc">High-performance video extraction and playback deck. Features an automated IMDb URL streaming injector system alongside advanced client-side processing matrices for scraping link parameters from YT, Instagram, and FB.</p>
                 </div>
-                <button class="lock-anchor" disabled>SECURE NODE</button>
+                <a href="tools/media_deck.html" class="launch-anchor purple-btn">LAUNCH MEDIA DECK</a>
             </section>
 
         </main>
 
-        <!-- Telemetry Logs -->
         <footer class="hub-telemetry-footer">
             <div class="telemetry-row">
                 <span>SYSTEM REGISTRY: <span style="color: #00ffcc; font-weight:900;">ACTIVE</span></span>
-                <span>ENGINE ARCHITECTURE: <span class="telemetry-value">CORE CANVAS MATRICES</span></span>
+                <span>ENGINE ARCHITECTURE: <span class="telemetry-value">MULTI-TOOL INTEGRATION LAYER</span></span>
             </div>
             <div class="telemetry-row">
                 <span>HARDWARE ENVIRONMENT: <span class="telemetry-value">iPad ProMotion Sync OK</span></span>
-                <span>REGISTRY SCHEMATIC: <span class="telemetry-value">VERSION_LAB.1.0</span></span>
+                <span>REGISTRY SCHEMATIC: <span class="telemetry-value">VERSION_LAB.2.0</span></span>
             </div>
         </footer>
 
