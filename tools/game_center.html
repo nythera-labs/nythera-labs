@@ -3,567 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zaeem Labs // Arcade Overdrive</title>
-    <link type="image/png" rel="icon" href="../logo.png">
+    <title>Zaeem Labs // Game Center</title>
+    <link rel="icon" type="image/png" href="../logo.png">
     <style>
         * {
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
             margin: 0; padding: 0;
-            user-select: none; -webkit-user-select: none;
         }
         body, html {
             width: 100%; height: 100%;
-            background-color: #04040a;
+            background-color: #020205;
             color: #ffffff;
-            font-family: ui-monospace, Consolas, Monaco, monospace;
-            overflow: hidden;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            overflow-x: hidden;
         }
         .grid-backdrop {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 255, 204, 0.012) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 204, 0.012) 1px, transparent 1px);
-            background-size: 30px 30px;
+                linear-gradient(rgba(0, 255, 204, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 204, 0.015) 1px, transparent 1px);
+            background-size: 35px 35px;
             z-index: 1; pointer-events: none;
         }
-        .container {
+        .center-wrapper {
             position: relative; z-index: 2;
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            padding: 20px;
+            max-width: 1100px; margin: 0 auto;
+            padding: 40px 20px; display: flex; flex-direction: column;
+            min-height: 100vh;
+        }
+        .back-mainframe {
+            align-self: flex-start; text-decoration: none;
+            color: #728196; font-size: 0.85rem; font-weight: 700;
+            letter-spacing: 1px; margin-bottom: 20px; display: inline-flex;
+            align-items: center; transition: color 0.2s ease;
+        }
+        .back-mainframe:hover { color: #ff00ff; }
+        
+        .center-header {
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            margin-bottom: 50px; padding-bottom: 30px; border-bottom: 1px dashed rgba(0, 255, 204, 0.15);
+        }
+        .center-title {
+            font-size: 2.6rem; font-weight: 900; letter-spacing: 7px; color: #ffffff;
+            text-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        }
+        .center-subtitle {
+            color: #00ffcc; text-shadow: 0 0 8px rgba(0, 255, 204, 0.2);
+            margin-top: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700;
+            font-size: 0.85rem;
         }
         
-        .arcade-header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px dashed rgba(0, 255, 204, 0.2);
-            padding-bottom: 15px; margin-bottom: 15px;
+        .games-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px; flex-grow: 1; margin-bottom: 40px;
         }
-        .back-btn {
-            color: #728196; text-decoration: none; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+        .game-card {
+            background: rgba(4, 5, 10, 0.9);
+            border: 1px solid rgba(0, 255, 204, 0.12);
+            border-radius: 16px; padding: 25px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            position: relative; overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .back-btn:hover { color: #ff00ff; }
-        .nav-title { font-size: 1.4rem; letter-spacing: 3px; text-shadow: 0 0 10px rgba(0, 255, 204, 0.3); }
-
-        .cabinet-panel { display: none; flex: 1; flex-direction: column; height: 100%; }
-        .cabinet-panel.active { display: flex; }
-
-        /* MENU COMPONENT */
-        .menu-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px; margin: auto 0;
+        .game-card.online { border-color: rgba(0, 255, 204, 0.25); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); }
+        .game-card.online:hover {
+            transform: translateY(-5px); border-color: #00ffcc;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.25);
         }
-        .menu-card {
-            background: rgba(10, 11, 28, 0.6);
-            border: 1px solid rgba(0, 255, 204, 0.15);
-            border-radius: 16px; padding: 25px; cursor: pointer;
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        .game-card.online.purple-glow:hover {
+            border-color: #ff00ff; box-shadow: 0 0 30px rgba(255, 0, 255, 0.25);
         }
-        .menu-card:hover {
-            transform: translateY(-4px); border-color: #ff00ff;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.15);
-        }
-        .card-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 10px; color: #00ffcc; }
-        .card-desc { font-size: 0.8rem; color: #637285; line-height: 1.5; }
-
-        /* INTERACTIVE SPLIT PANELS */
-        .game-split-layout { display: flex; flex: 1; gap: 40px; align-items: center; justify-content: center; }
-        @media (max-width: 850px) { .game-split-layout { flex-direction: column; gap: 20px; } }
         
-        .canvas-area {
-            background: #000000; border: 2px solid #00ffcc; border-radius: 14px;
-            box-shadow: 0 0 35px rgba(0, 255, 204, 0.15); overflow: hidden;
+        .status-tag {
+            position: absolute; top: 18px; right: 18px; font-size: 0.65rem; font-weight: 900;
+            padding: 5px 12px; border-radius: 20px; letter-spacing: 1px; text-transform: uppercase;
         }
-        canvas { display: block; }
+        .status-tag.online { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc; }
+        .status-tag.purple { background: rgba(255, 0, 255, 0.1); color: #ff00ff; border: 1px solid #ff00ff; }
         
-        .control-pad {
-            display: grid; grid-template-columns: repeat(3, 75px); grid-template-rows: repeat(3, 75px);
-            gap: 12px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .pad-btn {
-            background: #090a14; border: 1px solid rgba(0, 255, 204, 0.2); border-radius: 12px;
-            color: #00ffcc; font-size: 1.4rem; font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; transition: all 0.1s ease;
-        }
-        .pad-btn:active { background: #00ffcc; color: #000000; transform: scale(0.95); }
-
-        /* 2048 FIX GRID */
-        .grid-2048-container {
-            width: 340px; height: 340px; background: #0b0c16; border: 2px solid #ff00ff;
-            border-radius: 12px; padding: 10px; display: grid; grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(4, 1fr); gap: 10px; box-shadow: 0 0 25px rgba(255, 0, 255, 0.1);
-        }
-        .cell-2048 {
-            background: rgba(255, 255, 255, 0.03); border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; font-weight: 900; color: #ffffff;
-            transition: all 0.12s linear; border: 1px solid rgba(255,255,255,0.02);
-        }
-        .tile-2 { background: #1a0f30; color: #00ffcc; }
-        .tile-4 { background: #2d0f47; color: #ff00ff; }
-        .tile-8 { background: #470f41; color: #ffaa00; }
-        .tile-16 { background: #470f1a; color: #ff3366; }
-        .tile-32 { background: #5a1818; color: #ffeb3b; }
-        .tile-64 { background: #5a3c18; color: #00e676; }
-        .tile-128 { background: #185a3c; color: #a6f0ff; box-shadow: 0 0 10px #00ffcc; }
-        .tile-256 { background: #185a54; color: #b2fce3; box-shadow: 0 0 15px #00ffcc; }
-        .tile-512 { background: #18335a; color: #ff7ebb; box-shadow: 0 0 15px #ff00ff; }
-        .tile-1024 { background: #3c185a; color: #e60067; box-shadow: 0 0 20px #ff00ff; }
-        .tile-2048 { background: #5a004b; color: #ffffff; box-shadow: 0 0 25px #ffffff; }
+        .game-title { font-size: 1.4rem; font-weight: 900; letter-spacing: 1px; color: #ffffff; margin-bottom: 12px; margin-top: 10px; }
+        .game-card.online .game-title { text-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
+        .game-card.online.purple-glow .game-title { text-shadow: 0 0 10px rgba(255, 0, 255, 0.2); }
+        .game-desc { font-size: 0.85rem; color: #637285; line-height: 1.6; margin-bottom: 30px; }
         
-        .score-panel {
-            font-size: 1.1rem; font-weight: bold; color: #00ffcc; margin-bottom: 12px;
-            text-transform: uppercase; letter-spacing: 1px;
+        .action-btn {
+            display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 15px;
+            background: rgba(0, 255, 204, 0.03); border: 1px solid #00ffcc; color: #00ffcc;
+            font-size: 0.9rem; font-weight: 900; letter-spacing: 2px; border-radius: 10px; text-decoration: none; transition: all 0.2s ease;
         }
-        .paddle-pad {
-            display: flex; gap: 20px; width: 100%; max-width: 250px; margin-top: 15px;
-        }
+        .action-btn:hover { background: #00ffcc; color: #020205; box-shadow: 0 0 20px #00ffcc; }
+        .action-btn.purple-btn { border-color: #ff00ff; color: #ff00ff; background: rgba(255, 0, 255, 0.03); }
+        .action-btn.purple-btn:hover { background: #ff00ff; color: #020205; box-shadow: 0 0 20px #ff00ff; }
     </style>
 </head>
 <body>
 
     <div class="grid-backdrop"></div>
 
-    <div class="container">
-        
-        <div class="arcade-header">
-            <a id="nav-action-link" href="game_center.html" class="back-btn">⚡ EXIT_TO_HUB</a>
-            <h1 id="arcade-title" class="nav-title">ARCADE CABINET</h1>
-            <span style="color: #ff00ff; font-size: 0.8rem; font-weight: bold;" id="hud-status-node">STABLE</span>
-        </div>
+    <div class="center-wrapper">
+        <a href="../index.html" class="back-mainframe">⚡ BACK_TO_MAINFRAME</a>
 
-        <div id="panel-menu" class="cabinet-panel active">
-            <div class="menu-grid">
-                <div class="menu-card" onclick="launchGameModule('snake')">
-                    <h2 class="card-title">🐍 SNAKE OVERDRIVE</h2>
-                    <p class="card-desc">Juiced vector engine. Smooth 120Hz physics loops, particle explosion sparks on ingestion, and custom glowing arcade trails.</p>
-                </div>
-                <div class="menu-card" onclick="launchGameModule('2048')">
-                    <h2 class="card-title">🔢 FIXED 2048 CALIBRATION</h2>
-                    <p class="card-desc">Zero-inversion slider array module. Directly maps vertical tracking rows so controls translate flawlessly without flips.</p>
-                </div>
-                <div class="menu-card" onclick="launchGameModule('breaker')">
-                    <h2 class="card-title">🧱 NEON BRICK BREAKER</h2>
-                    <p class="card-desc">Deflect the high-velocity energy ball with your sliding paddle to shatter neon brick matrices. Smooth touch-drag tracking.</p>
-                </div>
-            </div>
-        </div>
+        <header class="center-header">
+            <h1 class="center-title">GAME CENTER</h1>
+            <div class="center-subtitle">Tool 01 // Zaeem Labs Deployment Suite</div>
+        </header>
 
-        <div id="panel-snake" class="cabinet-panel">
-            <div class="game-split-layout">
-                <div style="text-align: center;">
-                    <div class="score-panel">SCORE MATRIX: <span id="snake-score-val">0</span></div>
-                    <div class="canvas-area">
-                        <canvas id="snake-canvas" width="340" height="340"></canvas>
-                    </div>
+        <main class="games-grid">
+            
+            <!-- GAME 01: UPDATED FOR BRICK BREAKER OUT CHESS -->
+            <section class="game-card online">
+                <div class="status-tag online">3-IN-1 PACK</div>
+                <div>
+                    <h2 class="game-title">ARCADE CABINET</h2>
+                    <p class="game-desc">A premium compilation of three offline classics running on a juiced vector graphics engine. Features a neon-glowing Snake, a perfectly aligned anti-inversion 2048 matrix, and a high-velocity Neon Brick Breaker breakout module with responsive touch-drag paddle tracking.</p>
                 </div>
-                <div class="control-pad">
-                    <div></div><button class="pad-btn" onclick="handlePadDir('UP')">▲</button><div></div>
-                    <button class="pad-btn" onclick="handlePadDir('LEFT')">◀</button><div></div><button class="pad-btn" onclick="handlePadDir('RIGHT')">▶</button>
-                    <div></div><button class="pad-btn" onclick="handlePadDir('DOWN')">▼</button><div></div>
-                </div>
-            </div>
-        </div>
+                <a href="game.html" class="action-btn">LAUNCH CABINET</a>
+            </section>
 
-        <div id="panel-2048" class="cabinet-panel">
-            <div class="game-split-layout">
-                <div style="text-align: center;">
-                    <div class="score-panel">MATRIX INDEX: <span id="score-2048-val">0</span></div>
-                    <div class="grid-2048-container" id="grid-2048-root"></div>
+            <!-- GAME 02: PARTICLE LABORATORY V2 -->
+            <section class="game-card online purple-glow">
+                <div class="status-tag purple">PHYSICS SIM</div>
+                <div>
+                    <h2 class="game-title">PARTICLE LABORATORY V2</h2>
+                    <p class="game-desc">A therapeutic, highly reactive falling sand physics simulator. Interact with 10 complex elements including acid-melting fluids, burning wood structures, floating oil layers, and deep-radius C4 explosions.</p>
                 </div>
-                <div class="control-pad">
-                    <div></div><button class="pad-btn" onclick="shift2048('UP')">▲</button><div></div>
-                    <button class="pad-btn" onclick="shift2048('LEFT')">◀</button><div></div><button class="pad-btn" onclick="shift2048('RIGHT')">▶</button>
-                    <div></div><button class="pad-btn" onclick="shift2048('DOWN')">▼</button><div></div>
-                </div>
-            </div>
-        </div>
+                <a href="sand_lab.html" class="action-btn purple-btn">BOOT REACTOR</a>
+            </section>
 
-        <div id="panel-breaker" class="cabinet-panel">
-            <div class="game-split-layout">
-                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-                    <div class="score-panel">BRICKS SHATTERED: <span id="breaker-score-val">0</span></div>
-                    <div class="canvas-area">
-                        <canvas id="breaker-canvas" width="340" height="340"></canvas>
-                    </div>
-                    <div class="paddle-pad">
-                        <button class="pad-btn" style="flex:1; padding: 10px;" id="break-left-btn">◀</button>
-                        <button class="pad-btn" style="flex:1; padding: 10px;" id="break-right-btn">▶</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        </main>
     </div>
 
-    <script>
-        let currentActiveGame = null;
-
-        function launchGameModule(gameType) {
-            document.querySelectorAll('.cabinet-panel').forEach(el => el.classList.remove('active'));
-            document.getElementById(`panel-${gameType}`).classList.add('active');
-            
-            let backLink = document.getElementById('nav-action-link');
-            backLink.innerText = "◀ ARCADE_MAIN_MENU";
-            backLink.setAttribute('href', '#');
-            backLink.onclick = resetArcadeMainframe;
-
-            document.getElementById('arcade-title').innerText = `${gameType.toUpperCase()} SYSTEM`;
-            currentActiveGame = gameType;
-
-            if (gameType === 'snake') initSnakeEngine();
-            if (gameType === '2048') init2048Engine();
-            if (gameType === 'breaker') initBreakerEngine();
-        }
-
-        function resetArcadeMainframe(e) {
-            if(e) e.preventDefault();
-            if (snakeClockInterval) clearInterval(snakeClockInterval);
-            if (breakerInterval) clearInterval(breakerInterval);
-            
-            document.querySelectorAll('.cabinet-panel').forEach(el => el.classList.remove('active'));
-            document.getElementById('panel-menu').classList.add('active');
-
-            let backLink = document.getElementById('nav-action-link');
-            backLink.innerText = "⚡ EXIT_TO_HUB";
-            backLink.setAttribute('href', 'game_center.html');
-            backLink.onclick = null;
-
-            document.getElementById('arcade-title').innerText = "ARCADE CABINET";
-            document.getElementById('hud-status-node').innerText = "STABLE";
-            currentActiveGame = null;
-        }
-
-        // =========================================================================
-        // --- SNAKE REALISM MATRIX ENGINE ---
-        // =========================================================================
-        let snakeCanvas = document.getElementById('snake-canvas');
-        let snakeCtx = snakeCanvas.getContext('2d');
-        let snakeClockInterval = null;
-        let snakeBody = [];
-        let snakeFood = { x: 0, y: 0 };
-        let snakeDx = 1; let snakeDy = 0;
-        let snakeScore = 0;
-        let snakeParticles = [];
-        const sCellCount = 20;
-        const sCellSize = 17; 
-
-        function initSnakeEngine() {
-            snakeBody = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
-            snakeDx = 1; snakeDy = 0; snakeScore = 0; snakeParticles = [];
-            document.getElementById('snake-score-val').innerText = snakeScore;
-            spawnSnakeFood();
-            if (snakeClockInterval) clearInterval(snakeClockInterval);
-            snakeClockInterval = setInterval(updateSnakeFrameLoop, 100); 
-        }
-
-        function spawnSnakeFood() {
-            snakeFood.x = Math.floor(Math.random() * sCellCount);
-            snakeFood.y = Math.floor(Math.random() * sCellCount);
-        }
-
-        function handlePadDir(dir) {
-            if (dir === 'UP' && snakeDy === 0) { snakeDx = 0; snakeDy = -1; }
-            if (dir === 'DOWN' && snakeDy === 0) { snakeDx = 0; snakeDy = 1; }
-            if (dir === 'LEFT' && snakeDx === 0) { snakeDx = -1; snakeDy = 0; }
-            if (dir === 'RIGHT' && snakeDx === 0) { snakeDx = 1; snakeDy = 0; }
-        }
-
-        function triggerFoodParticleExplosion(x, y) {
-            for (let i = 0; i < 14; i++) {
-                snakeParticles.push({
-                    x: x * sCellSize + sCellSize/2,
-                    y: y * sCellSize + sCellSize/2,
-                    vx: (Math.random() - 0.5) * 7,
-                    vy: (Math.random() - 0.5) * 7,
-                    alpha: 1.0,
-                    color: ['#ff00ff', '#00ffcc', '#ffffff'][Math.floor(Math.random() * 3)]
-                });
-            }
-        }
-
-        function updateSnakeFrameLoop() {
-            let head = { x: snakeBody[0].x + snakeDx, y: snakeBody[0].y + snakeDy };
-            if (head.x < 0) head.x = sCellCount - 1;
-            if (head.x >= sCellCount) head.x = 0;
-            if (head.y < 0) head.y = sCellCount - 1;
-            if (head.y >= sCellCount) head.y = 0;
-
-            for (let i = 0; i < snakeBody.length; i++) {
-                if (snakeBody[i].x === head.x && snakeBody[i].y === head.y) {
-                    document.getElementById('hud-status-node').innerText = "LOOP_RESET";
-                    initSnakeEngine(); return;
-                }
-            }
-
-            snakeBody.unshift(head);
-            if (head.x === snakeFood.x && head.y === snakeFood.y) {
-                snakeScore += 10;
-                document.getElementById('snake-score-val').innerText = snakeScore;
-                triggerFoodParticleExplosion(snakeFood.x, snakeFood.y);
-                spawnSnakeFood();
-            } else {
-                snakeBody.pop();
-            }
-
-            snakeCtx.fillStyle = '#020206';
-            snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-
-            snakeCtx.strokeStyle = 'rgba(255, 255, 255, 0.02)'; snakeCtx.lineWidth = 1;
-            for(let g=0; g<sCellCount; g++) {
-                snakeCtx.beginPath(); snakeCtx.moveTo(g*sCellSize, 0); snakeCtx.lineTo(g*sCellSize, snakeCanvas.height); snakeCtx.stroke();
-                snakeCtx.beginPath(); snakeCtx.moveTo(0, g*sCellSize); snakeCtx.lineTo(snakeCanvas.width, g*sCellSize); snakeCtx.stroke();
-            }
-
-            snakeCtx.save();
-            snakeCtx.shadowBlur = 15; snakeCtx.shadowColor = '#ff00ff';
-            snakeCtx.fillStyle = '#ff00ff';
-            snakeCtx.beginPath();
-            snakeCtx.arc(snakeFood.x * sCellSize + sCellSize/2, snakeFood.y * sCellSize + sCellSize/2, sCellSize/2 - 1, 0, Math.PI * 2);
-            snakeCtx.fill();
-            snakeCtx.restore();
-
-            snakeBody.forEach((seg, index) => {
-                let intensityRatio = 1.0 - (index / snakeBody.length);
-                snakeCtx.save();
-                snakeCtx.fillStyle = `rgba(0, 255, 204, ${0.4 + (0.6 * intensityRatio)})`;
-                snakeCtx.shadowBlur = index === 0 ? 12 : 4;
-                snakeCtx.shadowColor = '#00ffcc';
-                let radius = (sCellSize/2 - 1) * (0.6 + 0.4 * intensityRatio);
-                snakeCtx.beginPath();
-                snakeCtx.arc(seg.x * sCellSize + sCellSize/2, seg.y * sCellSize + sCellSize/2, radius, 0, Math.PI * 2);
-                snakeCtx.fill();
-                snakeCtx.restore();
-            });
-
-            for (let i = snakeParticles.length - 1; i >= 0; i--) {
-                let p = snakeParticles[i]; p.x += p.vx; p.y += p.vy; p.alpha -= 0.06;
-                if (p.alpha <= 0) { snakeParticles.splice(i, 1); continue; }
-                snakeCtx.save(); snakeCtx.globalAlpha = p.alpha; snakeCtx.fillStyle = p.color;
-                snakeCtx.fillRect(p.x, p.y, 3, 3); snakeCtx.restore();
-            }
-        }
-
-        // =========================================================================
-        // --- 2048 FLUID ALGORITHMS MATRIX ---
-        // =========================================================================
-        let grid2048 = new Array(16).fill(0);
-        let score2048 = 0;
-
-        function init2048Engine() {
-            grid2048.fill(0); score2048 = 0;
-            document.getElementById('score-2048-val').innerText = score2048;
-            injectRandom2048Tile(); injectRandom2048Tile();
-            render2048LayoutGrid();
-        }
-
-        function injectRandom2048Tile() {
-            let empty = [];
-            for (let i = 0; i < 16; i++) { if (grid2048[i] === 0) empty.push(i); }
-            if (empty.length > 0) grid2048[empty[Math.floor(Math.random() * empty.length)]] = Math.random() > 0.88 ? 4 : 2;
-        }
-
-        function render2048LayoutGrid() {
-            let root = document.getElementById('grid-2048-root'); root.innerHTML = '';
-            for (let i = 0; i < 16; i++) {
-                let cell = document.createElement('div'); cell.className = 'cell-2048';
-                let val = grid2048[i];
-                if (val > 0) { cell.innerText = val; cell.classList.add(`tile-${val}`); }
-                root.appendChild(cell);
-            }
-        }
-
-        function shift2048(direction) {
-            let changed = false;
-            const getIndex = (row, col) => row * 4 + col;
-            if (direction === 'LEFT' || direction === 'RIGHT') {
-                for (let r = 0; r < 4; r++) {
-                    let row = [grid2048[getIndex(r,0)], grid2048[getIndex(r,1)], grid2048[getIndex(r,2)], grid2048[getIndex(r,3)]];
-                    if (direction === 'RIGHT') row.reverse();
-                    let compressed = processCollapseSequence(row);
-                    if (direction === 'RIGHT') compressed.reverse();
-                    for (let c = 0; c < 4; c++) {
-                        let targetIdx = getIndex(r, c);
-                        if (grid2048[targetIdx] !== compressed[c]) { grid2048[targetIdx] = compressed[c]; changed = true; }
-                    }
-                }
-            } else if (direction === 'UP' || direction === 'DOWN') {
-                for (let c = 0; c < 4; c++) {
-                    let col = [grid2048[getIndex(0,c)], grid2048[getIndex(1,c)], grid2048[getIndex(2,c)], grid2048[getIndex(3,c)]];
-                    if (direction === 'DOWN') col.reverse();
-                    let compressed = processCollapseSequence(col);
-                    if (direction === 'DOWN') compressed.reverse();
-                    for (let r = 0; r < 4; r++) {
-                        let targetIdx = getIndex(r, c);
-                        if (grid2048[targetIdx] !== compressed[r]) { grid2048[targetIdx] = compressed[r]; changed = true; }
-                    }
-                }
-            }
-            if (changed) { injectRandom2048Tile(); document.getElementById('score-2048-val').innerText = score2048; render2048LayoutGrid(); }
-        }
-
-        function processCollapseSequence(line) {
-            let filtered = line.filter(v => v !== 0);
-            for (let i = 0; i < filtered.length - 1; i++) {
-                if (filtered[i] === filtered[i+1]) { filtered[i] *= 2; score2048 += filtered[i]; filtered[i+1] = 0; }
-            }
-            filtered = filtered.filter(v => v !== 0); while (filtered.length < 4) filtered.push(0); return filtered;
-        }
-
-        // =========================================================================
-        // --- 100% TRAUMA-FREE NEON BRICK BREAKER PHYSICS ENGINE ---
-        // =========================================================================
-        let breakerCanvas = document.getElementById('breaker-canvas');
-        let breakerCtx = breakerCanvas.getContext('2d');
-        let breakerInterval = null;
-
-        let paddleW = 75; let paddleH = 10; let paddleX = 132;
-        let ballX = 170; let ballY = 240;
-        let ballVx = 3.5; let ballVy = -3.5;
-        let ballRadius = 6;
-
-        let brickRows = 4; let brickCols = 6;
-        let brickW = 46; let brickH = 16;
-        let brickPadding = 6; let brickOffsetTop = 35; let brickOffsetLeft = 16;
-        let bricks = [];
-        let breakerScore = 0;
-
-        function initBreakerEngine() {
-            breakerScore = 0;
-            document.getElementById('breaker-score-val').innerText = breakerScore;
-            paddleX = (breakerCanvas.width - paddleW) / 2;
-            ballX = breakerCanvas.width / 2; ballY = 240;
-            ballVx = 3.5; ballVy = -4.0;
-            
-            bricks = [];
-            for (let c = 0; c < brickCols; c++) {
-                bricks[c] = [];
-                for (let r = 0; r < brickRows; r++) {
-                    bricks[c][r] = { x: 0, y: 0, status: 1, color: ['#00ffcc', '#ff00ff', '#ffaa00', '#ff3366'][r] };
-                }
-            }
-            if (breakerInterval) clearInterval(breakerInterval);
-            breakerInterval = setInterval(updateBreakerCircuit, 1000 / 60); // 60FPS lock
-        }
-
-        // Add iPad Touch drag control event listeners natively onto canvas box
-        let dragActive = false;
-        breakerCanvas.addEventListener('touchstart', (e) => { dragActive = true; movePaddleOnTouch(e); }, {passive:true});
-        breakerCanvas.addEventListener('touchmove', (e) => { if(dragActive) movePaddleOnTouch(e); }, {passive:true});
-        breakerCanvas.addEventListener('touchend', () => dragActive = false);
-
-        function movePaddleOnTouch(e) {
-            let rect = breakerCanvas.getBoundingClientRect();
-            let touchX = e.touches[0].clientX - rect.left;
-            paddleX = (touchX * (breakerCanvas.width / rect.width)) - paddleW / 2;
-            clampPaddleBoundary();
-        }
-
-        // Tap helper button configurations
-        document.getElementById('break-left-btn').addEventListener('touchstart', (e) => { e.preventDefault(); paddleX -= 25; clampPaddleBoundary(); });
-        document.getElementById('break-right-btn').addEventListener('touchstart', (e) => { e.preventDefault(); paddleX += 25; clampPaddleBoundary(); });
-
-        function clampPaddleBoundary() {
-            if (paddleX < 0) paddleX = 0;
-            if (paddleX > breakerCanvas.width - paddleW) paddleX = breakerCanvas.width - paddleW;
-        }
-
-        function updateBreakerCircuit() {
-            // Ball motion physics vectors incrementation steps
-            ballX += ballVx; ballY += ballVy;
-
-            // Lateral bounces mechanics
-            if (ballX + ballVx > breakerCanvas.width - ballRadius || ballX + ballVx < ballRadius) ballVx = -ballVx;
-            if (ballY + ballVy < ballRadius) ballVy = -ballVy;
-
-            // Paddle impact checks tracking
-            if (ballY + ballVy > breakerCanvas.height - ballRadius - paddleH) {
-                if (ballX > paddleX && ballX < paddleX + paddleW) {
-                    ballVy = -ballVy;
-                    // Add tactical angle spin velocity offsets depending on hit positioning offsets
-                    let hitCenterDiff = ballX - (paddleX + paddleW/2);
-                    ballVx = hitCenterDiff * 0.12;
-                } else if (ballY + ballVy > breakerCanvas.height - ballRadius) {
-                    // Out of bounds reset pass trigger
-                    document.getElementById('hud-status-node').innerText = "BALL_LOST";
-                    initBreakerEngine(); return;
-                }
-            }
-
-            // Brick destruction intersection loop parameters
-            for (let c = 0; c < brickCols; c++) {
-                for (let r = 0; r < brickRows; r++) {
-                    let b = bricks[c][r];
-                    if (b.status === 1) {
-                        if (ballX > b.x && ballX < b.x + brickW && ballY > b.y && ballY < b.y + brickH) {
-                            ballVy = -ballVy; b.status = 0;
-                            breakerScore++;
-                            document.getElementById('breaker-score-val').innerText = breakerScore;
-                            
-                            if (breakerScore === brickRows * brickCols) {
-                                document.getElementById('hud-status-node').innerText = "VICTORY";
-                                initBreakerEngine(); return;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // --- RENDER MATRIX GRAPHICS CIRCUIT ---
-            breakerCtx.fillStyle = '#020206'; breakerCtx.fillRect(0, 0, breakerCanvas.width, breakerCanvas.height);
-
-            // Draw Bricks layer setup
-            for (let c = 0; c < brickCols; c++) {
-                for (let r = 0; r < brickRows; r++) {
-                    if (bricks[c][r].status === 1) {
-                        let brickX = (c * (brickW + brickPadding)) + brickOffsetLeft;
-                        let brickY = (r * (brickH + brickPadding)) + brickOffsetTop;
-                        bricks[c][r].x = brickX; bricks[c][r].y = brickY;
-                        
-                        breakerCtx.save();
-                        breakerCtx.fillStyle = bricks[c][r].color;
-                        breakerCtx.shadowBlur = 8; breakerCtx.shadowColor = bricks[c][r].color;
-                        breakerCtx.fillRect(brickX, brickY, brickW, brickH);
-                        breakerCtx.restore();
-                    }
-                }
-            }
-
-            // Draw Paddle mesh
-            breakerCtx.save();
-            breakerCtx.fillStyle = '#ffffff'; breakerCtx.shadowBlur = 10; breakerCtx.shadowColor = '#ffffff';
-            breakerCtx.fillRect(paddleX, breakerCanvas.height - paddleH - 4, paddleW, paddleH);
-            breakerCtx.restore();
-
-            // Draw Ball node orb
-            breakerCtx.save();
-            breakerCtx.fillStyle = '#ff00ff'; breakerCtx.shadowBlur = 12; breakerCtx.shadowColor = '#ff00ff';
-            breakerCtx.beginPath(); breakerCtx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2); breakerCtx.fill();
-            breakerCtx.restore();
-        }
-
-        // Global key capture loop backings
-        window.addEventListener('keydown', (e) => {
-            if (!currentActiveGame) return;
-            let key = e.key.toLowerCase();
-            if (currentActiveGame === 'snake') {
-                if (key === 'arrowup' || key === 'w') handlePadDir('UP');
-                if (key === 'arrowdown' || key === 's') handlePadDir('DOWN');
-                if (key === 'arrowleft' || key === 'a') handlePadDir('LEFT');
-                if (key === 'arrowright' || key === 'd') handlePadDir('RIGHT');
-            }
-            if (currentActiveGame === '2048') {
-                if (key === 'arrowup' || key === 'w') shift2048('UP');
-                if (key === 'arrowdown' || key === 's') shift2048('DOWN');
-                if (key === 'arrowleft' || key === 'a') shift2048('LEFT');
-                if (key === 'arrowright' || key === 'd') shift2048('RIGHT');
-            }
-            if (currentActiveGame === 'breaker') {
-                if (key === 'arrowleft' || key === 'a') { paddleX -= 20; clampPaddleBoundary(); }
-                if (key === 'arrowright' || key === 'd') { paddleX += 20; clampPaddleBoundary(); }
-            }
-        });
-    </script>
 </body>
 </html>
