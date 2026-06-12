@@ -156,18 +156,18 @@
             box-shadow: 0 0 15px #ff00ff;
         }
 
-        /* LIVE SEARCH RESULT CONTAINER GRID */
+        /* COMPACT SEARCH TRAY (Fits perfectly over iPad software keyboards) */
         #search-results-tray {
             margin-top: 15px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            max-height: 320px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            max-height: 260px;
             overflow-y: auto;
-            padding: 5px;
+            padding: 10px;
             border-radius: 10px;
-            background: rgba(2, 2, 5, 0.6);
-            border: 1px dashed rgba(0, 255, 204, 0.1);
+            background: rgba(2, 2, 5, 0.95);
+            border: 1px solid rgba(0, 255, 204, 0.3);
             display: none;
         }
         .search-node-card {
@@ -176,31 +176,26 @@
             border-radius: 10px;
             padding: 10px;
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
             cursor: pointer;
             transition: all 0.2s ease;
         }
         .search-node-card:hover {
             border-color: #00ffcc;
-            background: rgba(0, 255, 204, 0.05);
-            transform: scale(1.02);
+            background: rgba(0, 255, 204, 0.08);
         }
         .search-node-thumb {
-            width: 45px;
-            height: 65px;
+            width: 40px;
+            height: 55px;
             object-fit: cover;
             background: #111;
-            border-radius: 5px;
+            border-radius: 4px;
         }
         .search-node-meta h4 {
             font-size: 0.85rem;
             color: #ffffff;
             margin-bottom: 3px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
         .search-node-meta p {
             font-size: 0.75rem;
@@ -317,8 +312,10 @@
             <button class="tab-btn" onclick="switchPanel('dl-panel', this)">SOCIAL SCRAPER SUITE</button>
         </div>
 
+        <!-- PANEL 01: ADVANCED IMDb STREAM INJECTOR -->
         <div id="imdb-panel" class="panel-card active">
             
+            <!-- FIXED LIVE SEARCH ENGINE -->
             <div class="input-group" style="margin-bottom: 30px; border-bottom: 1px dashed rgba(0, 255, 204, 0.15); padding-bottom: 25px;">
                 <label>Built-In Title Search Engine</label>
                 <div class="input-row">
@@ -355,6 +352,7 @@
             </div>
         </div>
 
+        <!-- PANEL 02: SOCIAL MEDIA EXTRACTOR -->
         <div id="dl-panel" class="panel-card">
             <div class="input-group">
                 <label>Media Source Link parameters</label>
@@ -383,6 +381,7 @@
 
     <script>
         let searchDebounceTimeout = null;
+        let globalCallbackCounter = 0;
 
         function switchPanel(panelId, btnElement) {
             document.querySelectorAll('.panel-card').forEach(el => el.classList.remove('active'));
@@ -396,7 +395,7 @@
             document.getElementById('tv-config-row').style.display = (type === 'tv') ? 'flex' : 'none';
         }
 
-        // --- CHILL CLIENT-SIDE LIVE INTERACTIVE IMDB SEARCH ENGINE ---
+        // --- FIXED DYNAMIC INTERACTIVE SEARCH LOGIC ---
         function triggerLiveDeckSearch() {
             clearTimeout(searchDebounceTimeout);
             let query = document.getElementById('deck-search-bar').value.trim();
@@ -407,16 +406,21 @@
                 return;
             }
 
-            // Debounce stops redundant server requests on iPad keyboards
             searchDebounceTimeout = setTimeout(() => {
-                let sanitizedQuery = query.toLowerCase().replace(/[^a-z0-9 ]/g, '');
+                // IMDb strips non-alphanumeric chars and forces underscores for spaces
+                let sanitizedQuery = query.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
                 let targetLetter = sanitizedQuery[0];
                 
-                // Remove existing instances of search handles scripts
                 let oldScript = document.getElementById('imdb-jsonp-bridge');
                 if (oldScript) oldScript.remove();
 
-                // Advanced JSONP Injection bridge mapping to crawl autocomplete suggestions cleanly
+                // FIX: Map the window object receiver to match IMDb's generated callback format
+                let cbName = `imdb$${sanitizedQuery}`;
+                window[cbName] = function(data) {
+                    populateResultsTray(data);
+                    try { delete window[cbName]; } catch(e) {}
+                };
+
                 let script = document.createElement('script');
                 script.id = 'imdb-jsonp-bridge';
                 script.src = `https://sg.media-imdb.com/suggests/${targetLetter}/${encodeURIComponent(sanitizedQuery)}.json`;
@@ -424,8 +428,7 @@
             }, 300);
         }
 
-        // Dynamic target function receiver triggered automatically by the JSONP callback script
-        window.imdb$jsonp = function(data) {
+        function populateResultsTray(data) {
             let tray = document.getElementById('search-results-tray');
             tray.innerHTML = '';
 
@@ -434,9 +437,7 @@
                 return;
             }
 
-            // Process matches array limits safely
             data.d.forEach(node => {
-                // Ensure element maps strictly to media blocks (Movies or TV series)
                 if (!node.id.startsWith('tt') || !['feature', 'tv_series', 'tv_miniseries', 'movie'].includes(node.q)) return;
 
                 let card = document.createElement('div');
@@ -447,14 +448,13 @@
                 let contentTypeLabel = (node.q.startsWith('tv')) ? '🎬 TV SHOW' : '🎥 MOVIE';
 
                 card.innerHTML = `
-                    <img class="search-node-thumb" src="${thumbSrc}" alt="poster">
+                    <img class="search-node-thumb" src="${thumbSrc}">
                     <div class="search-node-meta">
                         <h4>${node.l}</h4>
                         <p>${releaseYear} • ${contentTypeLabel}</p>
                     </div>
                 `;
 
-                // Tapping card pushes selection data instantly into core inject stream fields
                 card.onclick = function() {
                     document.getElementById('imdb-input').value = node.id;
                     document.getElementById('imdb-type').value = (node.q.startsWith('tv')) ? 'tv' : 'movie';
@@ -467,9 +467,9 @@
             });
 
             tray.style.display = (tray.children.length > 0) ? 'grid' : 'none';
-        };
+        }
 
-        // --- IMDb AUTOMATED STREAM PARSER & INJECTOR ---
+        // --- IMDb STREAM PARSER ---
         function injectImdbStream() {
             let inputVal = document.getElementById('imdb-input').value.trim();
             let mediaType = document.getElementById('imdb-type').value;
@@ -478,7 +478,7 @@
             let imdbId = idMatch ? idMatch[0] : inputVal;
 
             if (!imdbId || !imdbId.startsWith('tt')) {
-                alert("ERROR: Please insert a valid IMDb identification string or selection card (ttXXXXXXX).");
+                alert("ERROR: Please choose a movie from the search bar above or paste an ID (ttXXXXXXX).");
                 return;
             }
 
@@ -499,42 +499,36 @@
             box.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // --- CLIENT SIDE SOCIAL MEDIA PREVIEW & DOWNLOAD DECK CONTAINER ---
+        // --- FIXED SOCIAL MEDIA SCRAPER (UNIVERSAL ENDPOINT) ---
         function processSocialLink() {
             let url = document.getElementById('dl-input').value.trim();
-            if (!url) return alert("ERROR: Input address field cannot settle empty entries.");
+            if (!url) return alert("ERROR: Input field is empty.");
 
-            let title = "Media Asset Stream Resource";
+            let title = "External Stream Node";
             let platformIcon = "🔗";
-            let cleanDlLink = "";
 
             if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                title = "YouTube Video Stream Array";
+                title = "YouTube Video Stream";
                 platformIcon = "🎥";
-                cleanDlLink = `https://ssyoutube.com/zh20/download?url=${encodeURIComponent(url)}`;
             } else if (url.includes('instagram.com')) {
-                title = "Instagram Media Profile Reel";
+                title = "Instagram Media Reel";
                 platformIcon = "📸";
-                cleanDlLink = `https://saveig.app/en?url=${encodeURIComponent(url)}`;
             } else if (url.includes('facebook.com') || url.includes('fb.watch')) {
-                title = "Facebook Video Payload Package";
+                title = "Facebook Video Payload";
                 platformIcon = "🌐";
-                cleanDlLink = `https://fdown.net/download.php?url=${encodeURIComponent(url)}`;
-            } else {
-                title = "External Web Stream Matrix Node";
-                platformIcon = "🔗";
-                cleanDlLink = `https://www.google.com/search?q=download+video+${encodeURIComponent(url)}`;
             }
+
+            // FIX: Using bulletproof universal savefrom web application mapping to prevent any endpoint 404s
+            let safeExtractionLink = `https://en.savefrom.net/?url=${encodeURIComponent(url)}`;
 
             document.getElementById('meta-title').innerText = title;
             document.getElementById('meta-icon').innerText = platformIcon;
-            document.getElementById('meta-source').innerText = `Target Link: ${url.substring(0, 50)}...`;
+            document.getElementById('meta-source').innerText = `Link: ${url.substring(0, 45)}...`;
 
             let grid = document.getElementById('download-nodes-grid');
             grid.innerHTML = `
-                <a href="${cleanDlLink}" target="_blank" class="dl-node">⬇️ DOWNLOAD VIDEO (HD)</a>
-                <a href="${cleanDlLink}" target="_blank" class="dl-node">🎵 EXTRACT AUDIO (MP3)</a>
-                <a href="${url}" target="_blank" class="dl-node">📺 ORIGINAL STREAM LINK</a>
+                <a href="${safeExtractionLink}" target="_blank" class="dl-node">⬇️ OPEN DOWNLOAD CARD</a>
+                <a href="${url}" target="_blank" class="dl-node">📺 ORIGINAL WEB LINK</a>
             `;
 
             document.getElementById('dl-preview-box').style.display = 'block';
