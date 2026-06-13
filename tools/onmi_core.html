@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zaeem Labs // Omni Core Suite</title>
+    <link type="image/png" rel="icon" href="../logo.png">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0; padding: 0;
+            font-family: ui-monospace, Consolas, Monaco, monospace;
+        }
+        body {
+            background-color: #020205;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 30px 15px;
+            overflow-x: hidden;
+        }
+        .grid-backdrop {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 204, 0.012) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 204, 0.012) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: 1; pointer-events: none;
+        }
+        .container { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; }
+        
+        .back-btn {
+            color: #728196; text-decoration: none; font-size: 0.85rem; font-weight: 700;
+            display: inline-block; margin-bottom: 25px; transition: color 0.2s ease;
+        }
+        .back-btn:hover { color: #00ffcc; }
+        
+        header { text-align: center; margin-bottom: 35px; border-bottom: 1px dashed rgba(0, 255, 204, 0.15); padding-bottom: 25px; }
+        h1 { font-size: 2.2rem; letter-spacing: 6px; text-shadow: 0 0 15px rgba(0, 255, 204, 0.4); margin-bottom: 8px; }
+        .subtitle { color: #ff00ff; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; }
+
+        /* Multi-Command Tab Navigation Controls */
+        .tab-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; }
+        @media (max-width: 768px) { .tab-bar { grid-template-columns: repeat(2, 1fr); } }
+        .tab-btn {
+            padding: 15px 5px; background: rgba(10, 11, 25, 0.6); border: 1px solid rgba(0, 255, 204, 0.15);
+            color: #728196; font-weight: 900; cursor: pointer; border-radius: 12px; letter-spacing: 1px;
+            font-size: 0.8rem; text-align: center; transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            background: rgba(0, 255, 204, 0.08); border-color: #00ffcc; color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.15);
+        }
+
+        .panel-card {
+            background: rgba(5, 6, 15, 0.9); border: 1px solid rgba(0, 255, 204, 0.15);
+            border-radius: 16px; padding: 25px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: none; min-height: 450px;
+        }
+        .panel-card.active { display: block; }
+
+        /* CORE STRUCTURAL LAYOUTS */
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.8rem; color: #00ffcc; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; }
+        .input-row { display: flex; gap: 10px; }
+        input[type="text"], textarea {
+            flex: 1; padding: 15px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 10px; color: #ffffff; font-size: 0.9rem; outline: none;
+        }
+        input[type="text"]:focus, textarea:focus { border-color: #ff00ff; box-shadow: 0 0 10px rgba(255,0,255,0.15); }
+
+        .action-btn {
+            padding: 15px 25px; background: rgba(0, 255, 204, 0.05); border: 1px solid #00ffcc;
+            color: #00ffcc; font-weight: 900; border-radius: 10px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s ease;
+        }
+        .action-btn:hover { background: #00ffcc; color: #020205; box-shadow: 0 0 15px #00ffcc; }
+
+        /* --- TAB 1: LOCAL NEURAL TERMINAL --- */
+        .chat-container {
+            background: #010205; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
+            height: 240px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;
+        }
+        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; line-height: 1.4; }
+        .chat-msg.user { background: rgba(0, 255, 204, 0.1); border: 1px solid #00ffcc; align-self: flex-end; color: #00ffcc; }
+        .chat-msg.bot { background: rgba(255, 0, 255, 0.1); border: 1px solid #ff00ff; align-self: flex-start; color: #ff00ff; }
+        #ai-canvas { background: #000; border: 1px solid rgba(255, 0, 255, 0.2); border-radius: 10px; width: 100%; height: 160px; display: block; }
+
+        /* --- TAB 2: BIOMETRIC SCANNER VIEWPORT --- */
+        .biometric-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; }
+        @media (max-width: 768px) { .biometric-grid { grid-template-columns: 1fr; } }
+        .video-viewport {
+            background: #000; border: 2px solid #ff00ff; border-radius: 14px;
+            position: relative; overflow: hidden; min-height: 280px; display: flex; align-items: center; justify-content: center;
+        }
+        #webcam-stream { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.45; transform: scaleX(-1); }
+        #scanner-overlay-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .telemetry-box { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .telemetry-node { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 10px; color: #728196; }
+
+        /* --- TAB 3: MATRIX QUANTUM CALCULATOR --- */
+        .calc-wrapper { max-width: 320px; margin: 0 auto; background: #010206; border: 1px solid rgba(0,255,204,0.2); border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #calc-display { width: 100%; padding: 18px; background: #05060f; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; text-align: right; font-size: 1.5rem; color: #00ffcc; font-weight: bold; margin-bottom: 15px; overflow-x: auto; }
+        .calc-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .calc-btn { padding: 18px 5px; background: #0c0d1a; border: 1px solid rgba(255,255,255,0.05); color: #ffffff; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.1s ease; }
+        .calc-btn:active { background: #00ffcc; color: #000; transform: scale(0.95); }
+        .calc-btn.op { color: #ff00ff; border-color: rgba(255,0,255,0.2); }
+        .calc-btn.clear { color: #ff3366; border-color: rgba(255,51,102,0.2); }
+
+        /* --- TAB 4: SYSTEM ENCODER TOOLKIT --- */
+        .tools-panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .tools-panel-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div class="grid-backdrop"></div>
+
+    <div class="container">
+        
+        <a href="../index.html" class="back-btn">⚡ RETURN TO MAIN HUB</a>
+
+        <header>
+            <h1>OMNI CORE</h1>
+            <div class="subtitle">Zaeem Labs // Multi-Utility Station Terminal</div>
+        </header>
+
+        <!-- COMMAND DOCK TABS CONTROL BAR -->
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchOmniTab('ai-panel', this)">🧠 NEURAL COMM</button>
+            <button class="tab-btn" onclick="switchOmniTab('bio-panel', this)">👁️ BIO SCANNER</button>
+            <button class="tab-btn" onclick="switchOmniTab('calc-panel', this)">🔢 QUANTUM CALC</button>
+            <button class="tab-btn" onclick="switchOmniTab('cipher-panel', this)">⚡ CRYPTO UTILS</button>
+        </div>
+
+        <!-- PANEL 01: LOCAL AI NEURAL COMM ENGINE -->
+        <div id="ai-panel" class="panel-card active">
+            <label>AI Communications Matrix Interface</label>
+            <div class="chat-container" id="chat-scroller">
+                <div class="chat-msg bot">SYSTEM INTERFACE ONLINE. Initialized localized pattern response nodes. Submit diagnostic inputs or prompt abstract procedural image compiles below.</div>
+            </div>
+            <div class="input-row" style="margin-bottom: 25px;">
+                <input type="text" id="ai-chat-input" placeholder="Ask local node or type image prompt (e.g., 'matrix code core')...">
+                <button class="action-btn" onclick="executeLocalNeuralInput()">TRANSMIT</button>
+            </div>
+
+            <label>Procedural Neural Imaging Matrix</label>
+            <canvas id="ai-canvas" width="600" height="160"></canvas>
+        </div>
+
+        <!-- PANEL 02: FRONTLINE BIOMETRIC EMOTION SCANNER -->
+        <div id="bio-panel" class="panel-card">
+            <div class="biometric-grid">
+                <div class="video-viewport">
+                    <video id="webcam-stream" autoplay playsinline></video>
+                    <canvas id="scanner-overlay-canvas"></canvas>
+                    <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px;">BIOMETRIC CAM OFFLINE.<br><br><button class="action-btn" onclick="initializeBiometricCamera()">BOOT FRONT CAM</button></p>
+                </div>
+                <div class="telemetry-box">
+                    <label style="color:#ff00ff; margin-bottom: 15px;">Biometric Matrix Feed</label>
+                    <div class="telemetry-node"><span>SCAN ARRAYS:</span><span id="tele-status" style="color:#ff3366; font-weight:bold;">STANDBY</span></div>
+                    <div class="telemetry-node"><span>EMOTION DELTA:</span><span id="tele-emotion" style="color:#fff; font-weight:bold;">UNINITIALIZED</span></div>
+                    <div class="telemetry-node"><span>VECTOR LOCK:</span><span id="tele-lock" style="color:#728196;">0.00%</span></div>
+                    <div class="telemetry-node"><span>PUPIL VARIANCE:</span><span id="tele-variance" style="color:#728196;">STABLE</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL 03: QUANTUM MATRIX RE-ENGINEERED CALCULATOR -->
+        <div id="calc-panel" class="panel-card">
+            <div class="calc-wrapper">
+                <div id="calc-display">0</div>
+                <div class="calc-keys">
+                    <button class="calc-btn clear" onclick="clearCalc()">C</button>
+                    <button class="calc-btn op" onclick="appendCalcOp('/')">/</button>
+                    <button class="calc-btn op" onclick="appendCalcOp('*')">*</button>
+                    <button class="calc-btn op" onclick="appendCalcOp('-')">-</button>
+                    
+                    <button class="calc-btn" onclick="appendCalcNum('7')">7</button>
+                    <button class="calc-btn" onclick="appendCalcNum('8')">8</button>
+                    <button class="calc-btn" onclick="appendCalcNum('9')">9</button>
+                    <button class="calc-btn op" onclick="appendCalcOp('+')">+</button>
+                    
+                    <button class="calc-btn" onclick="appendCalcNum('4')">4</button>
+                    <button class="calc-btn" onclick="appendCalcNum('5')">5</button>
+                    <button class="calc-btn" onclick="appendCalcNum('6')">6</button>
+                    <button class="calc-btn" onclick="computeCalcResult()">=</button>
+                    
+                    <button class="calc-btn" onclick="appendCalcNum('1')">1</button>
+                    <button class="calc-btn" onclick="appendCalcNum('2')">2</button>
+                    <button class="calc-btn" onclick="appendCalcNum('3')">3</button>
+                    <button class="calc-btn" onclick="appendCalcNum('0')">0</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL 04: CORE CIPHER & SECURITY TOOLS -->
+        <div id="cipher-panel" class="panel-card">
+            <div class="tools-panel-grid">
+                <!-- SHA-256 Sector -->
+                <div class="telemetry-box">
+                    <label style="color:#00ffcc;">1. Cryptographic SHA-256 Encoder</label>
+                    <textarea id="crypto-input" rows="4" style="width:100%; margin: 10px 0; resize: none;" placeholder="Enter string text to hash cleanly..."></textarea>
+                    <button class="action-btn" style="width:100%;" onclick="generateClientSha256()">EXECUTE CRYPTO HASH</button>
+                    <div style="margin-top: 15px; font-size: 0.75rem; word-break: break-all; color: #ff00ff;">OUTPUT MATRIX: <span id="crypto-output" style="color:white;">Awaiting Input...</span></div>
+                </div>
+                <!-- Base64 Sector -->
+                <div class="telemetry-box">
+                    <label style="color:#ffaa00;">2. Base64 Data Compiler Matrix</label>
+                    <textarea id="base64-input" rows="4" style="width:100%; margin: 10px 0; resize: none;" placeholder="Enter plain text or encoded base64 parameters..."></textarea>
+                    <div style="display:flex; gap:10px;">
+                        <button class="action-btn" style="flex:1; border-color:#ffaa00; color:#ffaa00; background:rgba(255,170,0,0.02);" onclick="executeBase64Compile('encode')">ENCODE</button>
+                        <button class="action-btn" style="flex:1; border-color:#ffaa00; color:#ffaa00; background:rgba(255,170,0,0.02);" onclick="executeBase64Compile('decode')">DECODE</button>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.75rem; word-break: break-all; color: #00ffcc;">DATA STREAM: <span id="base64-output" style="color:white;">Awaiting conversion...</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function switchOmniTab(panelId, btnElement) {
+            document.querySelectorAll('.panel-card').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            btnElement.classList.add('active');
+            // Shut off webcam processing loops gracefully if user switches panels
+            if (panelId !== 'bio-panel') stopBiometricCamera();
+        }
+
+        // =========================================================================
+        // --- CLIENT-SIDE LOCAL NEURAL TERMINAL & ART GENERATOR ---
+        // =========================================================================
+        function executeLocalNeuralInput() {
+            let inputField = document.getElementById('ai-chat-input');
+            let txt = inputField.value.trim(); if (!txt) return;
+
+            appendChatMessage(txt, 'user');
+            inputField.value = '';
+
+            // Generate responsive algorithmic text replies maps
+            setTimeout(() => {
+                let lower = txt.toLowerCase();
+                let reply = "Diag-matrix input logged. Telemetry states optimal. Request further queries.";
+                if (lower.includes('hello') || lower.includes('hi')) reply = "Omni Core connection verified. Systems reporting stable vectors.";
+                if (lower.includes('help')) reply = "Awaiting instruction blocks. Access tabs for Calculator, Biometrics, and Encoders.";
+                if (lower.includes('calc')) reply = "Quantum calculation engine loaded inside Tab 3 registers.";
+                
+                appendChatMessage(reply, 'bot');
+                // Trigger canvas art procedurally compiled from the prompt text
+                compileProceduralImageHash(txt);
+            }, 450);
+        }
+
+        function appendChatMessage(text, owner) {
+            let container = document.getElementById('chat-scroller');
+            let bubble = document.createElement('div');
+            bubble.className = `chat-msg ${owner}`;
+            bubble.innerText = text;
+            container.appendChild(bubble);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Fast client-side vector renderer creates beautiful custom abstract art based on string lengths hash values
+        function compileProceduralImageHash(prompt) {
+            let canvas = document.getElementById('ai-canvas');
+            let ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let hash = 0; for (let i = 0; i < prompt.length; i++) { hash = prompt.charCodeAt(i) + ((hash << 5) - hash); }
+
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 15; i++) {
+                let seed = Math.sin(hash + i) * 1000;
+                let rX = Math.abs(seed % canvas.width);
+                let rY = Math.abs((seed * 2) % canvas.height);
+                let radius = Math.abs((seed * 3) % 45) + 5;
+
+                ctx.strokeStyle = i % 2 === 0 ? '#00ffcc' : '#ff00ff';
+                ctx.shadowBlur = 10; ctx.shadowColor = ctx.strokeStyle;
+                
+                ctx.beginPath();
+                ctx.arc(rX, rY, radius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.shadowBlur = 0; // Clear register flags
+        }
+
+        // =========================================================================
+        // --- HARDWARE ACCELERATED BIOMETRIC RETICLE SCREEN OVERLAY ---
+        // =========================================================================
+        let camVideoStream = null;
+        let overlayLoopInterval = null;
+
+        function initializeBiometricCamera() {
+            let constraints = { video: { facingMode: "user", width: 640, height: 480 } };
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(stream => {
+                    camVideoStream = stream;
+                    let video = document.getElementById('webcam-stream');
+                    video.srcObject = stream;
+                    document.getElementById('camera-placeholder').style.display = 'none';
+                    
+                    document.getElementById('tele-status').innerText = "LOCKING VECTOR...";
+                    document.getElementById('tele-status').style.color = "#ffaa00";
+                    
+                    startTrackingReticleLoop();
+                })
+                .catch(err => {
+                    alert("ERROR: Biometric camera initialization blocked or unallocated.");
+                });
+        }
+
+        function stopBiometricCamera() {
+            if (camVideoStream) {
+                camVideoStream.getTracks().forEach(track => track.stop());
+                camVideoStream = null;
+            }
+            clearInterval(overlayLoopInterval);
+            document.getElementById('camera-placeholder').style.display = 'block';
+            document.getElementById('tele-status').innerText = "STANDBY";
+            document.getElementById('tele-status').style.color = "#ff3366";
+            document.getElementById('tele-emotion').innerText = "UNINITIALIZED";
+        }
+
+        function startTrackingReticleLoop() {
+            let canvas = document.getElementById('scanner-overlay-canvas');
+            let ctx = canvas.getContext('2d');
+            let video = document.getElementById('webcam-stream');
+
+            clearInterval(overlayLoopInterval);
+            overlayLoopInterval = setInterval(() => {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Procedural scanning telemetry tracker crosshairs variables layout mapping
+                    let tX = canvas.width / 2; let tY = canvas.height / 2;
+                    let pulseRadius = 55 + Math.sin(Date.now() / 150) * 4;
+
+                    ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 2;
+                    ctx.shadowBlur = 8; ctx.shadowColor = '#00ffcc';
+
+                    // Center box boundaries tracking indicators
+                    ctx.strokeRect(tX - 70, tY - 70, 140, 140);
+                    ctx.beginPath(); ctx.arc(tX, tY, pulseRadius, 0, Math.PI*2); ctx.stroke();
+
+                    // Matrix vector ticks lines
+                    ctx.beginPath(); ctx.moveTo(tX - 100, tY); ctx.lineTo(tX - 60, tY);
+                    ctx.moveTo(tX + 60, tY); ctx.lineTo(tX + 100, tY); ctx.stroke();
+
+                    // Dynamic shift simulation numbers calculations readouts metrics profiles
+                    document.getElementById('tele-status').innerText = "TRACKING LOCKED";
+                    document.getElementById('tele-status').style.color = "#00ffcc";
+                    document.getElementById('tele-lock').innerText = (96.4 + Math.random() * 3.5).toFixed(2) + "%";
+                    
+                    let expressions = ["CALM MATRIX", "STABLE FOCUS", "DETERMINED // OPTIMAL", "COGNITIVE STATE OK"];
+                    document.getElementById('tele-emotion').innerText = expressions[Math.floor((Date.now() / 2500) % expressions.length)];
+                }
+            }, 1000 / 30);
+        }
+
+        // =========================================================================
+        // --- QUANTUM FLUID MATHEMATICAL CALC OPERATIONS ENGINE ---
+        // =========================================================================
+        let currentCalcState = "0";
+        let clearOnNextInput = false;
+
+        function updateCalcDisplay() {
+            document.getElementById('calc-display').innerText = currentCalcState;
+        }
+        function appendCalcNum(num) {
+            if (currentCalcState === "0" || clearOnNextInput) { currentCalcState = num; clearOnNextInput = false; }
+            else { currentCalcState += num; }
+            updateCalcDisplay();
+        }
+        function appendCalcOp(op) {
+            clearOnNextInput = false;
+            let lastChar = currentCalcState.slice(-1);
+            if (['+','-','*','/'].includes(lastChar)) { currentCalcState = currentCalcState.slice(0, -1) + op; }
+            else { currentCalcState += op; }
+            updateCalcDisplay();
+        }
+        function clearCalc() { currentCalcState = "0"; clearOnNextInput = false; updateCalcDisplay(); }
+        function computeCalcResult() {
+            try {
+                // Evaluates standard math expressions using native context compilers securely inside sandbox registers
+                let result = Function(`"use strict"; return (${currentCalcState})`)();
+                currentCalcState = String(result); clearOnNextInput = true;
+            } catch(e) { currentCalcState = "ERROR"; clearOnNextInput = true; }
+            updateCalcDisplay();
+        }
+
+        // =========================================================================
+        // --- BINARY SECURITY DATA STREAM INTERFACES ---
+        // =========================================================================
+        async function generateClientSha256() {
+            let msg = document.getElementById('crypto-input').value;
+            if(!msg) return alert("ERROR: Input data registry is unallocated.");
+
+            // Native hardware WebCrypto API hashes data fast at CPU speed
+            let msgBuffer = new TextEncoder().encode(msg);
+            let hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            let hashArray = Array.from(new Uint8Array(hashBuffer));
+            let hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            document.getElementById('crypto-output').innerText = hashHex;
+        }
+
+        function executeBase64Compile(mode) {
+            let input = document.getElementById('base64-input').value.trim();
+            if(!input) return alert("ERROR: Allocation index empty.");
+            let outputNode = document.getElementById('base64-output');
+
+            try {
+                if (mode === 'encode') { outputNode.innerText = btoa(input); }
+                else { outputNode.innerText = atob(input); }
+            } catch(e) { outputNode.innerText = "ERROR: Compilation structural anomaly tracking broke conversion loop."; }
+        }
+    </script>
+</body>
+</html>
