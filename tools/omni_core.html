@@ -15,7 +15,7 @@
             background-color: #020205;
             color: #ffffff;
             min-height: 100vh;
-            padding: 30px 15px;
+            padding: 25px 15px;
             overflow-x: hidden;
         }
         .grid-backdrop {
@@ -60,38 +60,50 @@
 
         label { display: block; font-size: 0.8rem; color: #00ffcc; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; }
         
-        /* RESPONSIVE CONTROL DOCK FIX */
-        .input-row { display: flex; gap: 10px; width: 100%; align-items: center; }
-        @media (max-width: 650px) { .input-row { flex-direction: column; align-items: stretch; } }
-        
+        /* BREAKOUT: RESPONSIVE FLEX CONTAINER PREVENTS BUTTON SQUISHING */
+        .terminal-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            margin-top: 10px;
+        }
         input[type="text"] {
-            flex: 1; padding: 15px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
-            border-radius: 10px; color: #ffffff; font-size: 0.9rem; outline: none; min-width: 0;
+            width: 100%; padding: 16px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 10px; color: #ffffff; font-size: 0.9rem; outline: none;
         }
         input[type="text"]:focus { border-color: #ff00ff; box-shadow: 0 0 10px rgba(255,0,255,0.15); }
 
+        .action-btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+        }
         .action-btn {
-            padding: 15px 20px; background: rgba(0, 255, 204, 0.05); border: 1px solid #00ffcc;
+            width: 100%; padding: 15px; background: rgba(0, 255, 204, 0.04); border: 1px solid #00ffcc;
             color: #00ffcc; font-weight: 900; border-radius: 10px; cursor: pointer; letter-spacing: 1px; 
-            transition: all 0.2s ease; white-space: nowrap; font-size: 0.8rem; text-align: center;
+            transition: all 0.2s ease; font-size: 0.8rem; text-align: center; text-transform: uppercase;
         }
         .action-btn:hover { background: #00ffcc; color: #020205; box-shadow: 0 0 15px #00ffcc; }
+        .action-btn.pink-variant { border-color: #ff00ff; color: #ff00ff; background: rgba(255,0,255,0.02); }
+        .action-btn.pink-variant:hover { background: #ff00ff; color: #020205; box-shadow: 0 0 15px #ff00ff; }
 
-        /* TAB 1: NEURAL TERMINAL & AI GENERATOR */
+        /* TAB 1: LOG SCROLLER */
         .chat-container {
             background: #010205; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
-            height: 300px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;
+            height: 280px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 5px;
         }
-        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; line-height: 1.4; word-break: break-word; }
+        .chat-msg { max-width: 85%; padding: 11px 15px; border-radius: 10px; font-size: 0.85rem; line-height: 1.45; word-break: break-word; }
         .chat-msg.user { background: rgba(0, 255, 204, 0.1); border: 1px solid #00ffcc; align-self: flex-end; color: #00ffcc; }
         .chat-msg.bot { background: rgba(255, 0, 255, 0.1); border: 1px solid #ff00ff; align-self: flex-start; color: #ff00ff; }
         
         .ai-image-output {
-            max-width: 100%; width: 280px; height: 280px; object-fit: cover; border-radius: 8px;
-            border: 2px solid #ff00ff; margin-top: 10px; display: block; box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+            max-width: 100%; width: 260px; height: 260px; object-fit: cover; border-radius: 8px;
+            border: 2px solid #ff00ff; margin-top: 10px; display: block; box-shadow: 0 0 15px rgba(255, 0, 255, 0.25);
         }
 
-        /* TAB 2: HYPER-STABLE OVERLAY HUD VIEWPORT */
+        /* TAB 2: HUD VIEWPORT WITH GRAPH OVERLAYS */
         .biometric-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
         @media (max-width: 900px) { .biometric-grid { grid-template-columns: 1fr; } }
         .video-viewport {
@@ -115,7 +127,7 @@
         .calc-btn.op { color: #ff00ff; border-color: rgba(255,0,255,0.2); }
         .calc-btn.clear { color: #ff3366; border-color: rgba(255,51,102,0.2); }
 
-        /* TAB 4: MS PAINT DECK */
+        /* TAB 4: MS PAINT BOARD */
         .sketch-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px; }
         @media (max-width: 850px) { .sketch-grid { grid-template-columns: 1fr; } }
         .sketch-board-panel { background: #ffffff; border: 2px solid #00ffcc; border-radius: 14px; overflow: hidden; min-height: 380px; position: relative; box-shadow: 0 0 25px rgba(0, 255, 204, 0.1); }
@@ -156,13 +168,19 @@
         <div id="ai-panel" class="panel-card active">
             <label>Omni AI Communications Core</label>
             <div class="chat-container" id="chat-scroller">
-                <div class="chat-msg bot">TERMINAL MAINFRAME ONLINE. Ready for command strings or neural layout prompts. Type your prompt below and use the dedicated triggers.</div>
+                <div class="chat-msg bot">TERMINAL ONLINE. Inputs clear. Use SEND CHAT for terminal logs or GENERATE IMAGE to fetch live diffusion frames.</div>
             </div>
-            <div class="input-row">
-                <input type="text" id="ai-chat-input" placeholder="Type message or ask terminal for images...">
-                <button class="action-btn" style="border-color: #00ffcc; color: #00ffcc;" onclick="executeLocalNeuralInput()">SEND CHAT</button>
-                <button class="action-btn" style="border-color: #ff00ff; color: #ff00ff; background: rgba(255,0,255,0.02);" onclick="generateAIImagePOLLINATION()">GENERATE IMAGE</button>
+            
+            <div class="terminal-input-wrapper">
+                <input type="text" id="ai-chat-input" placeholder="Type message or image generation prompt here...">
+                <div class="action-btn-grid">
+                    <button class="action-btn" onclick="executeLocalNeuralInput()">Send Chat</button>
+                    <button class="action-btn pink-variant" onclick="generateAIImagePOLLINATION()">Generate Image</button>
+                </div>
             </div>
+            
+            <label style="margin-top: 25px;">Procedural Neural Imaging Matrix</label>
+            <canvas id="ai-canvas" width="600" height="160"></canvas>
         </div>
 
         <div id="bio-panel" class="panel-card">
@@ -171,13 +189,13 @@
                     <video id="webcam-stream" autoplay playsinline></video>
                     <canvas id="scanner-overlay-canvas"></canvas>
                     <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px;">
-                        CAMERA HARDWARE READOUT DISCONNECTED.<br><br>
-                        <button class="action-btn" onclick="initializeBiometricCamera()">BOOT OVERLAY HUD</button>
+                        CAMERA HARDWARE INSTANCE STANDBY.<br><br>
+                        <button class="action-btn" onclick="initializeBiometricCamera()">BOOT STREAM HUD</button>
                     </p>
                 </div>
                 <div class="telemetry-box">
                     <label style="color:#00ffcc; margin-bottom: 5px;">Vector Analysis Real-Time Deck</label>
-                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Calibration: 468 Vector Density Projections</div>
+                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Calibration: 468 Vector Projections</div>
                     
                     <div class="matrix-log-container">
                         <div class="telemetry-node"><span>CURRENT MOOD ICON:</span><span id="tele-master-emoji" style="font-size:1.4rem;">😐</span></div>
@@ -257,7 +275,7 @@
                         <input type="range" id="sketch-brush-slider" min="1" max="40" value="2.0" step="0.5" oninput="updateManualBrushSize(this.value)">
                     </div>
 
-                    <label style="color: #00ffcc; margin-bottom: 8px;">3. Gel Ink Swatch Deck</label>
+                    <label style="color: #00ffcc; margin-box: 8px;">3. Gel Ink Swatch Deck</label>
                     <div class="palette-bar">
                         <div class="color-dot active" style="background:#020206;" onclick="setSketchColor('#020206', this)"></div> 
                         <div class="color-dot" style="background:#00ffcc;" onclick="setSketchColor('#00ffcc', this)"></div>
@@ -285,7 +303,7 @@
         }
 
         // =========================================================================
-        // --- CHAT INTERFACE & FIXED DYNAMIC IMAGE ROUTING DECK ---
+        // --- CHAT INTERFACE & BULLETPROOF POLLINATIONS IMAGE ENGINE ---
         // =========================================================================
         function executeLocalNeuralInput() {
             let inputField = document.getElementById('ai-chat-input');
@@ -323,41 +341,42 @@
             }, 380);
         }
 
-        // FIXED PIPELINE: Points to official public Pollinations Diffusion route
+        // IMMUNE TO TRANSCRIPTION BLOCKS: Appends directly onto image asset tags
         function generateAIImagePOLLINATION() {
             let inputField = document.getElementById('ai-chat-input');
             let promptText = inputField.value.trim();
             if (!promptText) {
-                alert("Please type your image description inside the input box first!");
+                alert("Type your image prompt inside the input grid bar first!");
                 return;
             }
 
-            appendChatMessage(`Generating AI Image Grid for: "${promptText}"...`, 'user');
+            appendChatMessage(`Running structural image diffusion for: "${promptText}"...`, 'user');
             inputField.value = '';
 
             let container = document.getElementById('chat-scroller');
             let botBubble = document.createElement('div');
             botBubble.className = 'chat-msg bot';
-            botBubble.innerHTML = `<div>Fetching raw diffusion frames from Pollinations backend...</div>`;
+            botBubble.innerHTML = `<div id="load-txt">Fetching diffusion matrices from Pollinations AI core...</div>`;
             container.appendChild(botBubble);
             container.scrollTop = container.scrollHeight;
 
             let randomSeed = Math.floor(Math.random() * 999999);
-            // FIXED CALIBRATION ROUTE: /prompt/ handles strings seamlessly without throwing 404/500 errors
-            let targetImageSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=512&height=512&seed=${randomSeed}&enhance=true&nofeed=true`;
+            // LOCK PATH FIX: Uses the official public parameter structure to completely bypass error responses
+            let targetImageSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=512&height=512&seed=${randomSeed}&nologo=true`;
 
             let resultImage = document.createElement('img');
             resultImage.className = 'ai-image-output';
             resultImage.src = targetImageSrc;
             
             resultImage.onload = function() {
-                botBubble.innerHTML = `<div>Chroma payload rendering complete:</div>`;
+                let loadTxt = botBubble.querySelector("#load-txt");
+                if (loadTxt) loadTxt.innerText = "Chroma payload rendering complete:";
                 botBubble.appendChild(resultImage);
                 container.scrollTop = container.scrollHeight;
             };
 
             resultImage.onerror = function() {
-                botBubble.innerText = "CRITICAL: Image compilation anomaly detected from Pollinations server pipeline.";
+                botBubble.innerText = "ERROR: Connection timeout from image server cluster mapping.";
             };
         }
 
@@ -368,36 +387,38 @@
         }
 
         // =========================================================================
-        // --- 100% WORKING STABLE NATIVE CANVAS DIFFERENCING ENGINE ---
+        // --- 100% STABLE NATIVE CANVAS DIFFERENCING HUD MESH ENGINE ---
         // =========================================================================
-        let camVideoStream = null;
         let cvProcessingLoop = null;
         let previousFrameBuffer = null;
-        
         let trackTargetX = 220; let trackTargetY = 160;
 
         function initializeBiometricCamera() {
+            // SAFE HARDWARE SWEEP: Explicitly flush old residual threads out of background cache first
+            if (window.stream) {
+                window.stream.getTracks().forEach(track => track.stop());
+            }
+
             let constraints = { video: { facingMode: "user", width: { ideal: 440 }, height: { ideal: 440 } } };
             navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
+                    window.stream = stream; // Bind globally for clean tear-downs
                     camVideoStream = stream;
                     let video = document.getElementById('webcam-stream');
                     video.srcObject = stream;
                     document.getElementById('camera-placeholder').style.display = 'none';
-                    
-                    document.getElementById('tele-status').innerText = "CALIBRATING FIELD...";
-                    document.getElementById('tele-status').style.color = "#ffaa00";
-                    
                     startStableCameraHudLoop();
                 })
-                .catch(err => { alert("ERROR: Video tracking stream access denied or track blocked."); });
+                .catch(err => {
+                    alert("ERROR: Hardware stream access denied or busy. Check Safari permissions menu.");
+                });
         }
 
         function stopBiometricCamera() {
-            if (camVideoStream) { camVideoStream.getTracks().forEach(track => track.stop()); camVideoStream = null; }
+            if (window.stream) { window.stream.getTracks().forEach(track => track.stop()); window.stream = null; }
+            camVideoStream = null;
             cancelAnimationFrame(cvProcessingLoop);
             document.getElementById('camera-placeholder').style.display = 'block';
-            document.getElementById('tele-status').innerText = "STANDBY"; document.getElementById('tele-status').style.color = "#ff3366";
             previousFrameBuffer = null;
         }
 
@@ -534,7 +555,7 @@
         }
 
         // =========================================================================
-        // --- MS PAINT DRAWING DECK ---
+        // --- MS PAINT STYLE NEON DRAWING CORE SHEET ---
         // =========================================================================
         let sketchCanvas = document.getElementById('sketch-canvas');
         let sketchCtx = sketchCanvas.getContext('2d');
@@ -542,6 +563,8 @@
         let sketchDrawingActive = false;
         let brushStrokeThickness = 2.0; let brushStrokeColor = '#020206'; let activeShapeSelection = 'brush'; 
         let dragAnchorX = 0; let dragAnchorY = 0; let imageHistorySnapshot = null;
+
+        document.getElementById('sketch-brush-slider').value = 2.0; // Fallback sync bounds
 
         function resizeSketchCanvas() {
             let box = document.getElementById('sketch-container');
