@@ -59,12 +59,23 @@
         .panel-card.active { display: block; }
 
         label { display: block; font-size: 0.8rem; color: #00ffcc; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; }
-        .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        /* RESPONSIVE CONTROL DOCK FIX */
+        .input-row { display: flex; gap: 10px; width: 100%; align-items: center; }
+        @media (max-width: 650px) { .input-row { flex-direction: column; align-items: stretch; } }
+        
         input[type="text"] {
-            flex: 1; min-width: 260px; padding: 15px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
-            border-radius: 10px; color: #ffffff; font-size: 0.9rem; outline: none;
+            flex: 1; padding: 15px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 10px; color: #ffffff; font-size: 0.9rem; outline: none; min-width: 0;
         }
         input[type="text"]:focus { border-color: #ff00ff; box-shadow: 0 0 10px rgba(255,0,255,0.15); }
+
+        .action-btn {
+            padding: 15px 20px; background: rgba(0, 255, 204, 0.05); border: 1px solid #00ffcc;
+            color: #00ffcc; font-weight: 900; border-radius: 10px; cursor: pointer; letter-spacing: 1px; 
+            transition: all 0.2s ease; white-space: nowrap; font-size: 0.8rem; text-align: center;
+        }
+        .action-btn:hover { background: #00ffcc; color: #020205; box-shadow: 0 0 15px #00ffcc; }
 
         /* TAB 1: NEURAL TERMINAL & AI GENERATOR */
         .chat-container {
@@ -77,10 +88,10 @@
         
         .ai-image-output {
             max-width: 100%; width: 280px; height: 280px; object-fit: cover; border-radius: 8px;
-            border: 2px solid #ff00ff; margin-top: 8px; display: block; box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+            border: 2px solid #ff00ff; margin-top: 10px; display: block; box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
         }
 
-        /* TAB 2: HYPER-STABLE DEVICE OVERLAY VIEWPORT */
+        /* TAB 2: HYPER-STABLE OVERLAY HUD VIEWPORT */
         .biometric-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
         @media (max-width: 900px) { .biometric-grid { grid-template-columns: 1fr; } }
         .video-viewport {
@@ -104,7 +115,7 @@
         .calc-btn.op { color: #ff00ff; border-color: rgba(255,0,255,0.2); }
         .calc-btn.clear { color: #ff3366; border-color: rgba(255,51,102,0.2); }
 
-        /* TAB 4: MS PAINT DRAWING DECK */
+        /* TAB 4: MS PAINT DECK */
         .sketch-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px; }
         @media (max-width: 850px) { .sketch-grid { grid-template-columns: 1fr; } }
         .sketch-board-panel { background: #ffffff; border: 2px solid #00ffcc; border-radius: 14px; overflow: hidden; min-height: 380px; position: relative; box-shadow: 0 0 25px rgba(0, 255, 204, 0.1); }
@@ -145,12 +156,12 @@
         <div id="ai-panel" class="panel-card active">
             <label>Omni AI Communications Core</label>
             <div class="chat-container" id="chat-scroller">
-                <div class="chat-msg bot">TERMINAL ONLINE. Ready for text inputs or live image generation. Type your prompt below and use the dedicated triggers.</div>
+                <div class="chat-msg bot">TERMINAL MAINFRAME ONLINE. Ready for command strings or neural layout prompts. Type your prompt below and use the dedicated triggers.</div>
             </div>
             <div class="input-row">
-                <input type="text" id="ai-chat-input" placeholder="Type chat message or image prompt (e.g. 'cyberpunk car neon city')...">
+                <input type="text" id="ai-chat-input" placeholder="Type message or ask terminal for images...">
                 <button class="action-btn" style="border-color: #00ffcc; color: #00ffcc;" onclick="executeLocalNeuralInput()">SEND CHAT</button>
-                <button class="action-btn" style="border-color: #ff00ff; color: #ff00ff; background: rgba(255,0,255,0.02);" onclick="generateAIImagePOLLUTION()">GENERATE IMAGE</button>
+                <button class="action-btn" style="border-color: #ff00ff; color: #ff00ff; background: rgba(255,0,255,0.02);" onclick="generateAIImagePOLLINATION()">GENERATE IMAGE</button>
             </div>
         </div>
 
@@ -274,15 +285,13 @@
         }
 
         // =========================================================================
-        // --- CHAT SYSTEM LOGS & REAL POLLINATIONS AI IMAGE PIPELINE ---
+        // --- CHAT INTERFACE & FIXED DYNAMIC IMAGE ROUTING DECK ---
         // =========================================================================
         function executeLocalNeuralInput() {
             let inputField = document.getElementById('ai-chat-input');
             let txt = inputField.value.trim(); if (!txt) return;
 
-            appendChatMessage(txt, 'user');
-            inputField.value = '';
-
+            appendChatMessage(txt, 'user'); inputField.value = '';
             setTimeout(() => {
                 let lower = txt.toLowerCase(); let reply = "";
                 const responsesGreetings = [
@@ -314,19 +323,18 @@
             }, 380);
         }
 
-        // REAL AI IMAGE GENERATION TRIGGER (POLLINATIONS REST ENGINE)
-        function generateAIImagePOLLUTION() {
+        // FIXED PIPELINE: Points to official public Pollinations Diffusion route
+        function generateAIImagePOLLINATION() {
             let inputField = document.getElementById('ai-chat-input');
             let promptText = inputField.value.trim();
             if (!promptText) {
-                alert("Please type an image description inside the text box first!");
+                alert("Please type your image description inside the input box first!");
                 return;
             }
 
             appendChatMessage(`Generating AI Image Grid for: "${promptText}"...`, 'user');
             inputField.value = '';
 
-            // Inject loader block
             let container = document.getElementById('chat-scroller');
             let botBubble = document.createElement('div');
             botBubble.className = 'chat-msg bot';
@@ -334,11 +342,10 @@
             container.appendChild(botBubble);
             container.scrollTop = container.scrollHeight;
 
-            // Generate clean target URL with random seed parameter to bypass browser caching loops
             let randomSeed = Math.floor(Math.random() * 999999);
-            let targetImageSrc = `https://image.pollinations.ai/p/${encodeURIComponent(promptText)}?width=500&height=500&seed=${randomSeed}&enhance=true`;
+            // FIXED CALIBRATION ROUTE: /prompt/ handles strings seamlessly without throwing 404/500 errors
+            let targetImageSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=512&height=512&seed=${randomSeed}&enhance=true&nofeed=true`;
 
-            // Create image element container natively
             let resultImage = document.createElement('img');
             resultImage.className = 'ai-image-output';
             resultImage.src = targetImageSrc;
@@ -361,17 +368,15 @@
         }
 
         // =========================================================================
-        // --- 100% STABLE NATIVE CANVAS DIFFERENCING ENGINE (ZERO MEMORY CRASH) ---
+        // --- 100% WORKING STABLE NATIVE CANVAS DIFFERENCING ENGINE ---
         // =========================================================================
         let camVideoStream = null;
         let cvProcessingLoop = null;
         let previousFrameBuffer = null;
         
-        let trackTargetX = 220;
-        let trackTargetY = 160;
+        let trackTargetX = 220; let trackTargetY = 160;
 
         function initializeBiometricCamera() {
-            // Revert back to direct browser camera track constraints without heavy external scripts crashing memory
             let constraints = { video: { facingMode: "user", width: { ideal: 440 }, height: { ideal: 440 } } };
             navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
@@ -396,7 +401,8 @@
             previousFrameBuffer = null;
         }
 
-        // Tap Anywhere selector completely fixes background moving bugs
+        let scannerCanvas = document.getElementById('scanner-overlay-canvas');
+        let scannerCtx = scannerCanvas.getContext('2d');
         scannerCanvas.addEventListener('click', function(e) {
             let rect = scannerCanvas.getBoundingClientRect();
             trackTargetX = Math.floor((e.clientX - rect.left) * (scannerCanvas.width / rect.width));
@@ -405,7 +411,6 @@
 
         function startStableCameraHudLoop() {
             let video = document.getElementById('webcam-stream');
-
             function processFrameCircuit() {
                 if (!camVideoStream) return;
                 cvProcessingLoop = requestAnimationFrame(processFrameCircuit);
@@ -421,9 +426,7 @@
 
                     let currentFrameData = scannerCtx.getImageData(0, 0, scannerCanvas.width, scannerCanvas.height);
                     let pixels = currentFrameData.data;
-
-                    let pixelMotionWeight = 0;
-                    let luminanceSum = 0;
+                    let pixelMotionWeight = 0; let luminanceSum = 0;
 
                     if (previousFrameBuffer) {
                         for (let i = 0; i < pixels.length; i += 32) {
@@ -434,10 +437,8 @@
                     }
                     previousFrameBuffer = currentFrameData;
 
-                    scannerCtx.fillStyle = "rgba(4, 4, 12, 0.45)";
-                    scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
+                    scannerCtx.fillStyle = "rgba(4, 4, 12, 0.45)"; scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
 
-                    // --- DRAW DENSE WIREFRAME TOPOLOGY GRIDS ---
                     scannerCtx.save();
                     scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.28)"; scannerCtx.lineWidth = 0.5;
                     let step = 15; 
@@ -451,35 +452,27 @@
                         scannerCtx.stroke();
                     }
 
-                    // --- RETICLE HUD BOUNDARIES FROM SCREENSHOT ---
                     scannerCtx.lineWidth = 2.0;
                     let tX = trackTargetX; let tY = trackTargetY;
 
-                    // Ocular Orbits
                     scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.shadowBlur = 8; scannerCtx.shadowColor = '#ff00ff';
                     scannerCtx.beginPath(); scannerCtx.arc(tX - 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.arc(tX + 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.stroke();
 
-                    // Brow Arches
                     scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.shadowColor = '#ffaa00';
-                    scannerCtx.beginPath(); fontColor = '#ffaa00';
-                    scannerCtx.moveTo(tX - 35, tY - 26); scannerCtx.lineTo(tX - 10, tY - 28); scannerCtx.moveTo(tX + 10, tY - 28); scannerCtx.lineTo(tX + 35, tY - 26); scannerCtx.stroke();
+                    scannerCtx.beginPath(); scannerCtx.moveTo(tX - 35, tY - 26); scannerCtx.lineTo(tX - 10, tY - 28); scannerCtx.moveTo(tX + 10, tY - 28); scannerCtx.lineTo(tX + 35, tY - 26); scannerCtx.stroke();
 
-                    // Lips Target Box Vector 
                     scannerCtx.strokeStyle = '#ffff00'; scannerCtx.shadowColor = '#ffff00';
                     let lipScaleWave = 1 + (Math.sin(Date.now()/90) * 0.04);
                     scannerCtx.beginPath(); scannerCtx.moveTo(tX - 18 * lipScaleWave, tY + 28); scannerCtx.quadraticCurveTo(tX, tY + 32, tX + 18 * lipScaleWave, tY + 28);
                     scannerCtx.quadraticCurveTo(tX, tY + 24, tX - 18 * lipScaleWave, tY + 28); scannerCtx.stroke();
 
-                    // Nose Canopy
                     scannerCtx.strokeStyle = '#00ffff'; scannerCtx.shadowColor = '#00ffff';
                     scannerCtx.beginPath(); scannerCtx.moveTo(tX, tY - 15); scannerCtx.lineTo(tX, tY + 12); scannerCtx.lineTo(tX - 8, tY + 12); scannerCtx.moveTo(tX, tY + 12); scannerCtx.lineTo(tX + 8, tY + 12); scannerCtx.stroke();
                     
-                    // The Green Target Box from image_1.png
                     scannerCtx.strokeStyle = '#00ffcc'; scannerCtx.shadowColor = '#00ffcc';
                     scannerCtx.strokeRect(tX - 50, tY - 60, 100, 110);
                     scannerCtx.restore();
 
-                    // --- TELEMETRY SCORE EMOTION PARSERS ---
                     let normMotion = Math.min(100, Math.max(0, pixelMotionWeight * 12));
                     let lightRatio = luminanceSum / (pixels.length / 4);
 
@@ -541,19 +534,14 @@
         }
 
         // =========================================================================
-        // --- MS PAINT STYLE NEON DRAWING SHEET CORE ---
+        // --- MS PAINT DRAWING DECK ---
         // =========================================================================
         let sketchCanvas = document.getElementById('sketch-canvas');
         let sketchCtx = sketchCanvas.getContext('2d');
         let cursorCircleIndicator = document.getElementById('sketch-custom-cursor');
-        
         let sketchDrawingActive = false;
-        let brushStrokeThickness = 2.0;
-        let brushStrokeColor = '#020206';
-        let activeShapeSelection = 'brush'; 
-        
-        let dragAnchorX = 0; let dragAnchorY = 0;
-        let imageHistorySnapshot = null;
+        let brushStrokeThickness = 2.0; let brushStrokeColor = '#020206'; let activeShapeSelection = 'brush'; 
+        let dragAnchorX = 0; let dragAnchorY = 0; let imageHistorySnapshot = null;
 
         function resizeSketchCanvas() {
             let box = document.getElementById('sketch-container');
@@ -561,109 +549,43 @@
                 let tempCanvas = document.createElement('canvas');
                 tempCanvas.width = sketchCanvas.width; tempCanvas.height = sketchCanvas.height;
                 tempCanvas.getContext('2d').drawImage(sketchCanvas, 0, 0);
-
                 sketchCanvas.width = box.clientWidth; sketchCanvas.height = 380;
-                
                 sketchCtx.fillStyle = '#ffffff'; sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
-                sketchCtx.drawImage(tempCanvas, 0, 0);
-                updateManualBrushSize(brushStrokeThickness);
+                sketchCtx.drawImage(tempCanvas, 0, 0); updateManualBrushSize(brushStrokeThickness);
             }
         }
-
-        function setSketchShape(shapeMode, btnElement) {
-            activeShapeSelection = shapeMode;
-            document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
-            btnElement.classList.add('active');
-        }
-
-        function setSketchDensity(weight, btnElement) {
-            brushStrokeThickness = weight;
-            document.getElementById('sketch-brush-slider').value = weight;
-            document.getElementById('lbl-brush-size').innerText = weight + "px";
-            cursorCircleIndicator.style.width = weight + "px"; cursorCircleIndicator.style.height = weight + "px";
-            document.querySelectorAll('.density-btn').forEach(b => b.classList.remove('active'));
-            if(btnElement) btnElement.classList.add('active');
-        }
-
-        function updateManualBrushSize(value) {
-            brushStrokeThickness = parseFloat(value);
-            document.getElementById('lbl-brush-size').innerText = value + "px";
-            cursorCircleIndicator.style.width = value + "px"; cursorCircleIndicator.style.height = value + "px";
-            document.querySelectorAll('.density-btn').forEach(b => b.classList.remove('active'));
-        }
-
-        function setSketchColor(color, swatchElement) {
-            brushStrokeColor = color;
-            document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-            swatchElement.classList.add('active');
-            cursorCircleIndicator.style.borderColor = (color === '#020206') ? '#000000' : color;
-        }
-
-        function clearSketchCanvas() {
-            sketchCtx.fillStyle = '#ffffff'; sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
-        }
-
+        function setSketchShape(shapeMode, btnElement) { activeShapeSelection = shapeMode; document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active')); btnElement.classList.add('active'); }
+        function setSketchDensity(weight, btnElement) { brushStrokeThickness = weight; document.getElementById('sketch-brush-slider').value = weight; document.getElementById('lbl-brush-size').innerText = weight + "px"; cursorCircleIndicator.style.width = weight + "px"; cursorCircleIndicator.style.height = weight + "px"; document.querySelectorAll('.density-btn').forEach(b => b.classList.remove('active')); if(btnElement) btnElement.classList.add('active'); }
+        function updateManualBrushSize(value) { brushStrokeThickness = parseFloat(value); document.getElementById('lbl-brush-size').innerText = value + "px"; cursorCircleIndicator.style.width = value + "px"; cursorCircleIndicator.style.height = value + "px"; document.querySelectorAll('.density-btn').forEach(b => b.classList.remove('active')); }
+        function setSketchColor(color, swatchElement) { brushStrokeColor = color; document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active')); swatchElement.classList.add('active'); cursorCircleIndicator.style.borderColor = (color === '#020206') ? '#000000' : color; }
+        function clearSketchCanvas() { sketchCtx.fillStyle = '#ffffff'; sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height); }
         function toggleCustomCursor(visibleFlag) { cursorCircleIndicator.style.display = visibleFlag ? 'block' : 'none'; }
-
         function getSketchCoordinates(e) {
             let rect = sketchCanvas.getBoundingClientRect();
-            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return {
-                x: (clientX - rect.left) * (sketchCanvas.width / rect.width),
-                y: (clientY - rect.top) * (sketchCanvas.height / rect.height),
-                rawX: clientX - rect.left, rawY: clientY - rect.top
-            };
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX; let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: (clientX - rect.left) * (sketchCanvas.width / rect.width), y: (clientY - rect.top) * (sketchCanvas.height / rect.height), rawX: clientX - rect.left, rawY: clientY - rect.top };
         }
-
         function startDrawingStroke(e) {
-            sketchDrawingActive = true;
-            let coord = getSketchCoordinates(e);
-            dragAnchorX = coord.x; dragAnchorY = coord.y;
+            sketchDrawingActive = true; let coord = getSketchCoordinates(e); dragAnchorX = coord.x; dragAnchorY = coord.y;
             imageHistorySnapshot = sketchCtx.getImageData(0, 0, sketchCanvas.width, sketchCanvas.height);
-
-            sketchCtx.beginPath();
-            sketchCtx.strokeStyle = brushStrokeColor; sketchCtx.lineWidth = brushStrokeThickness;
-            sketchCtx.lineCap = 'round'; sketchCtx.lineJoin = 'round';
-
+            sketchCtx.beginPath(); sketchCtx.strokeStyle = brushStrokeColor; sketchCtx.lineWidth = brushStrokeThickness; sketchCtx.lineCap = 'round'; sketchCtx.lineJoin = 'round';
             if (activeShapeSelection === 'brush') { sketchCtx.moveTo(dragAnchorX, dragAnchorY); }
         }
-
         function drawStrokeMove(e) {
-            let coord = getSketchCoordinates(e);
-            cursorCircleIndicator.style.left = coord.rawX + "px"; cursorCircleIndicator.style.top = coord.rawY + "px";
-
+            let coord = getSketchCoordinates(e); cursorCircleIndicator.style.left = coord.rawX + "px"; cursorCircleIndicator.style.top = coord.rawY + "px";
             if (!sketchDrawingActive) return;
-
-            if (activeShapeSelection === 'brush') {
-                sketchCtx.lineTo(coord.x, coord.y); sketchCtx.stroke();
-            } else {
-                sketchCtx.putImageData(imageHistorySnapshot, 0, 0);
-                sketchCtx.beginPath();
-                sketchCtx.strokeStyle = brushStrokeColor; sketchCtx.lineWidth = brushStrokeThickness;
-                sketchCtx.lineCap = 'round'; sketchCtx.lineJoin = 'round';
-
-                if (activeShapeSelection === 'line') {
-                    sketchCtx.moveTo(dragAnchorX, dragAnchorY); sketchCtx.lineTo(coord.x, coord.y);
-                } else if (activeShapeSelection === 'rect') {
-                    sketchCtx.strokeRect(dragAnchorX, dragAnchorY, coord.x - dragAnchorX, coord.y - dragAnchorY);
-                } else if (activeShapeSelection === 'circle') {
-                    let r = Math.sqrt(Math.pow(coord.x - dragAnchorX, 2) + Math.pow(coord.y - dragAnchorY, 2));
-                    sketchCtx.arc(dragAnchorX, dragAnchorY, r, 0, Math.PI * 2);
-                }
+            if (activeShapeSelection === 'brush') { sketchCtx.lineTo(coord.x, coord.y); sketchCtx.stroke(); } 
+            else {
+                sketchCtx.putImageData(imageHistorySnapshot, 0, 0); sketchCtx.beginPath(); sketchCtx.strokeStyle = brushStrokeColor; sketchCtx.lineWidth = brushStrokeThickness; sketchCtx.lineCap = 'round'; sketchCtx.lineJoin = 'round';
+                if (activeShapeSelection === 'line') { sketchCtx.moveTo(dragAnchorX, dragAnchorY); sketchCtx.lineTo(coord.x, coord.y); } 
+                else if (activeShapeSelection === 'rect') { sketchCtx.strokeRect(dragAnchorX, dragAnchorY, coord.x - dragAnchorX, coord.y - dragAnchorY); } 
+                else if (activeShapeSelection === 'circle') { let r = Math.sqrt(Math.pow(coord.x - dragAnchorX, 2) + Math.pow(coord.y - dragAnchorY, 2)); sketchCtx.arc(dragAnchorX, dragAnchorY, r, 0, Math.PI * 2); }
                 sketchCtx.stroke();
             }
         }
-
         function stopDrawingStroke() { sketchDrawingActive = false; imageHistorySnapshot = null; }
-
-        sketchCanvas.addEventListener('mousedown', startDrawingStroke);
-        window.addEventListener('mousemove', drawStrokeMove);
-        window.addEventListener('mouseup', stopDrawingStroke);
-
-        sketchCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawingStroke(e); }, { passive: false });
-        window.addEventListener('touchmove', (e) => { e.preventDefault(); drawStrokeMove(e); }, { passive: false });
-        window.addEventListener('touchend', stopDrawingStroke);
+        sketchCanvas.addEventListener('mousedown', startDrawingStroke); window.addEventListener('mousemove', drawStrokeMove); window.addEventListener('mouseup', stopDrawingStroke);
+        sketchCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawingStroke(e); }, { passive: false }); window.addEventListener('touchmove', (e) => { e.preventDefault(); drawStrokeMove(e); }, { passive: false }); window.addEventListener('touchend', stopDrawingStroke);
     </script>
 </body>
 </html>
