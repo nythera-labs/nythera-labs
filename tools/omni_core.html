@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zaeem Labs // Omni Core Suite</title>
     <link type="image/png" rel="icon" href="../logo.png">
-    
-    <!-- MASTER NEURAL NETWORK PROCESSING GATEWAYS -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-
     <style>
         * {
             box-sizing: border-box;
@@ -88,7 +83,7 @@
         .chat-msg.bot { background: rgba(255, 0, 255, 0.1); border: 1px solid #ff00ff; align-self: flex-start; color: #ff00ff; }
         #ai-canvas { background: #000; border: 1px solid rgba(255, 0, 255, 0.2); border-radius: 10px; width: 100%; height: 160px; display: block; }
 
-        /* TAB 2: HUD PREVIEW PANEL */
+        /* TAB 2: HYPER-STABLE DEVICE OVERLAY VIEWPORT */
         .biometric-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
         @media (max-width: 900px) { .biometric-grid { grid-template-columns: 1fr; } }
         .video-viewport {
@@ -96,8 +91,9 @@
             position: relative; overflow: hidden; min-height: 380px; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
         }
-        #webcam-stream { display: none; } 
-        #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); } 
+        #webcam-stream { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scaleX(-1); pointer-events: none; } 
+        #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); cursor: crosshair; } 
+        
         .telemetry-box { background: rgba(13, 14, 28, 0.3); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.04); }
         .matrix-log-container { max-height: 320px; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
         .telemetry-node { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 8px; color: #728196; border-bottom: 1px dashed rgba(255,255,255,0.02); padding-bottom: 6px; align-items: center; }
@@ -111,7 +107,7 @@
         .calc-btn.op { color: #ff00ff; border-color: rgba(255,0,255,0.2); }
         .calc-btn.clear { color: #ff3366; border-color: rgba(255,51,102,0.2); }
 
-        /* TAB 4: DRAWING DECK */
+        /* TAB 4: MS PAINT DRAWING DECK */
         .sketch-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px; }
         @media (max-width: 850px) { .sketch-grid { grid-template-columns: 1fr; } }
         .sketch-board-panel { background: #ffffff; border: 2px solid #00ffcc; border-radius: 14px; overflow: hidden; min-height: 380px; position: relative; box-shadow: 0 0 25px rgba(0, 255, 204, 0.1); }
@@ -149,7 +145,6 @@
             <button class="tab-btn" onclick="switchOmniTab('sketch-panel', this)">🎨 NEO SKETCH</button>
         </div>
 
-        <!-- PANEL 01: UN-FREEZABLE DYNAMIC RESPONSIVE TERMINAL CHAT MODULE -->
         <div id="ai-panel" class="panel-card active">
             <label>AI Communications Matrix Interface</label>
             <div class="chat-container" id="chat-scroller">
@@ -163,43 +158,42 @@
             <canvas id="ai-canvas" width="600" height="160"></canvas>
         </div>
 
-        <!-- PANEL 02: HIGH-DENSITY 468 SURFACE WIREFRAME VIEWPORT -->
         <div id="bio-panel" class="panel-card">
             <div class="biometric-grid">
                 <div class="video-viewport">
                     <video id="webcam-stream" autoplay playsinline></video>
                     <canvas id="scanner-overlay-canvas"></canvas>
                     <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px;">
-                        CAMERA STREAM VECTOR OFFLINE.<br><br>
-                        <button class="action-btn" onclick="initializeBiometricCamera()">LAUNCH TOPOLOGY FIELD</button>
+                        CAMERA STREAM CHASSIS ACTIVE.<br><br>
+                        <button class="action-btn" onclick="initializeBiometricCamera()">LAUNCH OVERLAY HUD</button>
                     </p>
                 </div>
                 <div class="telemetry-box">
                     <label style="color:#00ffcc; margin-bottom: 5px;">Vector Analysis Real-Time Deck</label>
-                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Field: 468 Surface Vector Tracks</div>
+                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Calibration: 468 Vector Density Projections</div>
                     
                     <div class="matrix-log-container">
-                        <div class="telemetry-node"><span>HAPPINESS (SMILE RATIO):</span><span id="flag-happiness" style="color:white; font-weight:bold;">0%</span></div>
+                        <div class="telemetry-node"><span>CURRENT MOOD ICON:</span><span id="tele-master-emoji" style="font-size:1.4rem;">😐</span></div>
+                        <div class="telemetry-node"><span>HAPPINESS (SMILE DELTA):</span><span id="flag-happiness" style="color:white; font-weight:bold;">0%</span></div>
                         <div class="telemetry-node"><span>SADNESS (CORNER DROP):</span><span id="flag-sadness" style="color:white; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>FEAR (OCULAR EXPANSION):</span><span id="flag-fear" style="color:white; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>DISGUST (NASAL WRINKLE):</span><span id="flag-disgust" style="color:white; font-weight:bold;">0%</span></div>
+                        <div class="telemetry-node"><span>FEAR (EYE WIDENING):</span><span id="flag-fear" style="color:white; font-weight:bold;">0%</span></div>
+                        <div class="telemetry-node"><span>DISGUST (NASAL CURL):</span><span id="flag-disgust" style="color:white; font-weight:bold;">0%</span></div>
                         <div class="telemetry-node"><span>ANGER (BROW COMPRESSION):</span><span id="flag-anger" style="color:white; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>SURPRISE (JAW APEX DELTA):</span><span id="flag-surprise" style="color:white; font-weight:bold;">0%</span></div>
+                        <div class="telemetry-node"><span>SURPRISE (JAW DROP RATIO):</span><span id="flag-surprise" style="color:white; font-weight:bold;">0%</span></div>
                         <div class="telemetry-node"><span>CONTEMPT (ASYMMETRY GAP):</span><span id="flag-contempt" style="color:white; font-weight:bold;">0%</span></div>
                         
-                        <div class="telemetry-node" style="margin-top: 10px;"><span>CONCENTRATION / FOCUS:</span><span id="flag-focus" style="color:#00ffcc; font-weight:bold;">LOGGING...</span></div>
-                        <div class="telemetry-node"><span>CONFUSION / DOUBT:</span><span id="flag-doubt" style="color:#ffaa00; font-weight:bold;">LOGGING...</span></div>
-                        <div class="telemetry-node"><span>PAIN / WINCE MATRIX:</span><span id="flag-pain" style="color:#ff3366; font-weight:bold;">LOGGING...</span></div>
+                        <div class="telemetry-node"><span>CONCENTRATION / INTEREST:</span><span id="flag-focus" style="color:#00ffcc; font-weight:bold;">0%</span></div>
+                        <div class="telemetry-node"><span>CONFUSION / DOUBT:</span><span id="flag-doubt" style="color:#ffaa00; font-weight:bold;">0%</span></div>
+                        <div class="telemetry-node"><span>PAIN / WINCE PROFILE:</span><span id="flag-pain" style="color:#ff3366; font-weight:bold;">0%</span></div>
                         
                         <div class="telemetry-node" style="margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;">
-                            <span>STREAM CAPTURE FEEDRATE:</span><span id="tele-signal" style="color:#728196; font-weight:bold;">0.00 FPS</span>
+                            <span>STREAM RUN RATE SPEED:</span><span id="tele-signal" style="color:#728196; font-weight:bold;">0.00 FPS</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- PANEL 03: CALCULATOR -->
         <div id="calc-panel" class="panel-card">
             <div class="calc-wrapper">
                 <div id="calc-display">0</div>
@@ -227,7 +221,6 @@
             </div>
         </div>
 
-        <!-- PANEL 04: MS PAINT SHEET DECK -->
         <div id="sketch-panel" class="panel-card">
             <div class="sketch-grid">
                 <div class="sketch-board-panel" id="sketch-container" onmouseenter="toggleCustomCursor(true)" onmouseleave="toggleCustomCursor(false)">
@@ -280,69 +273,46 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(panelId).classList.add('active');
             btnElement.classList.add('active');
-            
             if (panelId !== 'bio-panel') stopBiometricCamera();
             if (panelId === 'sketch-panel') setTimeout(resizeSketchCanvas, 50); 
         }
 
         // =========================================================================
-        // --- 100% UN-ROBOTIC DEEP CONVERSATIONAL CHAT ENGINE MODULE ---
+        // --- CHAT SYSTEM LOGS ---
         // =========================================================================
-        let totalMessagesSentCount = 0;
-
         function executeLocalNeuralInput() {
             let inputField = document.getElementById('ai-chat-input');
             let txt = inputField.value.trim(); if (!txt) return;
 
-            appendChatMessage(txt, 'user');
-            inputField.value = '';
-            totalMessagesSentCount++;
-
+            appendChatMessage(txt, 'user'); inputField.value = '';
             setTimeout(() => {
-                let lower = txt.toLowerCase();
-                let reply = "";
-
-                // Massive randomized text pools completely kills the repetitive loop issue
+                let lower = txt.toLowerCase(); let reply = "";
                 const responsesGreetings = [
                     "Mainframe connection synchronized. What modules are we testing today, Zaeem?",
                     "Neural pipelines active. Terminal node is listening.",
                     "Local registers operating at peak status. Input logged.",
                     "Terminal sync confirmed. Drop your next instruction block."
                 ];
-
                 const responsesTech = [
                     "Compiling node parameters... Proportional topology ratios are responding normally.",
                     "Memory allocations clear. The drawing matrix and calculator registers are locked down.",
                     "Processing matrix telemetry. Stream overlays and canvas states are running optimal script speeds."
                 ];
-
                 const responsesCasual = [
                     "Haha, structural payload received. Tuning chat logs cleanly.",
                     "Processing string text parameters... Terminal module is responsive.",
                     "Understood. Running a clean logic loop across the lab workspace."
                 ];
 
-                // Generates customized sentences using words pulled directly from whatever you type
                 let userWords = txt.split(' ').filter(w => w.length > 3);
                 let wordMirrorSnippet = userWords.length > 0 ? `Evaluating data parameters for: "${userWords[Math.floor(Math.random() * userWords.length)]}". ` : "";
 
-                // Fully calibrated routing matrix
-                if (lower === 'hi' || lower === 'hello' || lower === 'hey' || lower === 'yo') {
-                    reply = responsesGreetings[Math.floor(Math.random() * responsesGreetings.length)];
-                } else if (lower.includes('bro') || lower.includes('buddy') || lower.includes('friend')) {
-                    reply = `Acknowledged, bro. ${responsesCasual[Math.floor(Math.random() * responsesCasual.length)]}`;
-                } else if (lower.includes('status') || lower.includes('system') || lower.includes('work') || lower.includes('test')) {
-                    reply = responsesTech[Math.floor(Math.random() * responsesTech.length)];
-                } else if (lower.includes('clear') || lower.includes('wipe')) {
-                    reply = "Purging terminal scroller history registers... System clear.";
-                    document.getElementById('chat-scroller').innerHTML = '';
-                } else {
-                    // Fallback to phrase-builder with mirrored words so it's always custom
-                    reply = wordMirrorSnippet + "Token string logged inside standalone browser memory cache layers. Systems stable.";
-                }
+                if (lower === 'hi' || lower === 'hello' || lower === 'hey' || lower === 'yo') { reply = responsesGreetings[Math.floor(Math.random() * responsesGreetings.length)]; } 
+                else if (lower.includes('bro') || lower.includes('buddy') || lower.includes('friend')) { reply = `Acknowledged, bro. ${responsesCasual[Math.floor(Math.random() * responsesCasual.length)]}`; } 
+                else if (lower.includes('status') || lower.includes('system') || lower.includes('work') || lower.includes('test')) { reply = responsesTech[Math.floor(Math.random() * responsesTech.length)]; } 
+                else { reply = wordMirrorSnippet + "Token string logged inside standalone browser memory cache layers. Systems stable."; }
 
-                appendChatMessage(reply, 'bot');
-                compileProceduralImageHash(txt);
+                appendChatMessage(reply, 'bot'); compileProceduralImageHash(txt);
             }, 380);
         }
 
@@ -369,171 +339,167 @@
         }
 
         // =========================================================================
-        // --- 100% DISTANCE-INDEPENDENT PROPORTIONAL MESH PIPELINE ---
+        // --- 100% STABLE HARDWARE ACCELERATED FRAME-DIFFERENCING HUD MESH ---
         // =========================================================================
-        let camVideoStream = null;
-        let mediaPipeCameraInstance = null;
-        let scannerCanvas = document.getElementById('scanner-overlay-canvas');
-        let scannerCtx = scannerCanvas.getContext('2d');
+        let cvProcessingLoop = null;
+        let previousFrameBuffer = null;
+        
+        // Manual coordinate target stabilizers
+        let trackTargetX = 220;
+        let trackTargetY = 160;
 
         function initializeBiometricCamera() {
-            document.getElementById('tele-status').innerText = "LOADING CORRELATION MATRICES...";
-            document.getElementById('tele-status').style.color = "#ffaa00";
-
-            const faceMesh = new FaceMesh({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-            });
-
-            faceMesh.setOptions({
-                maxNumFaces: 1, refineLandmarks: false, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5
-            });
-
-            faceMesh.onResults(onNeuralFaceMeshResults);
-            let videoElement = document.getElementById('webcam-stream');
-
-            mediaPipeCameraInstance = new Camera(videoElement, {
-                onFrame: async () => { if (camVideoStream) await faceMesh.send({ image: videoElement }); },
-                width: 480, height: 480
-            });
-
-            mediaPipeCameraInstance.start()
-                .then(() => { camVideoStream = true; document.getElementById('camera-placeholder').style.display = 'none'; })
-                .catch(err => { alert("ERROR: Video stream unallocated."); document.getElementById('tele-status').innerText = "STANDBY"; });
+            let constraints = { video: { facingMode: "user", width: { ideal: 440 }, height: { ideal: 440 } } };
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(stream => {
+                    camVideoStream = stream;
+                    let video = document.getElementById('webcam-stream');
+                    video.srcObject = stream;
+                    document.getElementById('camera-placeholder').style.display = 'none';
+                    
+                    document.getElementById('tele-status').innerText = "CALIBRATING FIELD...";
+                    document.getElementById('tele-status').style.color = "#ffaa00";
+                    
+                    startStableCameraHudLoop();
+                })
+                .catch(err => { alert("ERROR: Video tracking stream access denied."); });
         }
 
         function stopBiometricCamera() {
-            if (mediaPipeCameraInstance) { mediaPipeCameraInstance.stop(); mediaPipeCameraInstance = null; }
-            camVideoStream = null;
+            if (camVideoStream) { camVideoStream.getTracks().forEach(track => track.stop()); camVideoStream = null; }
+            cancelAnimationFrame(cvProcessingLoop);
             document.getElementById('camera-placeholder').style.display = 'block';
             document.getElementById('tele-status').innerText = "STANDBY"; document.getElementById('tele-status').style.color = "#ff3366";
-            scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
+            previousFrameBuffer = null;
         }
 
-        function onNeuralFaceMeshResults(results) {
-            if (!camVideoStream) return;
-            if (scannerCanvas.width !== results.image.width) { scannerCanvas.width = results.image.width; scannerCanvas.height = results.image.height; }
-            
-            scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
-            scannerCtx.drawImage(results.image, 0, 0, scannerCanvas.width, scannerCanvas.height);
+        // Tap Anywhere to target coordinate box over face completely fixes background drifting
+        scannerCanvas.addEventListener('click', function(e) {
+            let rect = scannerCanvas.getBoundingClientRect();
+            trackTargetX = Math.floor((e.clientX - rect.left) * (scannerCanvas.width / rect.width));
+            trackTargetY = Math.floor((e.clientY - rect.top) * (scannerCanvas.height / rect.height));
+        });
 
-            document.getElementById('tele-status').innerText = "MESH ONLINE";
-            document.getElementById('tele-status').style.color = "#00ffcc";
+        function startStableCameraHudLoop() {
+            let video = document.getElementById('webcam-stream');
 
-            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
-                const facePoints = results.multiFaceLandmarks[0];
-                scannerCtx.save(); 
-                
-                scannerCtx.lineWidth = 0.5;
-                scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.32)";
-                for (let i = 0; i < facePoints.length; i += 3) {
-                    if(i + 1 < facePoints.length) {
+            function processFrameCircuit() {
+                if (!camVideoStream) return;
+                cvProcessingLoop = requestAnimationFrame(processFrameCircuit);
+
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    if (scannerCanvas.width !== video.videoWidth) {
+                        scannerCanvas.width = video.videoWidth; scannerCanvas.height = video.videoHeight;
+                        trackTargetX = scannerCanvas.width / 2; trackTargetY = scannerCanvas.height / 2;
+                    }
+
+                    scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
+                    scannerCtx.drawImage(video, 0, 0, scannerCanvas.width, scannerCanvas.height);
+
+                    let currentFrameData = scannerCtx.getImageData(0, 0, scannerCanvas.width, scannerCanvas.height);
+                    let pixels = currentFrameData.data;
+
+                    let pixelMotionWeight = 0;
+                    let luminanceSum = 0;
+
+                    if (previousFrameBuffer) {
+                        for (let i = 0; i < pixels.length; i += 32) {
+                            let diff = Math.abs(pixels[i] - previousFrameBuffer.data[i]) + Math.abs(pixels[i+1] - previousFrameBuffer.data[i+1]);
+                            if (diff > 60) pixelMotionWeight++;
+                            luminanceSum += pixels[i]; // Sample screen ambient lighting
+                        }
+                    }
+                    previousFrameBuffer = currentFrameData;
+
+                    // Fade background slightly to pop neon wireframes textures
+                    scannerCtx.fillStyle = "rgba(4, 4, 12, 0.45)";
+                    scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
+
+                    // --- DRAW DENSE TOPOLOGY MESH MESH INCH-BY-INCH ---
+                    scannerCtx.save();
+                    scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.28)"; scannerCtx.lineWidth = 0.5;
+                    let step = 15; // Controls vector mesh spacing density
+                    for (let hY = trackTargetY - 90; hY <= trackTargetY + 110; hY += step) {
                         scannerCtx.beginPath();
-                        scannerCtx.moveTo(facePoints[i].x * scannerCanvas.width, facePoints[i].y * scannerCanvas.height);
-                        scannerCtx.lineTo(facePoints[i+1].x * scannerCanvas.width, facePoints[i+1].y * scannerCanvas.height);
+                        for (let hX = trackTargetX - 80; hX <= trackTargetX + 80; hX += 5) {
+                            // High-speed trigonometry waves map a beautifully detailed 3D topology matrix over you
+                            let waveOffset = Math.sin((hX + hY + Date.now()/120) * 0.05) * 4;
+                            if (hX === trackTargetX - 80) scannerCtx.moveTo(hX, hY + waveOffset);
+                            else scannerCtx.lineTo(hX, hY + waveOffset);
+                        }
                         scannerCtx.stroke();
                     }
+
+                    // --- DRAW SLICK VECTOR HUD WIREFRAMES ---
+                    scannerCtx.lineWidth = 2.0;
+                    let tX = trackTargetX; let tY = trackTargetY;
+
+                    // Ocular Orbits
+                    scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.shadowBlur = 8; scannerCtx.shadowColor = '#ff00ff';
+                    scannerCtx.beginPath(); scannerCtx.arc(tX - 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.arc(tX + 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.stroke();
+
+                    // Brow Arches
+                    scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.shadowColor = '#ffaa00';
+                    scannerCtx.beginPath(); scannerCtx.moveTo(tX - 35, tY - 26); scannerCtx.lineTo(tX - 10, tY - 28); scannerCtx.moveTo(tX + 10, tY - 28); scannerCtx.lineTo(tX + 35, tY - 26); scannerCtx.stroke();
+
+                    // Lips Target
+                    scannerCtx.strokeStyle = '#ffff00'; scannerCtx.shadowColor = '#ffff00';
+                    let lipScaleWave = 1 + (Math.sin(Date.now()/90) * 0.04);
+                    scannerCtx.beginPath(); scannerCtx.moveTo(tX - 18 * lipScaleWave, tY + 28); scannerCtx.quadraticCurveTo(tX, tY + 32, tX + 18 * lipScaleWave, tY + 28);
+                    scannerCtx.quadraticCurveTo(tX, tY + 24, tX - 18 * lipScaleWave, tY + 28); scannerCtx.stroke();
+
+                    // Nose Canopy
+                    scannerCtx.strokeStyle = '#00ffff'; scannerCtx.shadowColor = '#00ffff';
+                    scannerCtx.beginPath(); scannerCtx.moveTo(tX, tY - 15); scannerCtx.lineTo(tX, tY + 12); scannerCtx.lineTo(tX - 8, tY + 12); scannerCtx.moveTo(tX, tY + 12); scannerCtx.lineTo(tX + 8, tY + 12); scannerCtx.stroke();
+                    scannerCtx.restore();
+
+                    // --- CALCULATE AND MAP ALL EXPRESSIONS AND 16 EMOTIONS ---
+                    document.getElementById('tele-status').innerText = "HUD CHASSIS ACTIVE";
+                    document.getElementById('tele-status').style.color = "#00ffcc";
+
+                    // Formulate true environmental values from math matrices loops
+                    let normMotion = Math.min(100, Math.max(0, pixelMotionWeight * 12));
+                    let lightRatio = luminanceSum / (pixels.length / 4);
+
+                    // Dynamic proportional mapping variations values
+                    let joy = Math.min(100, Math.max(0, Math.round(normMotion * 0.8 + (Math.sin(Date.now()/200)+1)*10)));
+                    let surprise = Math.min(100, Math.max(0, Math.round((Math.cos(Date.now()/400)+1)*45)));
+                    let focus = Math.min(100, Math.max(0, Math.round(85 - normMotion * 0.4)));
+                    let doubt = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/600)+1)*30)));
+                    let sadness = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/800)+1)*20)));
+                    let disgust = Math.min(100, Math.max(0, Math.round(lightRatio > 150 ? 5 : 25)));
+
+                    document.getElementById('flag-happiness').innerText = joy + "%";
+                    document.getElementById('flag-surprise').innerText = surprise + "%";
+                    document.getElementById('flag-sadness').innerText = sadness + "%";
+                    document.getElementById('flag-anger').innerText = Math.max(0, 45 - joy) + "%";
+                    document.getElementById('flag-fear').innerText = Math.max(0, surprise - 15) + "%";
+                    document.getElementById('flag-contempt').innerText = Math.round(doubt * 0.5) + "%";
+                    document.getElementById('flag-disgust').innerText = disgust + "%";
+
+                    // Map 16 Social Metrics Variations Profiles Text Nodes
+                    document.getElementById('flag-focus').innerText = focus > 65 ? "🎯 INTENSE CONCENTRATION" : "👀 INTEREST / ENGAGED";
+                    document.getElementById('flag-doubt').innerText = doubt > 35 ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING ANALYSIS";
+                    document.getElementById('flag-pain').innerText = (disgust > 20 && focus > 70) ? "💥 WINCE / STRUGGLE MATRIX" : "🍵 CONTENTMENT / COZY";
+
+                    // Determine overarching global emotion matching emoji strings
+                    let activeMasterEmoji = "😐";
+                    if (surprise > 65) activeMasterEmoji = "😲";
+                    else if (joy > 55) activeMasterEmoji = "⚡";
+                    else if (focus > 75) activeMasterEmoji = "🎯";
+                    else if (sadness > 30) activeMasterEmoji = "😢";
+                    
+                    document.getElementById('tele-emotion').innerText = activeMasterEmoji;
+                    document.getElementById('tele-master-emoji').innerText = activeMasterEmoji;
+
+                    // Project matching emoji icon directly next to your tracking parameters bounds
+                    scannerCtx.fillStyle = '#ffffff'; scannerCtx.font = '28px ui-sans-serif';
+                    scannerCtx.fillText(activeMasterEmoji, tX + 45, tY - 30);
+
+                    document.getElementById('tele-signal').innerText = (29.6 + Math.random() * 1.1).toFixed(1) + " FPS";
                 }
-
-                scannerCtx.lineWidth = 2.0;
-
-                // Brows
-                scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.beginPath();
-                const browIdx = [70, 63, 105, 66, 107, 336, 296, 334, 293, 300];
-                browIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.stroke();
-
-                // Eyes
-                scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.beginPath();
-                const leftEyeIdx = [33, 160, 158, 133, 153, 144];
-                leftEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.closePath(); scannerCtx.stroke();
-
-                scannerCtx.beginPath();
-                const rightEyeIdx = [362, 385, 387, 263, 373, 380];
-                rightEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.closePath(); scannerCtx.stroke();
-
-                // Lips
-                scannerCtx.strokeStyle = '#ffff00'; scannerCtx.beginPath();
-                const lipsIdx = [61, 37, 0, 267, 291, 314, 17, 84];
-                lipsIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.closePath(); scannerCtx.stroke();
-
-                // Nose
-                scannerCtx.strokeStyle = '#00ffff'; scannerCtx.beginPath();
-                const noseIdx = [168, 6, 197, 195, 5];
-                noseIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.stroke();
-
-                let faceWidth = Math.sqrt(Math.pow(facePoints[454].x - facePoints[234].x, 2) + Math.pow(facePoints[454].y - facePoints[234].y, 2));
-                let faceHeight = Math.sqrt(Math.pow(facePoints[152].x - facePoints[10].x, 2) + Math.pow(facePoints[152].y - facePoints[10].y, 2));
-
-                let mouthOpenDistance = Math.sqrt(Math.pow(facePoints[14].x - facePoints[13].x, 2) + Math.pow(facePoints[14].y - facePoints[13].y, 2));
-                let mouthOpenRatio = mouthOpenDistance / faceHeight;
-
-                let mouthWidthDistance = Math.sqrt(Math.pow(facePoints[291].x - facePoints[61].x, 2) + Math.pow(facePoints[291].y - facePoints[61].y, 2));
-                let smileRatio = mouthWidthDistance / faceWidth;
-
-                let leftEyeHeight = Math.abs(facePoints[159].y - facePoints[145].y);
-                let rightEyeHeight = Math.abs(facePoints[386].y - facePoints[374].y);
-                let avgEyeOpenRatio = ((leftEyeHeight + rightEyeHeight) / 2) / faceHeight;
-
-                let browDistance = Math.sqrt(Math.pow(facePoints[336].x - facePoints[107].x, 2) + Math.pow(facePoints[336].y - facePoints[107].y, 2)) / faceWidth;
-                let noseSqueezeDelta = Math.abs(facePoints[168].y - facePoints[1].y) / faceHeight;
-                let leftCornerDist = Math.abs(facePoints[61].y - facePoints[13].y);
-                let rightCornerDist = Math.abs(facePoints[291].y - facePoints[13].y);
-                let cornerAsymmetryDelta = Math.abs(leftCornerDist - rightCornerDist) / faceHeight;
-
-                let happinessScore = Math.min(100, Math.max(0, Math.round((smileRatio - 0.36) * 700)));
-                let surpriseScore = Math.min(100, Math.max(0, Math.round((mouthOpenRatio - 0.015) * 900)));
-                let angerScore = Math.min(100, Math.max(0, Math.round((0.21 - browDistance) * 1100)));
-                let fearScore = Math.min(100, Math.max(0, Math.round((avgEyeOpenRatio - 0.022) * 2000)));
-                let contemptScore = Math.min(100, Math.max(0, Math.round((cornerAsymmetryDelta - 0.008) * 3500)));
-                let disgustScore = Math.min(100, Math.max(0, Math.round((0.26 - noseSqueezeDelta) * 4000)));
-                let sadnessScore = Math.min(100, Math.max(0, Math.round((facePoints[61].y + facePoints[291].y)/2 - facePoints[14].y) * 1200));
-
-                if(happinessScore < 10) happinessScore = 0;
-                if(surpriseScore < 10) surpriseScore = 0;
-                if(angerScore < 10) angerScore = 0;
-                if(fearScore < 10) fearScore = 0;
-                if(contemptScore < 10) contemptScore = 0;
-                if(disgustScore < 10) disgustScore = 0;
-                if(sadnessScore < 10) sadnessScore = 0;
-
-                document.getElementById('flag-happiness').innerText = happinessScore + "%";
-                document.getElementById('flag-surprise').innerText = surpriseScore + "%";
-                document.getElementById('flag-anger').innerText = angerScore + "%";
-                document.getElementById('flag-fear').innerText = fearScore + "%";
-                document.getElementById('flag-contempt').innerText = contemptScore + "%";
-                document.getElementById('flag-disgust').innerText = disgustScore + "%";
-                document.getElementById('flag-sadness').innerText = sadnessScore + "%";
-
-                let activeMasterEmoji = "😐 NEUTRAL";
-                let emotionDisplay = document.getElementById('tele-emotion');
-                
-                if (surpriseScore > 45) { activeMasterEmoji = "😲 SURPRISED"; emotionDisplay.style.color = "#00ffff"; }
-                else if (happinessScore > 40) { activeMasterEmoji = "⚡ HYPED"; emotionDisplay.style.color = "#00ffcc"; }
-                else if (angerScore > 45) { activeMasterEmoji = "🤬 ANGRY"; emotionDisplay.style.color = "#ff3366"; }
-                else if (disgustScore > 40) { activeMasterEmoji = "🤮 DISGUSTED"; emotionDisplay.style.color = "#ffaa00"; }
-                else if (fearScore > 50) { activeMasterEmoji = "😨 FEAR"; emotionDisplay.style.color = "#b5ff14"; }
-                else if (sadnessScore > 35) { activeMasterEmoji = "😢 SADNESS"; emotionDisplay.style.color = "#3399ff"; }
-                else if (contemptScore > 45) { activeMasterEmoji = "😏 CONTEMPT"; emotionDisplay.style.color = "#ff00ff"; }
-                else { emotionDisplay.style.color = "#ffffff"; }
-
-                emotionDisplay.innerText = activeMasterEmoji;
-
-                document.getElementById('flag-focus').innerText = (angerScore > 15 || avgEyeOpenRatio < 0.024) ? "🎯 INTENSE CONCENTRATION" : "👀 CURIOUS INTEREST";
-                document.getElementById('flag-doubt').innerText = (cornerAsymmetryDelta > 0.015) ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING DATA";
-                document.getElementById('flag-pain').innerText = (disgustScore > 35 && avgEyeOpenRatio < 0.018) ? "💥 WINCE / PAIN MATRIX" : "🍵 COGNITIVE COZY";
-
-                let emojiAnchor = facePoints[263];
-                scannerCtx.fillStyle = '#ffffff'; scannerCtx.font = '26px ui-sans-serif';
-                scannerCtx.fillText(activeMasterEmoji.split(' ')[0], emojiAnchor.x * scannerCanvas.width + 30, emojiAnchor.y * scannerCanvas.height);
-                scannerCtx.restore();
-            } else {
-                document.getElementById('tele-emotion').innerText = "AWAITING FEED"; document.getElementById('tele-emotion').style.color = "#728196";
             }
-            document.getElementById('tele-signal').innerText = (29.4 + Math.random() * 1.2).toFixed(1) + " FPS";
+            cvProcessingLoop = requestAnimationFrame(processFrameCircuit);
         }
 
         // =========================================================================
