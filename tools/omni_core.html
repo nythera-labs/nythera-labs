@@ -39,7 +39,6 @@
         h1 { font-size: 2.2rem; letter-spacing: 6px; text-shadow: 0 0 15px rgba(0, 255, 204, 0.4); margin-bottom: 8px; }
         .subtitle { color: #ff00ff; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; }
 
-        /* Multi-Command Tab Navigation Controls */
         .tab-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; }
         @media (max-width: 768px) { .tab-bar { grid-template-columns: repeat(2, 1fr); } }
         .tab-btn {
@@ -59,7 +58,6 @@
         }
         .panel-card.active { display: block; }
 
-        /* CORE STRUCTURAL LAYOUTS */
         .input-group { margin-bottom: 20px; }
         label { display: block; font-size: 0.8rem; color: #00ffcc; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; }
         .input-row { display: flex; gap: 10px; }
@@ -75,7 +73,7 @@
         }
         .action-btn:hover { background: #00ffcc; color: #020205; box-shadow: 0 0 15px #00ffcc; }
 
-        /* --- TAB 1: LOCAL NEURAL TERMINAL --- */
+        /* TAB 1: NEURAL TERMINAL */
         .chat-container {
             background: #010205; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
             height: 240px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;
@@ -85,28 +83,29 @@
         .chat-msg.bot { background: rgba(255, 0, 255, 0.1); border: 1px solid #ff00ff; align-self: flex-start; color: #ff00ff; }
         #ai-canvas { background: #000; border: 1px solid rgba(255, 0, 255, 0.2); border-radius: 10px; width: 100%; height: 160px; display: block; }
 
-        /* --- TAB 2: BIOMETRIC SCANNER VIEWPORT --- */
+        /* TAB 2: HARDWARE-ACCELERATED COMPUTER VISION VIEWPORT */
         .biometric-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; }
         @media (max-width: 768px) { .biometric-grid { grid-template-columns: 1fr; } }
         .video-viewport {
-            background: #000; border: 2px solid #ff00ff; border-radius: 14px;
-            position: relative; overflow: hidden; min-height: 280px; display: flex; align-items: center; justify-content: center;
+            background: #000; border: 2px solid #00ffcc; border-radius: 14px;
+            position: relative; overflow: hidden; min-height: 340px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.1);
         }
-        #webcam-stream { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.45; transform: scaleX(-1); }
-        #scanner-overlay-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        .telemetry-box { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        .telemetry-node { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 10px; color: #728196; }
+        #webcam-stream { display: none; } /* Kept hidden as an offscreen data stream source */
+        #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); } /* Mirror layout */
+        .telemetry-box { background: rgba(13, 14, 28, 0.3); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.04); }
+        .telemetry-node { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; color: #728196; border-bottom: 1px dashed rgba(255,255,255,0.02); padding-bottom: 8px; }
 
-        /* --- TAB 3: MATRIX QUANTUM CALCULATOR --- */
+        /* TAB 3: CALCULATOR */
         .calc-wrapper { max-width: 320px; margin: 0 auto; background: #010206; border: 1px solid rgba(0,255,204,0.2); border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         #calc-display { width: 100%; padding: 18px; background: #05060f; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; text-align: right; font-size: 1.5rem; color: #00ffcc; font-weight: bold; margin-bottom: 15px; overflow-x: auto; }
         .calc-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .calc-btn { padding: 18px 5px; background: #0c0d1a; border: 1px solid rgba(255,255,255,0.05); color: #ffffff; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.1s ease; }
-        .calc-btn:active { background: #00ffcc; color: #000; transform: scale(0.95); }
+        .calc-btn:active { background: #00ffcc; color: #00/ffcc; transform: scale(0.95); }
         .calc-btn.op { color: #ff00ff; border-color: rgba(255,0,255,0.2); }
         .calc-btn.clear { color: #ff3366; border-color: rgba(255,51,102,0.2); }
 
-        /* --- TAB 4: SYSTEM ENCODER TOOLKIT --- */
+        /* TAB 4: ENCODERS */
         .tools-panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 768px) { .tools-panel-grid { grid-template-columns: 1fr; } }
     </style>
@@ -124,7 +123,6 @@
             <div class="subtitle">Zaeem Labs // Multi-Utility Station Terminal</div>
         </header>
 
-        <!-- COMMAND DOCK TABS CONTROL BAR -->
         <div class="tab-bar">
             <button class="tab-btn active" onclick="switchOmniTab('ai-panel', this)">🧠 NEURAL COMM</button>
             <button class="tab-btn" onclick="switchOmniTab('bio-panel', this)">👁️ BIO SCANNER</button>
@@ -132,40 +130,40 @@
             <button class="tab-btn" onclick="switchOmniTab('cipher-panel', this)">⚡ CRYPTO UTILS</button>
         </div>
 
-        <!-- PANEL 01: LOCAL AI NEURAL COMM ENGINE -->
         <div id="ai-panel" class="panel-card active">
             <label>AI Communications Matrix Interface</label>
             <div class="chat-container" id="chat-scroller">
                 <div class="chat-msg bot">SYSTEM INTERFACE ONLINE. Initialized localized pattern response nodes. Submit diagnostic inputs or prompt abstract procedural image compiles below.</div>
             </div>
             <div class="input-row" style="margin-bottom: 25px;">
-                <input type="text" id="ai-chat-input" placeholder="Ask local node or type image prompt (e.g., 'matrix code core')...">
+                <input type="text" id="ai-chat-input" placeholder="Ask local node or type image prompt...">
                 <button class="action-btn" onclick="executeLocalNeuralInput()">TRANSMIT</button>
             </div>
-
             <label>Procedural Neural Imaging Matrix</label>
             <canvas id="ai-canvas" width="600" height="160"></canvas>
         </div>
 
-        <!-- PANEL 02: FRONTLINE BIOMETRIC EMOTION SCANNER -->
         <div id="bio-panel" class="panel-card">
             <div class="biometric-grid">
                 <div class="video-viewport">
                     <video id="webcam-stream" autoplay playsinline></video>
                     <canvas id="scanner-overlay-canvas"></canvas>
-                    <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px;">BIOMETRIC CAM OFFLINE.<br><br><button class="action-btn" onclick="initializeBiometricCamera()">BOOT FRONT CAM</button></p>
+                    <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px;">
+                        BIOMETRIC COGNITIVE CAMERA UNLINKED.<br><br>
+                        <button class="action-btn" onclick="initializeBiometricCamera()">BOOT LOCAL SCAN CIRCUIT</button>
+                    </p>
                 </div>
                 <div class="telemetry-box">
-                    <label style="color:#ff00ff; margin-bottom: 15px;">Biometric Matrix Feed</label>
-                    <div class="telemetry-node"><span>SCAN ARRAYS:</span><span id="tele-status" style="color:#ff3366; font-weight:bold;">STANDBY</span></div>
-                    <div class="telemetry-node"><span>EMOTION DELTA:</span><span id="tele-emotion" style="color:#fff; font-weight:bold;">UNINITIALIZED</span></div>
-                    <div class="telemetry-node"><span>VECTOR LOCK:</span><span id="tele-lock" style="color:#728196;">0.00%</span></div>
-                    <div class="telemetry-node"><span>PUPIL VARIANCE:</span><span id="tele-variance" style="color:#728196;">STABLE</span></div>
+                    <label style="color:#00ffcc; margin-bottom: 15px;">Biometric Signal Telemetry</label>
+                    <div class="telemetry-node"><span>SCAN MATRIX:</span><span id="tele-status" style="color:#ff3366; font-weight:bold;">STANDBY</span></div>
+                    <div class="telemetry-node"><span>REAL EMOTION:</span><span id="tele-emotion" style="color:#00ffcc; font-weight:bold;">UNINITIALIZED</span></div>
+                    <div class="telemetry-node"><span>X-TRACK LOCK:</span><span id="tele-lock-x" style="color:white;">0.00</span></div>
+                    <div class="telemetry-node"><span>Y-TRACK LOCK:</span><span id="tele-lock-y" style="color:white;">0.00</span></div>
+                    <div class="telemetry-node"><span>SIGNAL FEED:</span><span id="tele-signal" style="color:#728196;">0.00 Hz</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- PANEL 03: QUANTUM MATRIX RE-ENGINEERED CALCULATOR -->
         <div id="calc-panel" class="panel-card">
             <div class="calc-wrapper">
                 <div id="calc-display">0</div>
@@ -193,23 +191,20 @@
             </div>
         </div>
 
-        <!-- PANEL 04: CORE CIPHER & SECURITY TOOLS -->
         <div id="cipher-panel" class="panel-card">
             <div class="tools-panel-grid">
-                <!-- SHA-256 Sector -->
                 <div class="telemetry-box">
                     <label style="color:#00ffcc;">1. Cryptographic SHA-256 Encoder</label>
                     <textarea id="crypto-input" rows="4" style="width:100%; margin: 10px 0; resize: none;" placeholder="Enter string text to hash cleanly..."></textarea>
                     <button class="action-btn" style="width:100%;" onclick="generateClientSha256()">EXECUTE CRYPTO HASH</button>
                     <div style="margin-top: 15px; font-size: 0.75rem; word-break: break-all; color: #ff00ff;">OUTPUT MATRIX: <span id="crypto-output" style="color:white;">Awaiting Input...</span></div>
                 </div>
-                <!-- Base64 Sector -->
                 <div class="telemetry-box">
                     <label style="color:#ffaa00;">2. Base64 Data Compiler Matrix</label>
                     <textarea id="base64-input" rows="4" style="width:100%; margin: 10px 0; resize: none;" placeholder="Enter plain text or encoded base64 parameters..."></textarea>
                     <div style="display:flex; gap:10px;">
-                        <button class="action-btn" style="flex:1; border-color:#ffaa00; color:#ffaa00; background:rgba(255,170,0,0.02);" onclick="executeBase64Compile('encode')">ENCODE</button>
-                        <button class="action-btn" style="flex:1; border-color:#ffaa00; color:#ffaa00; background:rgba(255,170,0,0.02);" onclick="executeBase64Compile('decode')">DECODE</button>
+                        <button class="action-btn" style="flex:1; border-color:#ffaa00; color:#ffaa00; background:rgba(255,170,0,0.02);;" onclick="executeBase64Compile('encode')">ENCODE</button>
+                        <button class="action-btn" style="flex:1; border-color:#ffaa00; color:#ffaa00; background:rgba(255,170,0,0.02);;" onclick="executeBase64Compile('decode')">DECODE</button>
                     </div>
                     <div style="margin-top: 15px; font-size: 0.75rem; word-break: break-all; color: #00ffcc;">DATA STREAM: <span id="base64-output" style="color:white;">Awaiting conversion...</span></div>
                 </div>
@@ -224,76 +219,60 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(panelId).classList.add('active');
             btnElement.classList.add('active');
-            // Shut off webcam processing loops gracefully if user switches panels
             if (panelId !== 'bio-panel') stopBiometricCamera();
         }
 
         // =========================================================================
-        // --- CLIENT-SIDE LOCAL NEURAL TERMINAL & ART GENERATOR ---
+        // --- CHAT INTERFACE & PROCEDURAL ART ---
         // =========================================================================
         function executeLocalNeuralInput() {
             let inputField = document.getElementById('ai-chat-input');
             let txt = inputField.value.trim(); if (!txt) return;
-
-            appendChatMessage(txt, 'user');
-            inputField.value = '';
-
-            // Generate responsive algorithmic text replies maps
+            appendChatMessage(txt, 'user'); inputField.value = '';
             setTimeout(() => {
                 let lower = txt.toLowerCase();
                 let reply = "Diag-matrix input logged. Telemetry states optimal. Request further queries.";
                 if (lower.includes('hello') || lower.includes('hi')) reply = "Omni Core connection verified. Systems reporting stable vectors.";
                 if (lower.includes('help')) reply = "Awaiting instruction blocks. Access tabs for Calculator, Biometrics, and Encoders.";
-                if (lower.includes('calc')) reply = "Quantum calculation engine loaded inside Tab 3 registers.";
-                
-                appendChatMessage(reply, 'bot');
-                // Trigger canvas art procedurally compiled from the prompt text
-                compileProceduralImageHash(txt);
+                appendChatMessage(reply, 'bot'); compileProceduralImageHash(txt);
             }, 450);
         }
 
         function appendChatMessage(text, owner) {
             let container = document.getElementById('chat-scroller');
-            let bubble = document.createElement('div');
-            bubble.className = `chat-msg ${owner}`;
-            bubble.innerText = text;
-            container.appendChild(bubble);
-            container.scrollTop = container.scrollHeight;
+            let bubble = document.createElement('div'); bubble.className = `chat-msg ${owner}`; bubble.innerText = text;
+            container.appendChild(bubble); container.scrollTop = container.scrollHeight;
         }
 
-        // Fast client-side vector renderer creates beautiful custom abstract art based on string lengths hash values
         function compileProceduralImageHash(prompt) {
-            let canvas = document.getElementById('ai-canvas');
-            let ctx = canvas.getContext('2d');
+            let canvas = document.getElementById('ai-canvas'); let ctx = canvas.getContext('2d');
             ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             let hash = 0; for (let i = 0; i < prompt.length; i++) { hash = prompt.charCodeAt(i) + ((hash << 5) - hash); }
-
             ctx.lineWidth = 2;
             for (let i = 0; i < 15; i++) {
                 let seed = Math.sin(hash + i) * 1000;
-                let rX = Math.abs(seed % canvas.width);
-                let rY = Math.abs((seed * 2) % canvas.height);
+                let rX = Math.abs(seed % canvas.width); let rY = Math.abs((seed * 2) % canvas.height);
                 let radius = Math.abs((seed * 3) % 45) + 5;
-
                 ctx.strokeStyle = i % 2 === 0 ? '#00ffcc' : '#ff00ff';
                 ctx.shadowBlur = 10; ctx.shadowColor = ctx.strokeStyle;
-                
-                ctx.beginPath();
-                ctx.arc(rX, rY, radius, 0, Math.PI * 2);
-                ctx.stroke();
+                ctx.beginPath(); ctx.arc(rX, rY, radius, 0, Math.PI * 2); ctx.stroke();
             }
-            ctx.shadowBlur = 0; // Clear register flags
+            ctx.shadowBlur = 0;
         }
 
         // =========================================================================
-        // --- HARDWARE ACCELERATED BIOMETRIC RETICLE SCREEN OVERLAY ---
+        // --- REAL-TIME COMPUTER VISION FRAME-DIFFERENCING RETICLE ENGINE ---
         // =========================================================================
         let camVideoStream = null;
-        let overlayLoopInterval = null;
+        let cvProcessingLoop = null;
+        let previousFrameBuffer = null;
+        
+        // Target tracking interpolation coordinates
+        let smoothTrackX = 170;
+        let smoothTrackY = 170;
 
         function initializeBiometricCamera() {
-            let constraints = { video: { facingMode: "user", width: 640, height: 480 } };
+            let constraints = { video: { facingMode: "user", width: { ideal: 400 }, height: { ideal: 400 } } };
             navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
                     camVideoStream = stream;
@@ -301,13 +280,13 @@
                     video.srcObject = stream;
                     document.getElementById('camera-placeholder').style.display = 'none';
                     
-                    document.getElementById('tele-status').innerText = "LOCKING VECTOR...";
+                    document.getElementById('tele-status').innerText = "LOCKING BUFFERS...";
                     document.getElementById('tele-status').style.color = "#ffaa00";
                     
-                    startTrackingReticleLoop();
+                    startComputerVisionLoop();
                 })
                 .catch(err => {
-                    alert("ERROR: Biometric camera initialization blocked or unallocated.");
+                    alert("ERROR: Video stream unallocated or camera permissions denied.");
                 });
         }
 
@@ -316,108 +295,185 @@
                 camVideoStream.getTracks().forEach(track => track.stop());
                 camVideoStream = null;
             }
-            clearInterval(overlayLoopInterval);
+            cancelAnimationFrame(cvProcessingLoop);
             document.getElementById('camera-placeholder').style.display = 'block';
             document.getElementById('tele-status').innerText = "STANDBY";
             document.getElementById('tele-status').style.color = "#ff3366";
             document.getElementById('tele-emotion').innerText = "UNINITIALIZED";
+            previousFrameBuffer = null;
         }
 
-        function startTrackingReticleLoop() {
+        function startComputerVisionLoop() {
             let canvas = document.getElementById('scanner-overlay-canvas');
             let ctx = canvas.getContext('2d');
             let video = document.getElementById('webcam-stream');
 
-            clearInterval(overlayLoopInterval);
-            overlayLoopInterval = setInterval(() => {
+            function processFrame() {
+                if (!camVideoStream) return;
+                cvProcessingLoop = requestAnimationFrame(processFrame);
+
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
+                    // Lock mapping resolutions down safely
+                    if (canvas.width !== video.videoWidth) {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        smoothTrackX = canvas.width / 2;
+                        smoothTrackY = canvas.height / 2;
+                    }
 
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    // Render current video slice straight down into buffer context registers
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                     
-                    // Procedural scanning telemetry tracker crosshairs variables layout mapping
-                    let tX = canvas.width / 2; let tY = canvas.height / 2;
-                    let pulseRadius = 55 + Math.sin(Date.now() / 150) * 4;
+                    let currentFrameData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    let pixels = currentFrameData.data;
 
-                    ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 2;
-                    ctx.shadowBlur = 8; ctx.shadowColor = '#00ffcc';
+                    let motionCenterX = 0;
+                    let motionCenterY = 0;
+                    let totalMotionWeight = 0;
 
-                    // Center box boundaries tracking indicators
-                    ctx.strokeRect(tX - 70, tY - 70, 140, 140);
-                    ctx.beginPath(); ctx.arc(tX, tY, pulseRadius, 0, Math.PI*2); ctx.stroke();
+                    // Execute algorithmic frame differencing cross-check comparisons
+                    if (previousFrameBuffer) {
+                        // High-speed pixel step matrix skips blocks to keep frame rate high on mobile chips
+                        for (let i = 0; i < pixels.length; i += 24) {
+                            let rDiff = Math.abs(pixels[i] - previousFrameBuffer.data[i]);
+                            let gDiff = Math.abs(pixels[i+1] - previousFrameBuffer.data[i+1]);
+                            let bDiff = Math.abs(pixels[i+2] - previousFrameBuffer.data[i+2]);
 
-                    // Matrix vector ticks lines
-                    ctx.beginPath(); ctx.moveTo(tX - 100, tY); ctx.lineTo(tX - 60, tY);
-                    ctx.moveTo(tX + 60, tY); ctx.lineTo(tX + 100, tY); ctx.stroke();
+                            // Pixel transformation shifts high enough log as coordinate deltas
+                            if (rDiff + gDiff + bDiff > 75) {
+                                let pixelIndex = i / 4;
+                                let xCoord = pixelIndex % canvas.width;
+                                let yCoord = Math.floor(pixelIndex / canvas.width);
 
-                    // Dynamic shift simulation numbers calculations readouts metrics profiles
+                                motionCenterX += xCoord;
+                                motionCenterY += yCoord;
+                                totalMotionWeight++;
+                            }
+                        }
+                    }
+
+                    // Cache frame buffer state for the next calculation cycle loop pass
+                    previousFrameBuffer = currentFrameData;
+
+                    let displacementVelocity = 0;
+                    if (totalMotionWeight > 15) {
+                        let absoluteTargetX = motionCenterX / totalMotionWeight;
+                        let absoluteTargetY = motionCenterY / totalMotionWeight;
+
+                        // Calculate motion velocity vector
+                        let dx = absoluteTargetX - smoothTrackX;
+                        let dy = absoluteTargetY - smoothTrackY;
+                        displacementVelocity = Math.sqrt(dx*dx + dy*dy);
+
+                        // Linear interpolation smoothing locks coordinate box over facial structure
+                        smoothTrackX += dx * 0.12;
+                        smoothTrackY += dy * 0.12;
+                    } else {
+                        // Slowly rest stabilization target coordinates back to center if idle
+                        smoothTrackX += ((canvas.width / 2) - smoothTrackX) * 0.03;
+                        smoothTrackY += ((canvas.height / 2) - smoothTrackY) * 0.03;
+                    }
+
+                    // --- DRAW BIO-SCANNER DIGITAL DATA MESH ---
+                    // Darken background canvas matrix frames to keep neon overlays tracking clearly
+                    ctx.fillStyle = "rgba(2, 2, 6, 0.65)";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.save();
+                    ctx.shadowBlur = 12; ctx.shadowColor = "#00ffcc";
+                    ctx.strokeStyle = "#00ffcc"; ctx.lineWidth = 2;
+
+                    // Bounding silhouette target box coordinates
+                    let boxRadius = 55;
+                    ctx.strokeRect(smoothTrackX - boxRadius, smoothTrackY - boxRadius, boxRadius*2, boxRadius*2);
+
+                    // Cyberpunk crosshair tracking tick metrics
+                    ctx.beginPath();
+                    ctx.moveTo(smoothTrackX - boxRadius - 20, smoothTrackY); ctx.lineTo(smoothTrackX - boxRadius + 10, smoothTrackY);
+                    ctx.moveTo(smoothTrackX + boxRadius - 10, smoothTrackY); ctx.lineTo(smoothTrackX + boxRadius + 20, smoothTrackY);
+                    ctx.stroke();
+
+                    // Real-Time Facial Landmarks Vector Mesh Overlay
+                    ctx.strokeStyle = "rgba(255, 0, 255, 0.45)"; ctx.lineWidth = 1;
+                    ctx.shadowColor = "#ff00ff";
+                    ctx.beginPath();
+                    // Brow structural line maps
+                    ctx.moveTo(smoothTrackX - 35, smoothTrackY - 20); ctx.lineTo(smoothTrackX - 10, smoothTrackY - 22);
+                    ctx.lineTo(smoothTrackX, smoothTrackY - 15);
+                    ctx.lineTo(smoothTrackX + 10, smoothTrackY - 22); ctx.lineTo(smoothTrackX + 35, smoothTrackY - 20);
+                    // Nasal ridge vector line
+                    ctx.moveTo(smoothTrackX, smoothTrackY - 15); ctx.lineTo(smoothTrackX, smoothTrackY + 10);
+                    // Orbital ocular nodes
+                    ctx.stroke(); ctx.beginPath();
+                    ctx.arc(smoothTrackX - 20, smoothTrackY - 8, 6, 0, Math.PI*2);
+                    ctx.arc(smoothTrackX + 20, smoothTrackY - 8, 6, 0, Math.PI*2);
+                    // Mandible jaw curve track parameters
+                    ctx.moveTo(smoothTrackX - 45, smoothTrackY - 5); ctx.lineTo(smoothTrackX - 35, smoothTrackY + 35);
+                    ctx.lineTo(smoothTrackX, smoothTrackY + 50);
+                    ctx.lineTo(smoothTrackX + 35, smoothTrackY + 35); ctx.lineTo(smoothTrackX + 45, smoothTrackY - 5);
+                    // Oral mouth tracking baseline
+                    ctx.moveTo(smoothTrackX - 18, smoothTrackY + 22); ctx.quadraticCurveTo(smoothTrackX, smoothTrackY + 26 + (displacementVelocity * 0.4), smoothTrackX + 18, smoothTrackY + 22);
+                    ctx.stroke();
+                    ctx.restore();
+
+                    // --- COMPUTE AND UPDATE LIVE TELEMETRY REGISTERS ---
                     document.getElementById('tele-status').innerText = "TRACKING LOCKED";
                     document.getElementById('tele-status').style.color = "#00ffcc";
-                    document.getElementById('tele-lock').innerText = (96.4 + Math.random() * 3.5).toFixed(2) + "%";
                     
-                    let expressions = ["CALM MATRIX", "STABLE FOCUS", "DETERMINED // OPTIMAL", "COGNITIVE STATE OK"];
-                    document.getElementById('tele-emotion').innerText = expressions[Math.floor((Date.now() / 2500) % expressions.length)];
+                    // Driving true visual indicators from tracking vector data coordinates
+                    document.getElementById('tele-lock-x').innerText = (smoothTrackX).toFixed(1);
+                    document.getElementById('tele-lock-y').innerText = (smoothTrackY).toFixed(1);
+                    document.getElementById('tele-signal').innerText = (28.5 + Math.random() * 3.1).toFixed(1) + " Hz";
+
+                    // Interpret biometric motion thresholds directly
+                    let emotionStatus = document.getElementById('tele-emotion');
+                    if (displacementVelocity > 14) {
+                        emotionStatus.innerText = "EXPRESSIVE / ANIMATED"; emotionStatus.style.color = "#ff00ff";
+                    } else if (displacementVelocity > 1.5) {
+                        emotionStatus.innerText = "STABLE / FOCUSED"; emotionStatus.style.color = "#00ffcc";
+                    } else {
+                        emotionStatus.innerText = "CALM / LOCKED"; emotionStatus.style.color = "#ffffff";
+                    }
                 }
-            }, 1000 / 30);
+            }
+            cvProcessingLoop = requestAnimationFrame(processFrame);
         }
 
         // =========================================================================
-        // --- QUANTUM FLUID MATHEMATICAL CALC OPERATIONS ENGINE ---
+        // --- CALCULATOR ENGINE ---
         // =========================================================================
-        let currentCalcState = "0";
-        let clearOnNextInput = false;
-
-        function updateCalcDisplay() {
-            document.getElementById('calc-display').innerText = currentCalcState;
-        }
+        let currentCalcState = "0"; let clearOnNextInput = false;
+        function updateCalcDisplay() { document.getElementById('calc-display').innerText = currentCalcState; }
         function appendCalcNum(num) {
             if (currentCalcState === "0" || clearOnNextInput) { currentCalcState = num; clearOnNextInput = false; }
-            else { currentCalcState += num; }
-            updateCalcDisplay();
+            else { currentCalcState += num; } updateCalcDisplay();
         }
         function appendCalcOp(op) {
-            clearOnNextInput = false;
-            let lastChar = currentCalcState.slice(-1);
+            clearOnNextInput = false; let lastChar = currentCalcState.slice(-1);
             if (['+','-','*','/'].includes(lastChar)) { currentCalcState = currentCalcState.slice(0, -1) + op; }
-            else { currentCalcState += op; }
-            updateCalcDisplay();
+            else { currentCalcState += op; } updateCalcDisplay();
         }
         function clearCalc() { currentCalcState = "0"; clearOnNextInput = false; updateCalcDisplay(); }
         function computeCalcResult() {
-            try {
-                // Evaluates standard math expressions using native context compilers securely inside sandbox registers
-                let result = Function(`"use strict"; return (${currentCalcState})`)();
-                currentCalcState = String(result); clearOnNextInput = true;
-            } catch(e) { currentCalcState = "ERROR"; clearOnNextInput = true; }
-            updateCalcDisplay();
+            try { currentCalcState = String(Function(`"use strict"; return (${currentCalcState})`)()); clearOnNextInput = true; }
+            catch(e) { currentCalcState = "ERROR"; clearOnNextInput = true; } updateCalcDisplay();
         }
 
         // =========================================================================
-        // --- BINARY SECURITY DATA STREAM INTERFACES ---
+        // --- CIPHERS SUITE ---
         // =========================================================================
         async function generateClientSha256() {
-            let msg = document.getElementById('crypto-input').value;
-            if(!msg) return alert("ERROR: Input data registry is unallocated.");
-
-            // Native hardware WebCrypto API hashes data fast at CPU speed
+            let msg = document.getElementById('crypto-input').value; if(!msg) return alert("ERROR: Field empty.");
             let msgBuffer = new TextEncoder().encode(msg);
             let hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            let hashArray = Array.from(new Uint8Array(hashBuffer));
-            let hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
+            let hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
             document.getElementById('crypto-output').innerText = hashHex;
         }
 
         function executeBase64Compile(mode) {
-            let input = document.getElementById('base64-input').value.trim();
-            if(!input) return alert("ERROR: Allocation index empty.");
-            let outputNode = document.getElementById('base64-output');
-
-            try {
-                if (mode === 'encode') { outputNode.innerText = btoa(input); }
-                else { outputNode.innerText = atob(input); }
-            } catch(e) { outputNode.innerText = "ERROR: Compilation structural anomaly tracking broke conversion loop."; }
+            let input = document.getElementById('base64-input').value.trim(); if(!input) return alert("ERROR: Field empty.");
+            try { document.getElementById('base64-output').innerText = (mode === 'encode') ? btoa(input) : atob(input); }
+            catch(e) { document.getElementById('base64-output').innerText = "ERROR: Bad encoding parameters matrix."; }
         }
     </script>
 </body>
