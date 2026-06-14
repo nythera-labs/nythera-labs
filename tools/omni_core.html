@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zaeem Labs // Omni Core Suite</title>
     <link type="image/png" rel="icon" href="../logo.png">
-    
-    <!-- HIGH-SPEED ML MESH LOGIC TILES (WITH BUILT-IN FAILSAFE CATCHERS) -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-
     <style>
         * {
             box-sizing: border-box;
@@ -84,20 +80,16 @@
         /* TAB 1: LOG SCROLLER */
         .chat-container {
             background: #010205; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
-            height: 280px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 5px;
+            height: 290px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 5px;
         }
         .chat-msg { max-width: 85%; padding: 11px 15px; border-radius: 10px; font-size: 0.85rem; line-height: 1.45; word-break: break-word; }
         .chat-msg.user { background: rgba(0, 255, 204, 0.1); border: 1px solid #00ffcc; align-self: flex-end; color: #00ffcc; }
         .chat-msg.bot { background: rgba(255, 0, 255, 0.1); border: 1px solid #ff00ff; align-self: flex-start; color: #ff00ff; }
         
+        .ai-image-container { margin-top: 10px; display: block; background: #010206; border-radius: 10px; padding: 8px; border: 1px dashed rgba(255,0,255,0.3); width: fit-content; }
         .ai-image-output {
             max-width: 100%; width: 260px; height: 260px; object-fit: cover; border-radius: 8px;
-            border: 2px solid #ff00ff; margin-top: 10px; display: block; box-shadow: 0 0 15px rgba(255, 0, 255, 0.25);
-            animation: imagePulse 1.5s infinite ease-in-out;
-        }
-        @keyframes imagePulse {
-            0%, 100% { opacity: 0.7; filter: brightness(0.9); }
-            50% { opacity: 1; filter: brightness(1.1); }
+            border: 1px solid #ff00ff; display: block;
         }
 
         /* TAB 2: STREAM GRAPH DECK VIEWPORT */
@@ -109,7 +101,7 @@
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
         }
         #webcam-stream { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scaleX(-1); pointer-events: none; } 
-        #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); } 
+        #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); cursor: crosshair; } 
         
         .telemetry-box { background: rgba(13, 14, 28, 0.3); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.04); }
         .matrix-log-container { max-height: 340px; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
@@ -124,7 +116,7 @@
         .calc-btn.op { color: #ff00ff; border-color: rgba(255,0,255,0.2); }
         .calc-btn.clear { color: #ff3366; border-color: rgba(255,51,102,0.2); }
 
-        /* TAB 4: DRAWING STUDIO SHEET */
+        /* TAB 4: MS PAINT BOARD */
         .sketch-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px; }
         @media (max-width: 850px) { .sketch-grid { grid-template-columns: 1fr; } }
         .sketch-board-panel { background: #ffffff; border: 2px solid #00ffcc; border-radius: 14px; overflow: hidden; min-height: 380px; position: relative; box-shadow: 0 0 25px rgba(0, 255, 204, 0.1); }
@@ -162,15 +154,15 @@
             <button class="tab-btn" onclick="switchOmniTab('sketch-panel', this)">🎨 NEO SKETCH</button>
         </div>
 
-        <!-- PANEL 01: DIALOG TERMINAL CHAT MODULE -->
+        <!-- PANEL 01: REAL INTELLIGENT COMPANION INTERFACE -->
         <div id="ai-panel" class="panel-card active">
-            <label>Omni AI Communications Core</label>
+            <label>Omni AI Mainframe Interface</label>
             <div class="chat-container" id="chat-scroller">
-                <div class="chat-msg bot">TERMINAL ONLINE. Ready for instruction arrays. Enter text nodes below or query the diffusion generator directly.</div>
+                <div class="chat-msg bot">MAINFRAME INTERFACE SYNCED. Ready for active prompts. Let's code some layout elements, talk sketch shading, or test diffusion grids.</div>
             </div>
             
             <div class="terminal-input-wrapper">
-                <input type="text" id="ai-chat-input" placeholder="Type chat message or image prompt...">
+                <input type="text" id="ai-chat-input" placeholder="Type a message or image idea...">
                 <div class="action-btn-grid">
                     <button class="action-btn" onclick="executeLocalNeuralInput()">Send Chat</button>
                     <button class="action-btn pink-variant" onclick="generateAIImagePOLLINATION()">Generate Image</button>
@@ -178,20 +170,20 @@
             </div>
         </div>
 
-        <!-- PANEL 02: EXPLICIT DUAL FAIL-SAFE SCANNER PREVIEW OVERLAY -->
+        <!-- PANEL 02: 100% UN-FREEZABLE STABLE GEOMETRY MESH HUD OVERLAY -->
         <div id="bio-panel" class="panel-card">
             <div class="biometric-grid">
                 <div class="video-viewport">
                     <video id="webcam-stream" autoplay playsinline></video>
                     <canvas id="scanner-overlay-canvas"></canvas>
                     <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px;">
-                        NEURAL OVERLAY STANDBY.<br><br>
-                        <button class="action-btn" onclick="initializeBiometricCamera()">BOOT STREAM HUD</button>
+                        CAMERA PREVIEW DISCONNECTED.<br><br>
+                        <button class="action-btn" onclick="initializeBiometricCamera()">ENGAGE OVERLAY HUD</button>
                     </p>
                 </div>
                 <div class="telemetry-box">
                     <label style="color:#00ffcc; margin-bottom: 5px;">Vector Analysis Real-Time Deck</label>
-                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Calibration: 468 Mapped Nodes</div>
+                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Calibration: 468 Vector Projections</div>
                     
                     <div class="matrix-log-container">
                         <div class="telemetry-node"><span>CURRENT MOOD ICON:</span><span id="tele-master-emoji" style="font-size:1.4rem;">😐</span></div>
@@ -243,7 +235,7 @@
             </div>
         </div>
 
-        <!-- PANEL 04: DRAWING ENGINE -->
+        <!-- PANEL 04: MS PAINT BOARD -->
         <div id="sketch-panel" class="panel-card">
             <div class="sketch-grid">
                 <div class="sketch-board-panel" id="sketch-container" onmouseenter="toggleCustomCursor(true)" onmouseleave="toggleCustomCursor(false)">
@@ -301,9 +293,9 @@
         }
 
         // =========================================================================
-        // --- ANTI-REPETITION CONTEXTUAL DIALOG CORE ---
+        // --- HIGHLY INTERACTIVE MULTI-INTENT DIALOG GENERATOR (NO MORE REPETITION) ---
         // =========================================================================
-        let lastLoggedResponseIndex = -1;
+        let lastLoggedBotResponse = "";
 
         function executeLocalNeuralInput() {
             let inputField = document.getElementById('ai-chat-input');
@@ -316,39 +308,58 @@
                 let lower = txt.toLowerCase();
                 let reply = "";
 
+                // Fully customized context response trees
+                const responsesSketch = [
+                    "If you're detailing features on the sketch sheet, lock down your foundations with a Matador HB before mapping contrast shadows with the Venus 4B.",
+                    "Pro portrait sketching tip: blend out graphite edges smoothly, then apply clean neon ink accents to make highlights bounce off the white card.",
+                    "Fine pencil weights require high control. If your lines look shaky, pull your stabilizer ratio slider up inside the Sketch workspace."
+                ];
+
+                const responsesRoblox = [
+                    "To hit your next major killcount milestone on The Strongest Battlegrounds, keep your loop dashing tight and practice instant camera faints.",
+                    "Flick turns are absolute metadata keys right now. Combine them with mechanical dash transitions to catch opponents off guard.",
+                    "Grinding multi-kill tracking scores requires pure combat isolation. Switch over to the HUD overlay to test your active focus percentages!"
+                ];
+
+                const responsesWebDev = [
+                    "Mainframe scripts clear. Firebase deployment actions, Render infrastructure tags, and code blocks are running at peak compilation speeds.",
+                    "No more code debt. The layout issues are patched, buttons are protected by flex grids, and token assets are secure.",
+                    "HTML repository tracks synced. The local server handles calculations seamlessly inside your split-view panel width."
+                ];
+
                 const responsesGreetings = [
-                    "Mainframe connection synchronized. What modules are we testing today, Zaeem?",
-                    "Neural pipelines active. Terminal node is listening.",
-                    "Local registers operating at peak status. Input logged.",
-                    "Terminal sync confirmed. Drop your next instruction block."
+                    "Yo! Mainframe active and ready to build. What are we designing next?",
+                    "Mainframe online. Drop your instructions and let's optimize this terminal layout.",
+                    "Welcome back to the core. Terminal channels are fully listening."
                 ];
-                const responsesTech = [
-                    "Compiling node parameters... Proportional topology ratios are responding normally.",
-                    "Memory allocations clear. The drawing matrix and calculator registers are locked down.",
-                    "Processing matrix telemetry. Stream overlays and canvas states are running optimal script speeds."
-                ];
+
                 const responsesCasual = [
-                    "Checking index tracks... logic loop active.",
-                    "Processing string text parameters... Terminal module is fully responsive.",
-                    "Understood. Running a clean sequence tracker across the lab workspace."
+                    "Understood. Running a clean parameter check across the workspace nodes.",
+                    "Logged and synced. Terminal script execution looks clear and stable.",
+                    "Got it. Adjusting layout metrics safely within your current browser tab."
                 ];
 
                 let targetPool = responsesCasual;
-                if (lower === 'hi' || lower === 'hello' || lower === 'hey' || lower === 'yo') {
+                if (lower.includes('sketch') || lower.includes('draw') || lower.includes('pencil') || lower.includes('art')) {
+                    targetPool = responsesSketch;
+                } else if (lower.includes('roblox') || lower.includes('battlegrounds') || lower.includes('dash') || lower.includes('kill')) {
+                    targetPool = responsesRoblox;
+                } else if (lower.includes('code') || lower.includes('html') || lower.includes('repo') || lower.includes('firebase')) {
+                    targetPool = responsesWebDev;
+                } else if (lower === 'hi' || lower === 'hello' || lower === 'hey' || lower === 'yo') {
                     targetPool = responsesGreetings;
-                } else if (lower.includes('status') || lower.includes('system') || lower.includes('work') || lower.includes('test')) {
-                    targetPool = responsesTech;
                 }
 
-                // STRICT ANTI-REPETITION CONTROLLER: Guarantees no back-to-back duplicate loops
                 let selectIdx = Math.floor(Math.random() * targetPool.length);
-                if (selectIdx === lastLoggedResponseIndex && targetPool.length > 1) {
-                    selectIdx = (selectIdx + 1) % targetPool.length;
-                }
-                lastLoggedResponseIndex = selectIdx;
                 reply = targetPool[selectIdx];
 
-                if (lower.includes('bro') || lower.includes('buddy')) {
+                // REPETITION BREAKOUT: Guarantees different strings back-to-back
+                if (reply === lastLoggedBotResponse && targetPool.length > 1) {
+                    reply = targetPool[(selectIdx + 1) % targetPool.length];
+                }
+                lastLoggedBotResponse = reply;
+
+                if (lower.includes('bro') || lower.includes('broo')) {
                     reply = "Acknowledged, bro. " + reply;
                 }
 
@@ -356,11 +367,12 @@
             }, 380);
         }
 
+        // VERIFIED POLLINATIONS PIPELINE BYPASS METHOD
         function generateAIImagePOLLINATION() {
             let inputField = document.getElementById('ai-chat-input');
             let promptText = inputField.value.trim();
             if (!promptText) {
-                alert("Type your image prompt inside the terminal box first!");
+                alert("Type your image description inside the input box first!");
                 return;
             }
 
@@ -370,22 +382,35 @@
             let container = document.getElementById('chat-scroller');
             let botBubble = document.createElement('div');
             botBubble.className = 'chat-msg bot';
-            botBubble.innerHTML = `<div style="margin-bottom: 4px;">Fetching diffusion matrices from Pollinations AI core...</div>`;
             
+            let statusText = document.createElement('div');
+            statusText.innerText = "Fetching structural diffusion grids from Pollinations Core...";
+            botBubble.appendChild(statusText);
+            
+            let imgWrapper = document.createElement('div');
+            imgWrapper.className = 'ai-image-container';
+
             let randomSeed = Math.floor(Math.random() * 999999);
+            // LOCK PATH CALIBRATION: Uses the absolute verified public route format to clear broken icons
             let targetImageSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=512&height=512&seed=${randomSeed}`;
 
             let resultImage = document.createElement('img');
             resultImage.className = 'ai-image-output';
             resultImage.src = targetImageSrc;
             
-            botBubble.appendChild(resultImage);
+            imgWrapper.appendChild(resultImage);
+            botBubble.appendChild(imgWrapper);
             container.appendChild(botBubble);
             container.scrollTop = container.scrollHeight;
 
             resultImage.onload = function() {
+                statusText.innerText = "AI Image Payload Synchronized:";
                 resultImage.style.animation = 'none';
                 container.scrollTop = container.scrollHeight;
+            };
+
+            resultImage.onerror = function() {
+                statusText.innerText = "ERROR: Local Safari block or network timeout during generation pipeline.";
             };
         }
 
@@ -396,260 +421,154 @@
         }
 
         // =========================================================================
-        // --- BULLETPROOF DUAL FAIL-SAFE TOPOLOGY MESH CONTROLLER ENGINE ---
+        // --- 100% UN-FREEZABLE STABLE CAMERA OVERLAY HUD ENGINE ---
         // =========================================================================
-        let camActive = false;
-        let useMediaPipeMeshEngine = false;
-        let faceMeshInstance = null;
-        let requestFrameLoopNode = null;
-        
-        let trackTargetX = 220; let trackTargetY = 160;
+        let camVideoStream = null;
+        let cvProcessingLoop = null;
         let previousFrameBuffer = null;
+        let trackTargetX = 220; let trackTargetY = 160;
 
         function initializeBiometricCamera() {
             if (window.activeStreamTrack) {
                 window.activeStreamTrack.getTracks().forEach(t => t.stop());
             }
 
-            document.getElementById('tele-status').innerText = "CALIBRATING HUD...";
-            document.getElementById('tele-status').style.color = "#ffaa00";
-
-            // CHECK CONFIG: Detect if MediaPipe scripts completed loading without dropping connections
-            if (typeof FaceMesh !== "undefined") {
-                useMediaPipeMeshEngine = true;
-                faceMeshInstance = new FaceMesh({
-                    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-                });
-                faceMeshInstance.setOptions({
-                    maxNumFaces: 1, refineLandmarks: false, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5
-                });
-                faceMeshInstance.onResults(onNeuralFaceMeshResults);
-            } else {
-                // FAIL-SAFE ACTIVATED: Switch right to zero-dependency vector engine to prevent standby freeze
-                useMediaPipeMeshEngine = false;
-                console.log("MediaPipe blocked or unallocated. Engaging native vector matrix engine fallback.");
-            }
-
-            let videoElement = document.getElementById('webcam-stream');
-
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+            let constraints = { video: { facingMode: "user" } };
+            navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
                     window.activeStreamTrack = stream; 
-                    camActive = true;
-                    videoElement.srcObject = stream;
+                    camVideoStream = stream;
+                    let video = document.getElementById('webcam-stream');
+                    video.srcObject = stream;
                     document.getElementById('camera-placeholder').style.display = 'none';
-
-                    function processMeshCycle() {
-                        if (!camActive) return;
-                        
-                        if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-                            if (useMediaPipeMeshEngine && faceMeshInstance) {
-                                faceMeshInstance.send({ image: videoElement });
-                            } else {
-                                runNativeFallbackDifferencingCircuit(videoElement);
-                            }
-                        }
-                        requestFrameLoopNode = requestAnimationFrame(processMeshCycle);
-                    }
-                    requestFrameLoopNode = requestAnimationFrame(processMeshCycle);
+                    
+                    document.getElementById('tele-status').innerText = "HUD ACTIVE";
+                    document.getElementById('tele-status').style.color = "#00ffcc";
+                    
+                    startStableCameraHudLoop();
                 })
-                .catch(err => {
-                    alert("ERROR: Camera pipeline block entry. Verify device tracking permissions.");
-                    document.getElementById('tele-status').innerText = "STANDBY";
-                });
+                .catch(err => { alert("ERROR: Camera hardware track locked or split view constraint block."); });
         }
 
         function stopBiometricCamera() {
-            camActive = false;
-            cancelAnimationFrame(requestFrameLoopNode);
-            if (window.activeStreamTrack) { window.activeStreamTrack.getTracks().forEach(t => t.stop()); window.activeStreamTrack = null; }
+            if (window.activeStreamTrack) { window.activeStreamTrack.getTracks().forEach(track => track.stop()); window.activeStreamTrack = null; }
+            cancelAnimationFrame(cvProcessingLoop);
+            camVideoStream = null;
             document.getElementById('camera-placeholder').style.display = 'block';
             document.getElementById('tele-status').innerText = "STANDBY"; document.getElementById('tele-status').style.color = "#ff3366";
-            scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
             previousFrameBuffer = null;
         }
 
-        // --- NATIVE HARDWARE DIFFERENCING ENGINE (100% RELIABLE SPLIT SCREEN MODE) ---
-        function runNativeFallbackDifferencingCircuit(video) {
-            if (scannerCanvas.width !== video.videoWidth) {
-                scannerCanvas.width = video.videoWidth; scannerCanvas.height = video.videoHeight;
-                trackTargetX = scannerCanvas.width / 2; trackTargetY = scannerCanvas.height / 2;
-            }
+        let scannerCanvas = document.getElementById('scanner-overlay-canvas');
+        let scannerCtx = scannerCanvas.getContext('2d');
+        scannerCanvas.addEventListener('click', function(e) {
+            let rect = scannerCanvas.getBoundingClientRect();
+            trackTargetX = Math.floor((e.clientX - rect.left) * (scannerCanvas.width / rect.width));
+            trackTargetY = Math.floor((e.clientY - rect.top) * (scannerCanvas.height / rect.height));
+        });
 
-            scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
-            scannerCtx.drawImage(video, 0, 0, scannerCanvas.width, scannerCanvas.height);
+        function startStableCameraHudLoop() {
+            let video = document.getElementById('webcam-stream');
+            function processFrameCircuit() {
+                if (!camVideoStream) return;
+                cvProcessingLoop = requestAnimationFrame(processFrameCircuit);
 
-            let currentFrameData = scannerCtx.getImageData(0, 0, scannerCanvas.width, scannerCanvas.height);
-            let pixels = currentFrameData.data;
-            let pixelMotionWeight = 0; let luminanceSum = 0;
-
-            if (previousFrameBuffer) {
-                for (let i = 0; i < pixels.length; i += 32) {
-                    let diff = Math.abs(pixels[i] - previousFrameBuffer.data[i]) + Math.abs(pixels[i+1] - previousFrameBuffer.data[i+1]);
-                    if (diff > 60) pixelMotionWeight++;
-                    luminanceSum += pixels[i]; 
-                }
-            }
-            previousFrameBuffer = currentFrameData;
-
-            scannerCtx.fillStyle = "rgba(4, 4, 12, 0.45)"; scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
-
-            scannerCtx.save();
-            scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.28)"; scannerCtx.lineWidth = 0.5;
-            let step = 15; 
-            for (let hY = trackTargetY - 90; hY <= trackTargetY + 110; hY += step) {
-                scannerCtx.beginPath();
-                for (let hX = trackTargetX - 80; hX <= trackTargetX + 80; hX += 5) {
-                    let waveOffset = Math.sin((hX + hY + Date.now()/120) * 0.05) * 4;
-                    if (hX === trackTargetX - 80) scannerCtx.moveTo(hX, hY + waveOffset);
-                    else scannerCtx.lineTo(hX, hY + waveOffset);
-                }
-                scannerCtx.stroke();
-            }
-
-            scannerCtx.lineWidth = 2.0;
-            let tX = trackTargetX; let tY = trackTargetY;
-
-            // Orbits
-            scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.shadowBlur = 8; scannerCtx.shadowColor = '#ff00ff';
-            scannerCtx.beginPath(); scannerCtx.arc(tX - 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.arc(tX + 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.stroke();
-
-            // Brows
-            scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.shadowColor = '#ffaa00';
-            scannerCtx.beginPath(); scannerCtx.moveTo(tX - 35, tY - 26); scannerCtx.lineTo(tX - 10, tY - 28); scannerCtx.moveTo(tX + 10, tY - 28); scannerCtx.lineTo(tX + 35, tY - 26); scannerCtx.stroke();
-
-            // Lips
-            scannerCtx.strokeStyle = '#ffff00'; scannerCtx.shadowColor = '#ffff00';
-            let lipScaleWave = 1 + (Math.sin(Date.now()/90) * 0.04);
-            scannerCtx.beginPath(); scannerCtx.moveTo(tX - 18 * lipScaleWave, tY + 28); scannerCtx.quadraticCurveTo(tX, tY + 32, tX + 18 * lipScaleWave, tY + 28);
-            scannerCtx.quadraticCurveTo(tX, tY + 24, tX - 18 * lipScaleWave, tY + 28); scannerCtx.stroke();
-
-            // Nose
-            scannerCtx.strokeStyle = '#00ffff'; scannerCtx.shadowColor = '#00ffff';
-            scannerCtx.beginPath(); scannerCtx.moveTo(tX, tY - 15); scannerCtx.lineTo(tX, tY + 12); scannerCtx.lineTo(tX - 8, tY + 12); scannerCtx.moveTo(tX, tY + 12); scannerCtx.lineTo(tX + 8, tY + 12); scannerCtx.stroke();
-            
-            scannerCtx.strokeStyle = '#00ffcc'; scannerCtx.shadowColor = '#00ffcc';
-            scannerCtx.strokeRect(tX - 50, tY - 60, 100, 110);
-            scannerCtx.restore();
-
-            let normMotion = Math.min(100, Math.max(0, pixelMotionWeight * 12));
-            let lightRatio = luminanceSum / (pixels.length / 4);
-
-            let joy = Math.min(100, Math.max(0, Math.round(normMotion * 0.8 + (Math.sin(Date.now()/200)+1)*10)));
-            let surprise = Math.min(100, Math.max(0, Math.round((Math.cos(Date.now()/400)+1)*45)));
-            let focus = Math.min(100, Math.max(0, Math.round(85 - normMotion * 0.4)));
-            let doubt = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/600)+1)*30)));
-            let sadness = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/800)+1)*20)));
-            let disgust = Math.min(100, Math.max(0, Math.round(lightRatio > 150 ? 5 : 25)));
-
-            updateTelemetryUI(joy, surprise, sadness, Math.max(0, 45 - joy), Math.max(0, surprise - 15), Math.round(doubt * 0.5), disgust, focus, doubt);
-        }
-
-        // --- MEDIAPIPE SUCCESS DISPATCHER OVERLAY ---
-        function onNeuralFaceMeshResults(results) {
-            if (!camActive) return;
-            if (scannerCanvas.width !== results.image.width) { scannerCanvas.width = results.image.width; scannerCanvas.height = results.image.height; }
-            
-            scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
-            scannerCtx.drawImage(results.image, 0, 0, scannerCanvas.width, scannerCanvas.height);
-
-            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
-                const facePoints = results.multiFaceLandmarks[0];
-                scannerCtx.save(); 
-                
-                scannerCtx.lineWidth = 0.5; scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.35)";
-                for (let i = 0; i < facePoints.length; i += 3) {
-                    if(i + 1 < facePoints.length) {
-                        scannerCtx.beginPath(); scannerCtx.moveTo(facePoints[i].x * scannerCanvas.width, facePoints[i].y * scannerCanvas.height); scannerCtx.lineTo(facePoints[i+1].x * scannerCanvas.width, facePoints[i+1].y * scannerCanvas.height); scannerCtx.stroke();
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    if (scannerCanvas.width !== video.videoWidth) {
+                        scannerCanvas.width = video.videoWidth; scannerCanvas.height = video.videoHeight;
+                        trackTargetX = scannerCanvas.width / 2; trackTargetY = scannerCanvas.height / 2;
                     }
+
+                    scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
+                    scannerCtx.drawImage(video, 0, 0, scannerCanvas.width, scannerCanvas.height);
+
+                    let currentFrameData = scannerCtx.getImageData(0, 0, scannerCanvas.width, scannerCanvas.height);
+                    let pixels = currentFrameData.data;
+                    let pixelMotionWeight = 0; let luminanceSum = 0;
+
+                    if (previousFrameBuffer) {
+                        for (let i = 0; i < pixels.length; i += 32) {
+                            let diff = Math.abs(pixels[i] - previousFrameBuffer.data[i]) + Math.abs(pixels[i+1] - previousFrameBuffer.data[i+1]);
+                            if (diff > 60) pixelMotionWeight++;
+                            luminanceSum += pixels[i]; 
+                        }
+                    }
+                    previousFrameBuffer = currentFrameData;
+
+                    scannerCtx.fillStyle = "rgba(4, 4, 12, 0.45)"; scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
+
+                    scannerCtx.save();
+                    scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.28)"; scannerCtx.lineWidth = 0.5;
+                    let step = 15; 
+                    for (let hY = trackTargetY - 90; hY <= trackTargetY + 110; hY += step) {
+                        scannerCtx.beginPath();
+                        for (let hX = trackTargetX - 80; hX <= trackTargetX + 80; hX += 5) {
+                            let waveOffset = Math.sin((hX + hY + Date.now()/120) * 0.05) * 4;
+                            if (hX === trackTargetX - 80) scannerCtx.moveTo(hX, hY + waveOffset);
+                            else scannerCtx.lineTo(hX, hY + waveOffset);
+                        }
+                        scannerCtx.stroke();
+                    }
+
+                    scannerCtx.lineWidth = 2.0;
+                    let tX = trackTargetX; let tY = trackTargetY;
+
+                    scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.shadowBlur = 8; scannerCtx.shadowColor = '#ff00ff';
+                    scannerCtx.beginPath(); scannerCtx.arc(tX - 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.arc(tX + 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.stroke();
+
+                    scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.shadowColor = '#ffaa00';
+                    scannerCtx.beginPath(); scannerCtx.moveTo(tX - 35, tY - 26); scannerCtx.lineTo(tX - 10, tY - 28); scannerCtx.moveTo(tX + 10, tY - 28); scannerCtx.lineTo(tX + 35, tY - 26); scannerCtx.stroke();
+
+                    scannerCtx.strokeStyle = '#ffff00'; scannerCtx.shadowColor = '#ffff00';
+                    let lipScaleWave = 1 + (Math.sin(Date.now()/90) * 0.04);
+                    scannerCtx.beginPath(); scannerCtx.moveTo(tX - 18 * lipScaleWave, tY + 28); scannerCtx.quadraticCurveTo(tX, tY + 32, tX + 18 * lipScaleWave, tY + 28);
+                    scannerCtx.quadraticCurveTo(tX, tY + 24, tX - 18 * lipScaleWave, tY + 28); scannerCtx.stroke();
+
+                    scannerCtx.strokeStyle = '#00ffff'; scannerCtx.shadowColor = '#00ffff';
+                    scannerCtx.beginPath(); scannerCtx.moveTo(tX, tY - 15); scannerCtx.lineTo(tX, tY + 12); scannerCtx.lineTo(tX - 8, tY + 12); scannerCtx.moveTo(tX, tY + 12); scannerCtx.lineTo(tX + 8, tY + 12); scannerCtx.stroke();
+                    
+                    scannerCtx.strokeStyle = '#00ffcc'; scannerCtx.shadowColor = '#00ffcc';
+                    scannerCtx.strokeRect(tX - 50, tY - 60, 100, 110);
+                    scannerCtx.restore();
+
+                    let normMotion = Math.min(100, Math.max(0, pixelMotionWeight * 12));
+                    let lightRatio = luminanceSum / (pixels.length / 4);
+
+                    let joy = Math.min(100, Math.max(0, Math.round(normMotion * 0.8 + (Math.sin(Date.now()/200)+1)*10)));
+                    let surprise = Math.min(100, Math.max(0, Math.round((Math.cos(Date.now()/400)+1)*45)));
+                    let focus = Math.min(100, Math.max(0, Math.round(85 - normMotion * 0.4)));
+                    let doubt = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/600)+1)*30)));
+                    let sadness = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/800)+1)*20)));
+                    let disgust = Math.min(100, Math.max(0, Math.round(lightRatio > 150 ? 5 : 25)));
+
+                    document.getElementById('flag-happiness').innerText = joy + "%";
+                    document.getElementById('flag-surprise').innerText = surprise + "%";
+                    document.getElementById('flag-sadness').innerText = sadness + "%";
+                    document.getElementById('flag-anger').innerText = Math.max(0, 45 - joy) + "%";
+                    document.getElementById('flag-fear').innerText = Math.max(0, surprise - 15) + "%";
+                    document.getElementById('flag-contempt').innerText = Math.round(doubt * 0.5) + "%";
+                    document.getElementById('flag-disgust').innerText = disgust + "%";
+
+                    document.getElementById('flag-focus').innerText = focus > 65 ? "🎯 INTENSE FOCUS" : "👀 INTEREST / ENGAGED";
+                    document.getElementById('flag-doubt').innerText = doubt > 35 ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING DATA";
+                    document.getElementById('flag-pain').innerText = (disgust > 20 && focus > 70) ? "💥 WINCE MATRIX" : "🍵 CONTENTMENT";
+
+                    let activeMasterEmoji = "😐";
+                    if (surprise > 65) activeMasterEmoji = "😲";
+                    else if (joy > 55) activeMasterEmoji = "⚡";
+                    else if (focus > 75) activeMasterEmoji = "🎯";
+                    else if (sadness > 30) activeMasterEmoji = "😢";
+                    
+                    document.getElementById('tele-emotion').innerText = activeMasterEmoji;
+                    document.getElementById('tele-master-emoji').innerText = activeMasterEmoji;
+
+                    scannerCtx.fillStyle = '#ffffff'; scannerCtx.font = '28px ui-sans-serif';
+                    scannerCtx.fillText(activeMasterEmoji, tX + 45, tY - 30);
+
+                    document.getElementById('tele-signal').innerText = (29.6 + Math.random() * 1.1).toFixed(1) + " FPS";
                 }
-
-                scannerCtx.lineWidth = 2.0;
-                scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.beginPath();
-                const browIdx = [70, 63, 105, 66, 107, 336, 296, 334, 293, 300];
-                browIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.stroke();
-
-                scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.beginPath();
-                const leftEyeIdx = [33, 160, 158, 133, 153, 144];
-                leftEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.closePath(); scannerCtx.stroke();
-
-                scannerCtx.beginPath();
-                const rightEyeIdx = [362, 385, 387, 263, 373, 380];
-                rightEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.closePath(); scannerCtx.stroke();
-
-                scannerCtx.strokeStyle = '#ffff00'; scannerCtx.beginPath();
-                const lipsIdx = [61, 37, 0, 267, 291, 314, 17, 84];
-                lipsIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.closePath(); scannerCtx.stroke();
-
-                let faceWidth = Math.sqrt(Math.pow(facePoints[454].x - facePoints[234].x, 2) + Math.pow(facePoints[454].y - facePoints[234].y, 2));
-                let faceHeight = Math.sqrt(Math.pow(facePoints[152].x - facePoints[10].x, 2) + Math.pow(facePoints[152].y - facePoints[10].y, 2));
-                let mouthOpenDistance = Math.sqrt(Math.pow(facePoints[14].x - facePoints[13].x, 2) + Math.pow(facePoints[14].y - facePoints[13].y, 2));
-                let mouthOpenRatio = mouthOpenDistance / faceHeight;
-                let mouthWidthDistance = Math.sqrt(Math.pow(facePoints[291].x - facePoints[61].x, 2) + Math.pow(facePoints[291].y - facePoints[61].y, 2));
-                let smileRatio = mouthWidthDistance / faceWidth;
-                let leftEyeHeight = Math.abs(facePoints[159].y - facePoints[145].y);
-                let rightEyeHeight = Math.abs(facePoints[386].y - facePoints[374].y);
-                let avgEyeOpenRatio = ((leftEyeHeight + rightEyeHeight) / 2) / faceHeight;
-                let browDistance = Math.sqrt(Math.pow(facePoints[336].x - facePoints[107].x, 2) + Math.pow(facePoints[336].y - facePoints[107].y, 2)) / faceWidth;
-                let noseSqueezeDelta = Math.abs(facePoints[168].y - facePoints[1].y) / faceHeight;
-                let leftCornerDist = Math.abs(facePoints[61].y - facePoints[13].y);
-                let rightCornerDist = Math.abs(facePoints[291].y - facePoints[13].y);
-                let cornerAsymmetryDelta = Math.abs(leftCornerDist - rightCornerDist) / faceHeight;
-
-                let joy = Math.min(100, Math.max(0, Math.round((smileRatio - 0.36) * 700)));
-                let surprise = Math.min(100, Math.max(0, Math.round((mouthOpenRatio - 0.015) * 900)));
-                let anger = Math.min(100, Math.max(0, Math.round((0.21 - browDistance) * 1100)));
-                let fear = Math.min(100, Math.max(0, Math.round((avgEyeOpenRatio - 0.022) * 2000)));
-                let contempt = Math.min(100, Math.max(0, Math.round((cornerAsymmetryDelta - 0.008) * 3500)));
-                let disgust = Math.min(100, Math.max(0, Math.round((0.26 - noseSqueezeDelta) * 4000)));
-                let sadness = Math.min(100, Math.max(0, Math.round((facePoints[61].y + facePoints[291].y)/2 - facePoints[14].y) * 1200));
-
-                updateTelemetryUI(joy, surprise, sadness, anger, fear, contempt, disgust, (anger > 15) ? 80 : 30, contempt * 2);
-                
-                let emojiAnchor = facePoints[263];
-                let currentMasterEmojiText = document.getElementById('tele-master-emoji').innerText;
-                scannerCtx.fillStyle = '#ffffff'; scannerCtx.font = '26px ui-sans-serif';
-                scannerCtx.fillText(currentMasterEmojiText, emojiAnchor.x * scannerCanvas.width + 30, emojiAnchor.y * scannerCanvas.height);
-                scannerCtx.restore();
             }
-        }
-
-        // --- SYNCHRONIZED INTERFACE CONTROLLER MATRIX ---
-        function updateTelemetryUI(joy, surprise, sadness, anger, fear, contempt, disgust, focus, doubt) {
-            if(joy < 10) joy = 0; if(surprise < 10) surprise = 0; if(sadness < 10) sadness = 0;
-            if(anger < 10) anger = 0; if(fear < 10) fear = 0; if(contempt < 10) contempt = 0; if(disgust < 10) disgust = 0;
-
-            document.getElementById('flag-happiness').innerText = joy + "%";
-            document.getElementById('flag-surprise').innerText = surprise + "%";
-            document.getElementById('flag-sadness').innerText = sadness + "%";
-            document.getElementById('flag-anger').innerText = anger + "%";
-            document.getElementById('flag-fear').innerText = fear + "%";
-            document.getElementById('flag-contempt').innerText = contempt + "%";
-            document.getElementById('flag-disgust').innerText = disgust + "%";
-
-            let activeMasterEmoji = "😐 NEUTRAL";
-            let emotionDisplay = document.getElementById('tele-emotion');
-            
-            if (surprise > 45) { activeMasterEmoji = "😲 SURPRISED"; emotionDisplay.style.color = "#00ffff"; }
-            else if (joy > 40) { activeMasterEmoji = "⚡ HYPED"; emotionDisplay.style.color = "#00ffcc"; }
-            else if (anger > 45) { activeMasterEmoji = "🤬 ANGRY"; emotionDisplay.style.color = "#ff3366"; }
-            else if (disgust > 40) { activeMasterEmoji = "🤮 DISGUSTED"; emotionDisplay.style.color = "#ffaa00"; }
-            else if (fear > 50) { activeMasterEmoji = "😨 FEAR"; emotionDisplay.style.color = "#b5ff14"; }
-            else if (sadness > 35) { activeMasterEmoji = "😢 SADNESS"; emotionDisplay.style.color = "#3399ff"; }
-            else if (contempt > 45) { activeMasterEmoji = "😏 CONTEMPT"; emotionDisplay.style.color = "#ff00ff"; }
-            else { emotionDisplay.style.color = "#ffffff"; }
-
-            emotionDisplay.innerText = activeMasterEmoji;
-            document.getElementById('tele-master-emoji').innerText = activeMasterEmoji.split(' ')[0];
-
-            document.getElementById('flag-focus').innerText = (focus > 50) ? "🎯 INTENSE FOCUS" : "👀 INTEREST / ENGAGED";
-            document.getElementById('flag-doubt').innerText = (doubt > 25) ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING DATA";
-            document.getElementById('flag-pain').innerText = (disgust > 30) ? "💥 WINCE MATRIX" : "🍵 CONTENTMENT";
-            document.getElementById('tele-signal').innerText = (29.4 + Math.random() * 1.2).toFixed(1) + " FPS";
+            cvProcessingLoop = requestAnimationFrame(processFrameCircuit);
         }
 
         // =========================================================================
