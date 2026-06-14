@@ -65,7 +65,6 @@
             width: 100%; padding: 16px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
             border-radius: 10px; color: #ffffff; font-size: 0.9rem; outline: none;
         }
-        input[type="text"]:focus { border-color: #ff00ff; box-shadow: 0 0 10px rgba(255,0,255,0.15); }
 
         .action-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
         .action-btn {
@@ -80,7 +79,7 @@
         /* TAB 1: LOG SCROLLER */
         .chat-container {
             background: #010205; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
-            height: 280px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 5px;
+            height: 280px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;
         }
         .chat-msg { max-width: 85%; padding: 11px 15px; border-radius: 10px; font-size: 0.85rem; line-height: 1.45; word-break: break-word; }
         .chat-msg.user { background: rgba(0, 255, 204, 0.1); border: 1px solid #00ffcc; align-self: flex-end; color: #00ffcc; }
@@ -89,7 +88,7 @@
         .ai-image-wrapper { margin-top: 12px; display: block; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,0,255,0.3); width: 260px; height: 260px; background: #010206; position: relative; }
         .ai-image-output { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-        /* TAB 2: HUD VIEWPORT WITH GRAPH OVERLAYS */
+        /* TAB 2: STREAM GRAPH DECK VIEWPORT */
         .biometric-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
         @media (max-width: 900px) { .biometric-grid { grid-template-columns: 1fr; } }
         .video-viewport {
@@ -151,11 +150,10 @@
             <button class="tab-btn" onclick="switchOmniTab('sketch-panel', this)">🎨 NEO SKETCH</button>
         </div>
 
-        <!-- PANEL 01: LOG CHAT MODULE -->
         <div id="ai-panel" class="panel-card active">
             <label>Omni AI Mainframe Interface</label>
             <div class="chat-container" id="chat-scroller">
-                <div class="chat-msg bot">MAINFRAME INTERFACE SYNCED. Ready for active prompts. Let's code layout elements, talk portrait shading, or test diffusion grids.</div>
+                <div class="chat-msg bot">MAINFRAME INITIALIZED. Ready for prompt execution. Ask me about layout adjustments, portrait pencil weights, or test real-time diffusion frames.</div>
             </div>
             
             <div class="terminal-input-wrapper">
@@ -167,14 +165,13 @@
             </div>
         </div>
 
-        <!-- PANEL 02: EXPLICIT DEFENSIVE SCALABLE RADAR MESH HUD -->
         <div id="bio-panel" class="panel-card">
             <div class="biometric-grid">
                 <div class="video-viewport">
                     <video id="webcam-stream" autoplay playsinline></video>
-                    <canvas id="scanner-overlay-canvas"></canvas>
+                    <canvas id="scanner-overlay-canvas" width="440" height="380"></canvas>
                     <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px; z-index: 5;">
-                        DIAGNOSTIC TELEMETRY MATRIX STANDBY.<br><br>
+                        DIAGNOSTIC HUD STANDBY.<br><br>
                         <button class="action-btn" onclick="initializeBiometricCamera()">ENGAGE OVERLAY HUD</button>
                     </p>
                 </div>
@@ -204,7 +201,6 @@
             </div>
         </div>
 
-        <!-- PANEL 03: CALCULATOR -->
         <div id="calc-panel" class="panel-card">
             <div class="calc-wrapper">
                 <div id="calc-display">0</div>
@@ -232,7 +228,6 @@
             </div>
         </div>
 
-        <!-- PANEL 04: MS PAINT BOARD -->
         <div id="sketch-panel" class="panel-card">
             <div class="sketch-grid">
                 <div class="sketch-board-panel" id="sketch-container" onmouseenter="toggleCustomCursor(true)" onmouseleave="toggleCustomCursor(false)">
@@ -280,17 +275,8 @@
     </div>
 
     <script>
-        function switchOmniTab(panelId, btnElement) {
-            document.querySelectorAll('.panel-card').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(panelId).classList.add('active');
-            btnElement.classList.add('active');
-            if (panelId !== 'bio-panel') stopBiometricCamera();
-            if (panelId === 'sketch-panel') setTimeout(resizeSketchCanvas, 50); 
-        }
-
         // =========================================================================
-        // --- CHAT INTERFACE & CONTEXTUAL DIALOG DISCOVERY MATRIX ---
+        // --- CONTEXTUAL PERSONALIZED TALK TREE MATRIX (ZERO REPETITION) ---
         // =========================================================================
         let lastLoggedBotResponse = "";
 
@@ -299,27 +285,29 @@
             let txt = inputField.value.trim(); if (!txt) return;
 
             appendChatMessage(txt, 'user'); inputField.value = '';
+            
             setTimeout(() => {
                 let lower = txt.toLowerCase(); let reply = "";
+                
                 const responsesSketch = [
-                    "When mapping structures on the canvas, anchor initial grids with your Matador HB before baking deep shadows using the Venus 4B pencil tool.",
-                    "If you're tracking fine graphite textures, wrap them with vibrant neon colors to make your sketch highlights bounce cleanly against the white page.",
-                    "Steady tracking is critical for details. If your line arcs feel shaky, pull up your manual stabilizer brush dimensions slider."
+                    "When drawing silhouettes, block out initial base outlines with your Matador HB before mapping deep shadows with the Venus 4B pencil.",
+                    "Try using standard graphite shades for the facial details, then back it with hyper-bright Neon Ink paths to create a clean pop on the white card.",
+                    "If your freehand line drawing feels slightly unstable or shaky, try pulling up your brush stabilizer slider dimensions."
                 ];
                 const responsesRoblox = [
-                    "To completely clear your next combat milestone on Battlegrounds, match fluid loop dashing steps with instant flick-turn cancels.",
-                    "Flick turn extensions are major meta properties. Executing them cleanly catches opponent targets completely off guard.",
-                    "Grinding milestones takes maximum focus. Open up your Stream HUD panel to keep a close eye on your concentration matrices!"
+                    "To easily break your next combat kill milestone on Battlegrounds, align immediate loop dashing steps with split-second flick turns.",
+                    "Flick turns are absolute meta execution elements right now. Activating them instantly leaves your opponent target locked out.",
+                    "Tracking milestones takes intense concentration. Switch over to the HUD panel to evaluate your real focus matrices!"
                 ];
                 const responsesWebDev = [
-                    "Mainframe architecture clear. Local layouts, responsive button padding maps, and asset elements are fully synced.",
-                    "No more crumpled button states. The text lines wrap beautifully using responsive CSS grid containment blocks.",
-                    "HTML workspace logs are responding at optimal script speeds directly within your split-screen dashboard bounds."
+                    "Mainframe architecture clear. Local directory layouts, button padding grids, and deployment elements are running smoothly.",
+                    "The crumpled button layers are fixed. Everything wraps cleanly using native CSS boundaries even inside split-view cards.",
+                    "HTML repository files are responding at maximum execution speeds right inside your iPad tab width constraints."
                 ];
                 const responsesGreetings = [
-                    "Yo! Terminal synchronized and ready to build. What are we developing today?",
-                    "Mainframe online. Drop your next instruction block and let's optimize this layout.",
-                    "Sync verified. System channels are fully listening."
+                    "Yo! Terminal mainframe active and optimized. What are we designing next?",
+                    "Mainframe synchronized. Drop your next instruction block and let's compile this module.",
+                    "Welcome back to the core. Terminal channels are fully responsive."
                 ];
                 const responsesCasual = [
                     "Understood. Running a clean parameter log across the active workspace coordinates.",
@@ -330,7 +318,7 @@
                 let targetPool = responsesCasual;
                 if (lower.includes('sketch') || lower.includes('draw') || lower.includes('pencil') || lower.includes('art')) { targetPool = responsesSketch; } 
                 else if (lower.includes('roblox') || lower.includes('battlegrounds') || lower.includes('dash') || lower.includes('kill')) { targetPool = responsesRoblox; } 
-                else if (lower.includes('code') || lower.includes('html') || lower.includes('repo') || lower.includes('firebase')) { targetPool = responsesWebDev; } 
+                else if (lower.includes('code') || lower.includes('html') || lower.includes('repo')) { targetPool = responsesWebDev; } 
                 else if (lower === 'hi' || lower === 'hello' || lower === 'hey' || lower === 'yo') { targetPool = responsesGreetings; }
 
                 let selectIdx = Math.floor(Math.random() * targetPool.length);
@@ -341,18 +329,15 @@
 
                 if (lower.includes('bro') || lower.includes('broo')) { reply = "Acknowledged, bro. " + reply; }
                 appendChatMessage(reply, 'bot');
-            }, 380);
+            }, 300);
         }
 
         function generateAIImagePOLLINATION() {
             let inputField = document.getElementById('ai-chat-input');
             let promptText = inputField.value.trim();
-            if (!promptText) {
-                alert("Type your image description inside the input grid bar first!");
-                return;
-            }
+            if (!promptText) { return alert("Type your image prompt inside the input bar first!"); }
 
-            appendChatMessage(`Initiating image matrix stream for: "${promptText}"...`, 'user');
+            appendChatMessage(`Running structural image diffusion for: "${promptText}"...`, 'user');
             inputField.value = '';
 
             let container = document.getElementById('chat-scroller');
@@ -373,33 +358,28 @@
             imgElement.className = 'ai-image-output';
             imgElement.src = targetImageSrc;
             
-            wrapper.appendChild(imgElement);
-            botBubble.appendChild(wrapper);
-            container.appendChild(botBubble);
-            container.scrollTop = container.scrollHeight;
+            wrapper.appendChild(imgElement); botBubble.appendChild(wrapper);
+            container.appendChild(botBubble); container.scrollTop = container.scrollHeight;
 
             imgElement.onload = function() {
                 statusLog.innerText = "AI Generation Core Synchronized:";
-                imgElement.style.animation = 'none';
                 container.scrollTop = container.scrollHeight;
             };
 
             imgElement.onerror = function() {
                 wrapper.innerHTML = ''; 
                 wrapper.style.borderStyle = 'solid'; wrapper.style.borderColor = '#ff3366';
-                
                 let errorCanvas = document.createElement('canvas');
-                errorCanvas.width = 240; errorCanvas.height = 260;
+                errorCanvas.width = 260; errorCanvas.height = 260;
                 let eCtx = errorCanvas.getContext('2d');
-                
-                eCtx.fillStyle = '#010206'; eCtx.fillRect(0, 0, 240, 260);
-                eCtx.strokeStyle = 'rgba(255, 51, 102, 0.4)'; eCtx.lineWidth = 1;
-                for(let i=0; i<240; i+=20) {
-                    eCtx.beginPath(); eCtx.moveTo(i, 0); eCtx.lineTo(240 - i, 260); eCtx.stroke();
-                    eCtx.beginPath(); eCtx.moveTo(0, i); eCtx.lineTo(240, 260 - i); eCtx.stroke();
+                eCtx.fillStyle = '#010206'; eCtx.fillRect(0, 0, 260, 260);
+                eCtx.strokeStyle = 'rgba(255, 51, 102, 0.3)'; eCtx.lineWidth = 1;
+                for(let i=0; i<260; i+=20) {
+                    eCtx.beginPath(); eCtx.moveTo(i, 0); eCtx.lineTo(260 - i, 260); eCtx.stroke();
+                    eCtx.beginPath(); eCtx.moveTo(0, i); eCtx.lineTo(260, 260 - i); eCtx.stroke();
                 }
                 wrapper.appendChild(errorCanvas);
-                statusLog.innerHTML = `<span style="color:#ff3366; font-weight:bold;">📡 GATEWAY TIMEOUT // Fallback Accents Drawn</span>`;
+                statusLog.innerHTML = `<span style="color:#ff3366; font-weight:bold;">📡 TIMEOUT DETECTED // Fallback Elements Loaded</span>`;
                 container.scrollTop = container.scrollHeight;
             };
         }
@@ -411,46 +391,40 @@
         }
 
         // =========================================================================
-        // --- CRASH-PROOF ORIENTATION-AGNOSTIC EXTRACTIONS HUD MESH ---
+        // --- Bulletproof Zero-Dependency Pixel Luminance Stream Overlay HUD ---
         // =========================================================================
         let camVideoStream = null;
         let cvProcessingLoop = null;
         let previousFrameBuffer = null;
-        let trackTargetX = 240; let trackTargetY = 180;
+        let trackTargetX = 220; let trackTargetY = 190;
 
         let scannerCanvas = document.getElementById('scanner-overlay-canvas');
         let scannerCtx = scannerCanvas.getContext('2d');
 
         function initializeBiometricCamera() {
-            if (window.activeStreamTrack) {
-                window.activeStreamTrack.getTracks().forEach(t => t.stop());
-            }
+            if (window.activeStreamTrack) { window.activeStreamTrack.getTracks().forEach(t => t.stop()); }
 
+            // WINDOW-PROOF SAFE CONSTRAINTS: Dropping strict dimensions prevents overconstrained crashes in split view panels completely!
             let constraints = { video: { facingMode: "user" } };
+            
             navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
-                    window.activeStreamTrack = stream; 
-                    camVideoStream = stream;
-                    let video = document.getElementById('webcam-stream');
-                    video.srcObject = stream;
+                    window.activeStreamTrack = stream; camVideoStream = stream;
+                    let video = document.getElementById('webcam-stream'); video.srcObject = stream;
                     document.getElementById('camera-placeholder').style.display = 'none';
                     startStableCameraHudLoop();
                 })
                 .catch(err => {
-                    // SEAMLESS FALLBACK: If hardware fails or splits constraints, start the simulation loop anyway
-                    console.log("Hardware request overconstrained. Booting matrix wireframe tracking emulator.");
+                    console.log("Hardware blocked. Engaging zero-dependency vector animation loop engine.");
                     document.getElementById('camera-placeholder').style.display = 'none';
-                    camVideoStream = true; 
-                    startStableCameraHudLoop();
+                    camVideoStream = true; startStableCameraHudLoop();
                 });
         }
 
         function stopBiometricCamera() {
-            if (window.activeStreamTrack) { window.activeStreamTrack.getTracks().forEach(track => track.stop()); window.activeStreamTrack = null; }
-            cancelAnimationFrame(cvProcessingLoop);
-            camVideoStream = null;
+            if (window.activeStreamTrack) { window.activeStreamTrack.getTracks().forEach(t => t.stop()); window.activeStreamTrack = null; }
+            cancelAnimationFrame(cvProcessingLoop); camVideoStream = null;
             document.getElementById('camera-placeholder').style.display = 'block';
-            document.getElementById('tele-status').innerText = "STANDBY"; document.getElementById('tele-status').style.color = "#ff3366";
             previousFrameBuffer = null;
         }
 
@@ -466,21 +440,7 @@
                 if (!camVideoStream) return;
                 cvProcessingLoop = requestAnimationFrame(processFrameCircuit);
 
-                // FIXED CHASSIS SAFEGUARDS: Sets explicit static dimensional coordinates if client sizes return 0 while hidden
-                let targetW = scannerCanvas.clientWidth || 440;
-                let targetH = 380;
-                
-                if (scannerCanvas.width !== targetW || scannerCanvas.height !== targetH) {
-                    scannerCanvas.width = targetW;
-                    scannerCanvas.height = targetH;
-                    if (!previousFrameBuffer) {
-                        trackTargetX = scannerCanvas.width / 2;
-                        trackTargetY = scannerCanvas.height / 2;
-                    }
-                }
-
-                // DEFENSIVE SANITY CHECK: Only run pixel analytics if canvas area attributes are greater than 0
-                if (video.srcObject && video.readyState === video.HAVE_ENOUGH_DATA && scannerCanvas.width > 0 && scannerCanvas.height > 0) {
+                if (video.srcObject && video.readyState === video.HAVE_ENOUGH_DATA) {
                     scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
                     scannerCtx.drawImage(video, 0, 0, scannerCanvas.width, scannerCanvas.height);
 
@@ -496,7 +456,6 @@
                         }
                     }
                     previousFrameBuffer = currentFrameData;
-
                     scannerCtx.fillStyle = "rgba(4, 4, 12, 0.45)"; scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
 
                     let normMotion = Math.min(100, Math.max(0, pixelMotionWeight * 24));
@@ -511,7 +470,6 @@
 
                     updateTelemetryUI(joy, surprise, sadness, Math.max(0, 45 - joy), Math.max(0, surprise - 15), Math.round(doubt * 0.5), disgust, focus, doubt);
                 } else {
-                    // STANDBY MODE PROCEDURAL MATRIX GENERATOR
                     scannerCtx.fillStyle = '#020206'; scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
                     let joy = Math.round(45 + Math.sin(Date.now()/350) * 15);
                     let surprise = Math.round(20 + Math.cos(Date.now()/500) * 20);
@@ -520,7 +478,7 @@
                     updateTelemetryUI(joy, surprise, 0, Math.max(0, 30 - joy), 0, Math.round(doubt * 0.5), 5, focus, doubt);
                 }
 
-                // Render vector mesh curves over background
+                // --- PROCEDURAL CYBERPUNK CHASSIS MATRIX OVERLAY ---
                 scannerCtx.save();
                 scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.3)"; scannerCtx.lineWidth = 0.5;
                 let step = 15; 
@@ -579,11 +537,6 @@
             else if (anger > 45) { activeMasterEmoji = "🤬 ANGRY"; emotionDisplay.style.color = "#ff3366"; }
             else if (sadness > 30) { activeMasterEmoji = "😢 SADNESS"; emotionDisplay.style.color = "#3399ff"; }
             else { emotionDisplay.style.color = "#ffffff"; }
-
-            if(document.getElementById('tele-status').innerText !== "STANDBY") {
-                document.getElementById('tele-status').innerText = "HUD ACTIVE";
-                document.getElementById('tele-status').style.color = "#00ffcc";
-            }
 
             emotionDisplay.innerText = activeMasterEmoji;
             document.getElementById('tele-master-emoji').innerText = activeMasterEmoji.split(' ')[0];
