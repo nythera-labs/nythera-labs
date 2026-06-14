@@ -58,20 +58,9 @@
         }
         .panel-card.active { display: block; }
 
-        /* TAB 1: NEURAL TERMINAL CONTAINMENT UNITS */
-        .chat-container {
-            background: #010205; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
-            height: 290px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;
-            position: relative;
-        }
-        .chat-msg { max-width: 85%; padding: 12px 16px; border-radius: 10px; font-size: 0.85rem; line-height: 1.45; word-break: break-word; position: relative; }
-        .chat-msg.user { background: rgba(0, 255, 204, 0.1); border: 1px solid #00ffcc; align-self: flex-end; color: #00ffcc; }
-        .chat-msg.bot { background: rgba(5, 6, 15, 0.9); border: 1px solid #ff00ff; align-self: flex-start; color: #ff00ff; }
+        label { display: block; font-size: 0.8rem; color: #00ffcc; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; }
         
-        .ai-image-wrapper { margin-top: 12px; display: block; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,0,255,0.3); width: 240px; height: 260px; background: #010206; position: relative; }
-        .ai-image-output { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-        .terminal-input-wrapper { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        .terminal-input-wrapper { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 10px; }
         input[type="text"] {
             width: 100%; padding: 16px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
             border-radius: 10px; color: #ffffff; font-size: 0.9rem; outline: none;
@@ -88,16 +77,28 @@
         .action-btn.pink-variant { border-color: #ff00ff; color: #ff00ff; background: rgba(255,0,255,0.02); }
         .action-btn.pink-variant:hover { background: #ff00ff; color: #020205; box-shadow: 0 0 15px #ff00ff; }
 
-        /* TAB 2: GEOMETRY VIEWPORT HUD */
+        /* TAB 1: LOG SCROLLER */
+        .chat-container {
+            background: #010205; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
+            height: 280px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 5px;
+        }
+        .chat-msg { max-width: 85%; padding: 11px 15px; border-radius: 10px; font-size: 0.85rem; line-height: 1.45; word-break: break-word; }
+        .chat-msg.user { background: rgba(0, 255, 204, 0.1); border: 1px solid #00ffcc; align-self: flex-end; color: #00ffcc; }
+        .chat-msg.bot { background: rgba(255, 0, 255, 0.1); border: 1px solid #ff00ff; align-self: flex-start; color: #ff00ff; }
+        
+        .ai-image-wrapper { margin-top: 12px; display: block; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,0,255,0.3); width: 260px; height: 260px; background: #010206; position: relative; }
+        .ai-image-output { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        /* TAB 2: HUD VIEWPORT WITH GRAPH OVERLAYS */
         .biometric-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
         @media (max-width: 900px) { .biometric-grid { grid-template-columns: 1fr; } }
         .video-viewport {
-            background: #000003; border: 2px solid #00ffcc; border-radius: 14px;
+            background: #000; border: 2px solid #00ffcc; border-radius: 14px;
             position: relative; overflow: hidden; min-height: 380px; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
         }
         #webcam-stream { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scaleX(-1); pointer-events: none; } 
-        #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); } 
+        #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); cursor: crosshair; } 
         
         .telemetry-box { background: rgba(13, 14, 28, 0.3); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.04); }
         .matrix-log-container { max-height: 340px; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
@@ -112,7 +113,7 @@
         .calc-btn.op { color: #ff00ff; border-color: rgba(255,0,255,0.2); }
         .calc-btn.clear { color: #ff3366; border-color: rgba(255,51,102,0.2); }
 
-        /* TAB 4: MS PAINT CANVAS */
+        /* TAB 4: MS PAINT BOARD */
         .sketch-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px; }
         @media (max-width: 850px) { .sketch-grid { grid-template-columns: 1fr; } }
         .sketch-board-panel { background: #ffffff; border: 2px solid #00ffcc; border-radius: 14px; overflow: hidden; min-height: 380px; position: relative; box-shadow: 0 0 25px rgba(0, 255, 204, 0.1); }
@@ -150,11 +151,11 @@
             <button class="tab-btn" onclick="switchOmniTab('sketch-panel', this)">🎨 NEO SKETCH</button>
         </div>
 
-        <!-- PANEL 01: CHAT MATRIX & FALLBACK AI IMAGE ENGINE -->
+        <!-- PANEL 01: LOG CHAT MODULE -->
         <div id="ai-panel" class="panel-card active">
-            <label>Omni AI Terminal Mainframe</label>
+            <label>Omni AI Mainframe Interface</label>
             <div class="chat-container" id="chat-scroller">
-                <div class="chat-msg bot">MAINFRAME INTERFACE ACTIVE. Ready for operations. Let's code clean layout adjustments, check portrait graphite shading, or run diffusion frames.</div>
+                <div class="chat-msg bot">MAINFRAME INTERFACE SYNCED. Ready for active prompts. Let's code layout elements, talk portrait shading, or test diffusion grids.</div>
             </div>
             
             <div class="terminal-input-wrapper">
@@ -164,25 +165,22 @@
                     <button class="action-btn pink-variant" onclick="generateAIImagePOLLINATION()">Generate Image</button>
                 </div>
             </div>
-            
-            <label style="margin-top: 25px;">Local Procedural Synthesis Node</label>
-            <canvas id="ai-canvas" width="600" height="160"></canvas>
         </div>
 
-        <!-- PANEL 02: EXPLICIT UN-FREEZABLE SCANNER HUD OVERLAY -->
+        <!-- PANEL 02: EXPLICIT DEFENSIVE SCALABLE RADAR MESH HUD -->
         <div id="bio-panel" class="panel-card">
             <div class="biometric-grid">
                 <div class="video-viewport">
                     <video id="webcam-stream" autoplay playsinline></video>
                     <canvas id="scanner-overlay-canvas"></canvas>
-                    <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px;">
+                    <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px; z-index: 5;">
                         DIAGNOSTIC TELEMETRY MATRIX STANDBY.<br><br>
-                        <button class="action-btn" onclick="initializeBiometricCamera()">INITIALIZE STREAM ENGINE</button>
+                        <button class="action-btn" onclick="initializeBiometricCamera()">ENGAGE OVERLAY HUD</button>
                     </p>
                 </div>
                 <div class="telemetry-box">
                     <label style="color:#00ffcc; margin-bottom: 5px;">Vector Analysis Real-Time Deck</label>
-                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Fields: 468 Active Grid Points</div>
+                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Calibration: 468 Vector Projections</div>
                     
                     <div class="matrix-log-container">
                         <div class="telemetry-node"><span>CURRENT MOOD ICON:</span><span id="tele-master-emoji" style="font-size:1.4rem;">😐</span></div>
@@ -292,7 +290,7 @@
         }
 
         // =========================================================================
-        // --- CHAT SYSTEM LOGS & RESILIENT IMAGE FALLBACK OVERLAY ---
+        // --- CHAT INTERFACE & CONTEXTUAL DIALOG DISCOVERY MATRIX ---
         // =========================================================================
         let lastLoggedBotResponse = "";
 
@@ -300,15 +298,11 @@
             let inputField = document.getElementById('ai-chat-input');
             let txt = inputField.value.trim(); if (!txt) return;
 
-            appendChatMessage(txt, 'user');
-            inputField.value = '';
-
+            appendChatMessage(txt, 'user'); inputField.value = '';
             setTimeout(() => {
-                let lower = txt.toLowerCase();
-                let reply = "";
-
+                let lower = txt.toLowerCase(); let reply = "";
                 const responsesSketch = [
-                    "When mapping out structures on the canvas, anchor initial grids with your Matador HB before baking deep shadows using the Venus 4B pencil tool.",
+                    "When mapping structures on the canvas, anchor initial grids with your Matador HB before baking deep shadows using the Venus 4B pencil tool.",
                     "If you're tracking fine graphite textures, wrap them with vibrant neon colors to make your sketch highlights bounce cleanly against the white page.",
                     "Steady tracking is critical for details. If your line arcs feel shaky, pull up your manual stabilizer brush dimensions slider."
                 ];
@@ -350,7 +344,6 @@
             }, 380);
         }
 
-        // INTERCEPT PIPELINE: Wipes broken link boxes out and swaps in procedural art fallbacks
         function generateAIImagePOLLINATION() {
             let inputField = document.getElementById('ai-chat-input');
             let promptText = inputField.value.trim();
@@ -391,11 +384,9 @@
                 container.scrollTop = container.scrollHeight;
             };
 
-            // INTERCEPT ENGINE: Catches Safari timeout errors and replaces broken box links with clean procedural canvas nodes
             imgElement.onerror = function() {
-                wrapper.innerHTML = ''; // Purges the broken box completely
-                wrapper.style.borderStyle = 'solid';
-                wrapper.style.borderColor = '#ff3366';
+                wrapper.innerHTML = ''; 
+                wrapper.style.borderStyle = 'solid'; wrapper.style.borderColor = '#ff3366';
                 
                 let errorCanvas = document.createElement('canvas');
                 errorCanvas.width = 240; errorCanvas.height = 260;
@@ -403,35 +394,39 @@
                 
                 eCtx.fillStyle = '#010206'; eCtx.fillRect(0, 0, 240, 260);
                 eCtx.strokeStyle = 'rgba(255, 51, 102, 0.4)'; eCtx.lineWidth = 1;
-                
-                // Draw a sleek tactical geometry matrix vector fallback grid
                 for(let i=0; i<240; i+=20) {
                     eCtx.beginPath(); eCtx.moveTo(i, 0); eCtx.lineTo(240 - i, 260); eCtx.stroke();
                     eCtx.beginPath(); eCtx.moveTo(0, i); eCtx.lineTo(240, 260 - i); eCtx.stroke();
                 }
-                
                 wrapper.appendChild(errorCanvas);
-                statusLog.innerHTML = `<span style="color:#ff3366; font-weight:bold;">📡 GATEWAY TIMEOUT // PROCEDURAL ACCENTS RENDERED</span>`;
+                statusLog.innerHTML = `<span style="color:#ff3366; font-weight:bold;">📡 GATEWAY TIMEOUT // Fallback Accents Drawn</span>`;
                 container.scrollTop = container.scrollHeight;
             };
         }
 
+        function appendChatMessage(text, owner) {
+            let container = document.getElementById('chat-scroller');
+            let bubble = document.createElement('div'); bubble.className = `chat-msg ${owner}`; bubble.innerText = text;
+            container.appendChild(bubble); container.scrollTop = container.scrollHeight;
+        }
+
         // =========================================================================
-        // --- 100% UN-FREEZABLE STABLE VECTOR RADAR ENGINE FALLBACK ---
+        // --- CRASH-PROOF ORIENTATION-AGNOSTIC EXTRACTIONS HUD MESH ---
         // =========================================================================
         let camVideoStream = null;
         let cvProcessingLoop = null;
         let previousFrameBuffer = null;
-        let trackTargetX = 220; let trackTargetY = 160;
+        let trackTargetX = 240; let trackTargetY = 180;
+
+        let scannerCanvas = document.getElementById('scanner-overlay-canvas');
+        let scannerCtx = scannerCanvas.getContext('2d');
 
         function initializeBiometricCamera() {
             if (window.activeStreamTrack) {
                 window.activeStreamTrack.getTracks().forEach(t => t.stop());
             }
 
-            // CRITICAL FIX: Safe, orientation-agnostic track configurations prevents overconstrained crashes in split views
             let constraints = { video: { facingMode: "user" } };
-            
             navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
                     window.activeStreamTrack = stream; 
@@ -439,17 +434,13 @@
                     let video = document.getElementById('webcam-stream');
                     video.srcObject = stream;
                     document.getElementById('camera-placeholder').style.display = 'none';
-                    
-                    document.getElementById('tele-status').innerText = "HUD ACTIVE";
-                    document.getElementById('tele-status').style.color = "#00ffcc";
-                    
                     startStableCameraHudLoop();
                 })
                 .catch(err => {
-                    // SILENT HARDWARE OVERRIDE: Switches directly to animation radar tracking to preserve dashboard visuals seamlessly
-                    console.log("Hardware blocked inside split screen panel view. Engaging local animation matrix loop.");
+                    // SEAMLESS FALLBACK: If hardware fails or splits constraints, start the simulation loop anyway
+                    console.log("Hardware request overconstrained. Booting matrix wireframe tracking emulator.");
                     document.getElementById('camera-placeholder').style.display = 'none';
-                    camVideoStream = true; // Sets logic flag active to trigger rendering framework loops
+                    camVideoStream = true; 
                     startStableCameraHudLoop();
                 });
         }
@@ -463,7 +454,6 @@
             previousFrameBuffer = null;
         }
 
-        // Tap coordinate controls completely lock target tracking on your face, avoiding curtain drift errors
         scannerCanvas.addEventListener('click', function(e) {
             let rect = scannerCanvas.getBoundingClientRect();
             trackTargetX = Math.floor((e.clientX - rect.left) * (scannerCanvas.width / rect.width));
@@ -472,30 +462,33 @@
 
         function startStableCameraHudLoop() {
             let video = document.getElementById('webcam-stream');
-
             function processFrameCircuit() {
                 if (!camVideoStream) return;
                 cvProcessingLoop = requestAnimationFrame(processFrameCircuit);
 
-                // Dynamically handles layout resizing parameters safely inside narrow window spaces
-                if (scannerCanvas.width !== scannerCanvas.clientWidth || scannerCanvas.height !== 380) {
-                    scannerCanvas.width = scannerCanvas.clientWidth;
-                    scannerCanvas.height = 380;
-                    if(!previousFrameBuffer) {
+                // FIXED CHASSIS SAFEGUARDS: Sets explicit static dimensional coordinates if client sizes return 0 while hidden
+                let targetW = scannerCanvas.clientWidth || 440;
+                let targetH = 380;
+                
+                if (scannerCanvas.width !== targetW || scannerCanvas.height !== targetH) {
+                    scannerCanvas.width = targetW;
+                    scannerCanvas.height = targetH;
+                    if (!previousFrameBuffer) {
                         trackTargetX = scannerCanvas.width / 2;
                         trackTargetY = scannerCanvas.height / 2;
                     }
                 }
 
-                if (video.srcObject && video.readyState === video.HAVE_ENOUGH_DATA) {
+                // DEFENSIVE SANITY CHECK: Only run pixel analytics if canvas area attributes are greater than 0
+                if (video.srcObject && video.readyState === video.HAVE_ENOUGH_DATA && scannerCanvas.width > 0 && scannerCanvas.height > 0) {
                     scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
                     scannerCtx.drawImage(video, 0, 0, scannerCanvas.width, scannerCanvas.height);
-                    
+
                     let currentFrameData = scannerCtx.getImageData(0, 0, scannerCanvas.width, scannerCanvas.height);
                     let pixels = currentFrameData.data;
                     let pixelMotionWeight = 0; let luminanceSum = 0;
 
-                    if (previousFrameBuffer) {
+                    if (previousFrameBuffer && previousFrameBuffer.data.length === pixels.length) {
                         for (let i = 0; i < pixels.length; i += 64) {
                             let diff = Math.abs(pixels[i] - previousFrameBuffer.data[i]);
                             if (diff > 60) pixelMotionWeight++;
@@ -503,35 +496,31 @@
                         }
                     }
                     previousFrameBuffer = currentFrameData;
-                    
-                    // Apply tint layer
+
                     scannerCtx.fillStyle = "rgba(4, 4, 12, 0.45)"; scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
-                    
+
                     let normMotion = Math.min(100, Math.max(0, pixelMotionWeight * 24));
                     let lightRatio = luminanceSum / (pixels.length / 4);
-                    
+
                     let joy = Math.min(100, Math.max(0, Math.round(normMotion * 0.8 + (Math.sin(Date.now()/200)+1)*10)));
                     let surprise = Math.min(100, Math.max(0, Math.round((Math.cos(Date.now()/400)+1)*45)));
                     let focus = Math.min(100, Math.max(0, Math.round(85 - normMotion * 0.4)));
                     let doubt = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/600)+1)*30)));
                     let sadness = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/800)+1)*20)));
                     let disgust = Math.min(100, Math.max(0, Math.round(lightRatio > 150 ? 5 : 25)));
-                    
+
                     updateTelemetryUI(joy, surprise, sadness, Math.max(0, 45 - joy), Math.max(0, surprise - 15), Math.round(doubt * 0.5), disgust, focus, doubt);
                 } else {
-                    // STANDBY BYPASS: If hardware stream is blocked by split view, run a beautiful procedural wireframe grid asset natively
+                    // STANDBY MODE PROCEDURAL MATRIX GENERATOR
                     scannerCtx.fillStyle = '#020206'; scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
-                    
-                    // Continuous layout adjustments loops values
                     let joy = Math.round(45 + Math.sin(Date.now()/350) * 15);
                     let surprise = Math.round(20 + Math.cos(Date.now()/500) * 20);
                     let focus = Math.round(75 + Math.sin(Date.now()/200) * 10);
                     let doubt = Math.round(15 + Math.sin(Date.now()/600) * 10);
-                    
                     updateTelemetryUI(joy, surprise, 0, Math.max(0, 30 - joy), 0, Math.round(doubt * 0.5), 5, focus, doubt);
                 }
 
-                // --- DRAW INCH-BY-INCH HIGH DEFINITION VECTOR TOPOLOGY MESH ---
+                // Render vector mesh curves over background
                 scannerCtx.save();
                 scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.3)"; scannerCtx.lineWidth = 0.5;
                 let step = 15; 
@@ -545,29 +534,23 @@
                     scannerCtx.stroke();
                 }
 
-                // Render vector maps chassis configurations
                 scannerCtx.lineWidth = 2.0;
                 let tX = trackTargetX; let tY = trackTargetY;
 
-                // Eyes
                 scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.shadowBlur = 8; scannerCtx.shadowColor = '#ff00ff';
                 scannerCtx.beginPath(); scannerCtx.arc(tX - 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.arc(tX + 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.stroke();
 
-                // Brows
                 scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.shadowColor = '#ffaa00';
                 scannerCtx.beginPath(); scannerCtx.moveTo(tX - 35, tY - 26); scannerCtx.lineTo(tX - 10, tY - 28); scannerCtx.moveTo(tX + 10, tY - 28); scannerCtx.lineTo(tX + 35, tY - 26); scannerCtx.stroke();
 
-                // Lips
                 scannerCtx.strokeStyle = '#ffff00'; scannerCtx.shadowColor = '#ffff00';
                 let lipScaleWave = 1 + (Math.sin(Date.now()/90) * 0.04);
                 scannerCtx.beginPath(); scannerCtx.moveTo(tX - 18 * lipScaleWave, tY + 28); scannerCtx.quadraticCurveTo(tX, tY + 32, tX + 18 * lipScaleWave, tY + 28);
                 scannerCtx.quadraticCurveTo(tX, tY + 24, tX - 18 * lipScaleWave, tY + 28); scannerCtx.stroke();
 
-                // Nose
                 scannerCtx.strokeStyle = '#00ffff'; scannerCtx.shadowColor = '#00ffff';
                 scannerCtx.beginPath(); scannerCtx.moveTo(tX, tY - 15); scannerCtx.lineTo(tX, tY + 12); scannerCtx.lineTo(tX - 8, tY + 12); scannerCtx.moveTo(tX, tY + 12); scannerCtx.lineTo(tX + 8, tY + 12); scannerCtx.stroke();
                 
-                // Green Reticle bounding box from screenshot
                 scannerCtx.strokeStyle = '#00ffcc'; scannerCtx.shadowColor = '#00ffcc';
                 scannerCtx.strokeRect(tX - 55, tY - 65, 110, 120);
 
@@ -597,13 +580,18 @@
             else if (sadness > 30) { activeMasterEmoji = "😢 SADNESS"; emotionDisplay.style.color = "#3399ff"; }
             else { emotionDisplay.style.color = "#ffffff"; }
 
+            if(document.getElementById('tele-status').innerText !== "STANDBY") {
+                document.getElementById('tele-status').innerText = "HUD ACTIVE";
+                document.getElementById('tele-status').style.color = "#00ffcc";
+            }
+
             emotionDisplay.innerText = activeMasterEmoji;
             document.getElementById('tele-master-emoji').innerText = activeMasterEmoji.split(' ')[0];
 
             document.getElementById('flag-focus').innerText = focus > 65 ? "🎯 INTENSE FOCUS" : "👀 INTEREST / ENGAGED";
             document.getElementById('flag-doubt').innerText = doubt > 25 ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING DATA";
             document.getElementById('flag-pain').innerText = disgust > 20 ? "💥 WINCE MATRIX" : "🍵 CONTENTMENT";
-            document.getElementById('tele-signal').innerText = (29.4 + Math.random() * 1.2).toFixed(1) + " FPS";
+            document.getElementById('tele-signal').innerText = (29.6 + Math.random() * 1.1).toFixed(1) + " FPS";
         }
 
         // =========================================================================
@@ -627,7 +615,7 @@
         }
 
         // =========================================================================
-        // --- MS PAINT STYLE DRAWING CORE ---
+        // --- MS PAINT DRAWING DECK ---
         // =========================================================================
         let sketchCanvas = document.getElementById('sketch-canvas');
         let sketchCtx = sketchCanvas.getContext('2d');
