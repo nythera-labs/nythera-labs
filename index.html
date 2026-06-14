@@ -3,644 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zaeem Labs // Omni Core Suite</title>
-    <link type="image/png" rel="icon" href="../logo.png">
+    <title>Zaeem Labs // Mainframe</title>
     
-    <!-- MASTER CLIENT-SIDE ML MESH LOGIC TILES -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <link rel="icon" type="image/png" href="logo.png">
 
     <style>
         * {
             box-sizing: border-box;
-            margin: 0; padding: 0;
-            font-family: ui-monospace, Consolas, Monaco, monospace;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
         }
-        body {
+        body, html {
+            width: 100%;
+            height: 100%;
             background-color: #020205;
             color: #ffffff;
-            min-height: 100vh;
-            padding: 25px 15px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
             overflow-x: hidden;
         }
+
+        /* Ambient Digital Grid Backdrop Layer */
         .grid-backdrop {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 255, 204, 0.012) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 204, 0.012) 1px, transparent 1px);
-            background-size: 30px 30px;
-            z-index: 1; pointer-events: none;
+                linear-gradient(rgba(255, 17, 17, 0.012) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 17, 17, 0.012) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+            pointer-events: none;
         }
-        .container { relative: z-index: 2; max-width: 1200px; margin: 0 auto; }
+
+        /* Hub Interface Main Container */
+        .mainframe-wrapper {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Zaeem Labs Station Header */
+        .hub-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            border-bottom: 1px dashed rgba(255, 17, 17, 0.15);
+        }
+        .lab-logo {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(255, 17, 17, 0.6)) 
+                    drop-shadow(0 0 30px rgba(0, 255, 204, 0.3));
+            margin-bottom: 20px;
+            animation: corePulse 4s infinite ease-in-out;
+        }
+        .lab-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(255, 17, 17, 0.5);
+        }
+        .lab-subtitle {
+            font-size: 0.85rem;
+            color: #556275;
+            margin-top: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Tools & Modules Workspace Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            flex-grow: 1;
+            margin-bottom: 40px;
+        }
+
+        .module-card {
+            background: rgba(5, 6, 12, 0.85);
+            border: 1px solid rgba(255, 17, 17, 0.15);
+            border-radius: 16px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .module-card.online {
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+        .module-card.online:hover {
+            transform: translateY(-4px);
+            border-color: #00ffcc;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.25);
+        }
+        .module-card.online.purple-glow:hover {
+            border-color: #ff00ff;
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.25);
+        }
+        .module-card.online.red-glow:hover {
+            border-color: #ff3366;
+            box-shadow: 0 0 25px rgba(255, 51, 102, 0.25);
+        }
+
+        .status-flag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            padding: 4px 10px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+        }
+        .status-flag.online { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc;}
+        .status-flag.purple { background: rgba(255, 0, 255, 0.1); color: #ff00ff; border: 1px solid #ff00ff;}
+        .status-flag.red { background: rgba(255, 51, 102, 0.1); color: #ff3366; border: 1px solid #ff3366;}
+
+        .module-meta {
+            margin-bottom: 25px;
+        }
+        .module-name {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+        .module-card.online .module-name { text-shadow: 0 0 8px rgba(0, 255, 204, 0.3); }
+        .module-card.online.purple-glow .module-name { text-shadow: 0 0 8px rgba(255, 0, 255, 0.3); }
+        .module-card.online.red-glow .module-name { text-shadow: 0 0 8px rgba(255, 51, 102, 0.3); }
         
-        .back-btn {
-            color: #728196; text-decoration: none; font-size: 0.85rem; font-weight: 700;
-            display: inline-block; margin-bottom: 25px; transition: color 0.2s ease;
-        }
-        .back-btn:hover { color: #00ffcc; }
-        
-        header { text-align: center; margin-bottom: 35px; border-bottom: 1px dashed rgba(0, 255, 204, 0.15); padding-bottom: 25px; }
-        h1 { font-size: 2.2rem; letter-spacing: 6px; text-shadow: 0 0 15px rgba(0, 255, 204, 0.4); margin-bottom: 8px; }
-        .subtitle { color: #ff00ff; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; }
-
-        .tab-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; }
-        @media (max-width: 768px) { .tab-bar { grid-template-columns: repeat(2, 1fr); } }
-        .tab-btn {
-            padding: 15px 5px; background: rgba(10, 11, 25, 0.6); border: 1px solid rgba(0, 255, 204, 0.15);
-            color: #728196; font-weight: 900; cursor: pointer; border-radius: 12px; letter-spacing: 1px;
-            font-size: 0.8rem; text-align: center; transition: all 0.2s ease;
-        }
-        .tab-btn.active {
-            background: rgba(0, 255, 204, 0.08); border-color: #00ffcc; color: #ffffff;
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.15);
+        .module-desc {
+            font-size: 0.85rem;
+            color: #728196;
+            line-height: 1.6;
         }
 
-        .panel-card {
-            background: rgba(5, 6, 15, 0.9); border: 1px solid rgba(0, 255, 204, 0.15);
-            border-radius: 16px; padding: 25px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            display: none; min-height: 450px;
+        .launch-anchor {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 255, 204, 0.04);
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            font-size: 0.9rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s ease;
         }
-        .panel-card.active { display: block; }
-
-        label { display: block; font-size: 0.8rem; color: #00ffcc; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; }
-        
-        .terminal-input-wrapper { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 10px; }
-        input[type="text"] {
-            width: 100%; padding: 16px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
-            border-radius: 10px; color: #ffffff; font-size: 0.9rem; outline: none;
+        .launch-anchor:hover {
+            background: #00ffcc;
+            color: #020205;
+            box-shadow: 0 0 15px #00ffcc;
         }
-        input[type="text"]:focus { border-color: #ff00ff; box-shadow: 0 0 10px rgba(255,0,255,0.15); }
-
-        .action-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-        .action-btn {
-            width: 100%; padding: 15px; background: rgba(0, 255, 204, 0.04); border: 1px solid #00ffcc;
-            color: #00ffcc; font-weight: 900; border-radius: 10px; cursor: pointer; letter-spacing: 1px; 
-            transition: all 0.2s ease; font-size: 0.8rem; text-align: center; text-transform: uppercase; white-space: nowrap;
+        .launch-anchor.purple-btn {
+            border-color: #ff00ff;
+            color: #ff00ff;
+            background: rgba(255, 0, 255, 0.04);
         }
-        .action-btn:hover { background: #00ffcc; color: #020205; box-shadow: 0 0 15px #00ffcc; }
-        .action-btn.pink-variant { border-color: #ff00ff; color: #ff00ff; background: rgba(255,0,255,0.02); }
-        .action-btn.pink-variant:hover { background: #ff00ff; color: #020205; box-shadow: 0 0 15px #ff00ff; }
-
-        /* TAB 1: LOG SCROLLER */
-        .chat-container {
-            background: #010205; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
-            height: 280px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 5px;
+        .launch-anchor.purple-btn:hover {
+            background: #ff00ff;
+            color: #020205;
+            box-shadow: 0 0 15px #ff00ff;
         }
-        .chat-msg { max-width: 85%; padding: 11px 15px; border-radius: 10px; font-size: 0.85rem; line-height: 1.45; word-break: break-word; }
-        .chat-msg.user { background: rgba(0, 255, 204, 0.1); border: 1px solid #00ffcc; align-self: flex-end; color: #00ffcc; }
-        .chat-msg.bot { background: rgba(255, 0, 255, 0.1); border: 1px solid #ff00ff; align-self: flex-start; color: #ff00ff; }
-        
-        .ai-image-output {
-            max-width: 100%; width: 260px; height: 260px; object-fit: cover; border-radius: 8px;
-            border: 2px solid #ff00ff; margin-top: 10px; display: block; box-shadow: 0 0 15px rgba(255, 0, 255, 0.25);
-            animation: imagePulse 1.5s infinite ease-in-out;
+        .launch-anchor.red-btn {
+            border-color: #ff3366;
+            color: #ff3366;
+            background: rgba(255, 51, 102, 0.04);
         }
-        @keyframes imagePulse {
-            0%, 100% { opacity: 0.7; filter: brightness(0.9); }
-            50% { opacity: 1; filter: brightness(1.1); }
+        .launch-anchor.red-btn:hover {
+            background: #ff3366;
+            color: #020205;
+            box-shadow: 0 0 15px #ff3366;
         }
 
-        /* TAB 2: STREAM GRAPH DECK VIEWPORT */
-        .biometric-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
-        @media (max-width: 900px) { .biometric-grid { grid-template-columns: 1fr; } }
-        .video-viewport {
-            background: #000; border: 2px solid #00ffcc; border-radius: 14px;
-            position: relative; overflow: hidden; min-height: 380px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
+        /* Telemetry Diagnostic Footer */
+        .hub-telemetry-footer {
+            border-top: 1px dashed rgba(255, 17, 17, 0.15);
+            padding-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #434d5c;
         }
-        #webcam-stream { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scaleX(-1); pointer-events: none; } 
-        #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); } 
-        
-        .telemetry-box { background: rgba(13, 14, 28, 0.3); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.04); }
-        .matrix-log-container { max-height: 340px; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
-        .telemetry-node { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 8px; color: #728196; border-bottom: 1px dashed rgba(255,255,255,0.02); padding-bottom: 6px; align-items: center; }
+        .telemetry-row {
+            display: flex;
+            justify-content: space-between;
+        }
+        .telemetry-value {
+            color: #728196;
+        }
 
-        /* TAB 3: CALCULATOR */
-        .calc-wrapper { max-width: 320px; margin: 0 auto; background: #010206; border: 1px solid rgba(0,255,204,0.2); border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        #calc-display { width: 100%; padding: 18px; background: #05060f; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; text-align: right; font-size: 1.5rem; color: #00ffcc; font-weight: bold; margin-bottom: 15px; overflow-x: auto; }
-        .calc-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .calc-btn { padding: 18px 5px; background: #0c0d1a; border: 1px solid rgba(255,255,255,0.05); color: #ffffff; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.1s ease; }
-        .calc-btn:active { background: #00ffcc; color: #000; transform: scale(0.95); }
-        .calc-btn.op { color: #ff00ff; border-color: rgba(255,0,255,0.2); }
-        .calc-btn.clear { color: #ff3366; border-color: rgba(255,51,102,0.2); }
-
-        /* TAB 4: DRAWING STUDIO SHEET */
-        .sketch-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px; }
-        @media (max-width: 850px) { .sketch-grid { grid-template-columns: 1fr; } }
-        .sketch-board-panel { background: #ffffff; border: 2px solid #00ffcc; border-radius: 14px; overflow: hidden; min-height: 380px; position: relative; box-shadow: 0 0 25px rgba(0, 255, 204, 0.1); }
-        #sketch-canvas { display: block; background: #ffffff; }
-        #sketch-custom-cursor { position: absolute; border: 2px solid #000000; border-radius: 50%; pointer-events: none; display: none; z-index: 10; transform: translate(-50%, -50%); box-shadow: 0 0 4px rgba(255,255,255,0.8); }
-        .palette-bar { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .color-dot { width: 32px; height: 32px; border-radius: 6px; cursor: pointer; border: 2px solid #000; transition: transform 0.1s linear; }
-        .color-dot.active { transform: scale(1.1); border-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.5); }
-        .density-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-        .density-btn { padding: 10px 4px; background: #060710; border: 1px solid rgba(0, 255, 204, 0.3); color: #00ffcc; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
-        .density-btn.active { background: rgba(0, 255, 204, 0.12); border-color: #00ffcc; color: #ffffff; box-shadow: 0 0 10px #00ffcc; }
-        .shape-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
-        .shape-btn { padding: 12px; background: #060710; border: 1px solid rgba(255, 0, 255, 0.2); color: #ff00ff; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.75rem; transition: all 0.15s ease; }
-        .shape-btn.active { background: rgba(255, 0, 255, 0.15); border-color: #ff00ff; color: #ffffff; box-shadow: 0 0 10px #ff00ff; }
-        input[type="range"] { width: 100%; accent-color: #ff00ff; cursor: pointer; height: 6px; }
+        @keyframes corePulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 17, 17, 0.6)) drop-shadow(0 0 30px rgba(0, 255, 204, 0.3)); }
+            50% { transform: scale(1.02); filter: drop-shadow(0 0 22px rgba(255, 17, 17, 0.8)) drop-shadow(0 0 40px rgba(0, 255, 204, 0.5)); }
+        }
     </style>
 </head>
 <body>
 
     <div class="grid-backdrop"></div>
 
-    <div class="container">
+    <div class="mainframe-wrapper">
         
-        <a href="../index.html" class="back-btn">⚡ RETURN TO MAIN HUB</a>
-
-        <header>
-            <h1>OMNI CORE</h1>
-            <div class="subtitle">Zaeem Labs // Multi-Utility Station Terminal</div>
+        <header class="hub-header">
+            <img src="logo.png" alt="Zaeem Labs" class="lab-logo">
+            <h1 class="lab-title">ZAEEM LABS</h1>
+            <div class="lab-subtitle">Experimental Engineering & Simulation Workspace</div>
         </header>
 
-        <div class="tab-bar">
-            <button class="tab-btn active" onclick="switchOmniTab('ai-panel', this)">🧠 NEURAL COMM</button>
-            <button class="tab-btn" onclick="switchOmniTab('bio-panel', this)">👁️ STREAM HUD</button>
-            <button class="tab-btn" onclick="switchOmniTab('calc-panel', this)">🔢 QUANTUM CALC</button>
-            <button class="tab-btn" onclick="switchOmniTab('sketch-panel', this)">🎨 NEO SKETCH</button>
-        </div>
-
-        <!-- PANEL 01: SMART DIALOG MATRIX & IMAGE DIFFUSION PANEL -->
-        <div id="ai-panel" class="panel-card active">
-            <label>Omni AI Communications Core</label>
-            <div class="chat-container" id="chat-scroller">
-                <div class="chat-msg bot">TERMINAL ONLINE. Ready for instruction arrays. Enter text nodes below or query the diffusion generator directly.</div>
-            </div>
+        <main class="modules-grid">
             
-            <div class="terminal-input-wrapper">
-                <input type="text" id="ai-chat-input" placeholder="Type chat message or image prompt...">
-                <div class="action-btn-grid">
-                    <button class="action-btn" onclick="executeLocalNeuralInput()">Send Chat</button>
-                    <button class="action-btn pink-variant" onclick="generateAIImagePOLLINATION()">Generate Image</button>
+            <section class="module-card online">
+                <div class="status-flag online">TOOL 01</div>
+                <div class="module-meta">
+                    <h2 class="module-name">GAME CENTER</h2>
+                    <p class="module-desc">Dedicated physics simulation portal housing Particle Laboratory V2. Run full 60FPS falling sand automata to orchestrate real-time interactions between 10 reactive elements entirely offline.</p>
                 </div>
+                <a href="tools/game_center.html" class="launch-anchor">BOOT GAME CENTER</a>
+            </section>
+
+            <section class="module-card online purple-glow">
+                <div class="status-flag purple">TOOL 02</div>
+                <div class="module-meta">
+                    <h2 class="module-name">MEDIA DECK</h2>
+                    <p class="module-desc">Advanced local media suite. Connects directly to playimdb streaming engines via built-in title selectors alongside an offline studio processor for full-resolution filter baking, image compression, and chroma-key isolation.</p>
+                </div>
+                <a href="tools/media_deck.html" class="launch-anchor purple-btn">LAUNCH MEDIA DECK</a>
+            </section>
+
+            <section class="module-card online red-glow">
+                <div class="status-flag red">TOOL 03</div>
+                <div class="module-meta">
+                    <h2 class="module-name">OMNI CORE MODULE</h2>
+                    <p class="module-desc">Central multi-command utility terminal. Houses an anti-loop neural terminal with free Pollinations AI image generation, a stable split-view camera HUD checking all 7 universal expressions, a quantum calculator, and a flat white MS Paint studio canvas tool.</p>
+                </div>
+                <a href="tools/omni_core.html" class="launch-anchor red-btn">ENGAGE COMMAND STATION</a>
+            </section>
+
+        </main>
+
+        <footer class="hub-telemetry-footer">
+            <div class="telemetry-row">
+                <span>SYSTEM REGISTRY: <span style="color: #00ffcc; font-weight:900;">ACTIVE</span></span>
+                <span>ENGINE ARCHITECTURE: <span class="telemetry-value">DEDICATED MULTI-MODULE MAINFRAME</span></span>
             </div>
-        </div>
-
-        <!-- PANEL 02: HIGH-DENSITY 468 POINT WIREFRAME MAPPER -->
-        <div id="bio-panel" class="panel-card">
-            <div class="biometric-grid">
-                <div class="video-viewport">
-                    <video id="webcam-stream" autoplay playsinline></video>
-                    <canvas id="scanner-overlay-canvas"></canvas>
-                    <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px;">
-                        NEURAL OVERLAY STANDBY.<br><br>
-                        <button class="action-btn" onclick="initializeBiometricCamera()">BOOT STREAM HUD</button>
-                    </p>
-                </div>
-                <div class="telemetry-box">
-                    <label style="color:#00ffcc; margin-bottom: 5px;">Vector Analysis Real-Time Deck</label>
-                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Calibration: 468 Mapped Nodes</div>
-                    
-                    <div class="matrix-log-container">
-                        <div class="telemetry-node"><span>CURRENT MOOD ICON:</span><span id="tele-master-emoji" style="font-size:1.4rem;">😐</span></div>
-                        <div class="telemetry-node"><span>HAPPINESS (SMILE DELTA):</span><span id="flag-happiness" style="color:white; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>SADNESS (CORNER DROP):</span><span id="flag-sadness" style="color:white; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>FEAR (EYE WIDENING):</span><span id="flag-fear" style="color:white; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>DISGUST (NASAL CURL):</span><span id="flag-disgust" style="color:white; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>ANGER (BROW COMPRESSION):</span><span id="flag-anger" style="color:white; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>SURPRISE (JAW DROP RATIO):</span><span id="flag-surprise" style="color:white; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>CONTEMPT (ASYMMETRY GAP):</span><span id="flag-contempt" style="color:white; font-weight:bold;">0%</span></div>
-                        
-                        <div class="telemetry-node" style="margin-top: 10px;"><span>CONCENTRATION / INTEREST:</span><span id="flag-focus" style="color:#00ffcc; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>CONFUSION / DOUBT:</span><span id="flag-doubt" style="color:#ffaa00; font-weight:bold;">0%</span></div>
-                        <div class="telemetry-node"><span>PAIN / WINCE PROFILE:</span><span id="flag-pain" style="color:#ff3366; font-weight:bold;">0%</span></div>
-                        
-                        <div class="telemetry-node" style="margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;">
-                            <span>STREAM RUN RATE SPEED:</span><span id="tele-signal" style="color:#728196; font-weight:bold;">0.00 FPS</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="telemetry-row">
+                <span>HARDWARE ENVIRONMENT: <span class="telemetry-value">WebKit Hardware Accelerated Filters OK</span></span>
+                <span>REGISTRY SCHEMATIC: <span class="telemetry-value">VERSION_LAB.3.2</span></span>
             </div>
-        </div>
-
-        <!-- PANEL 03: CALCULATOR -->
-        <div id="calc-panel" class="panel-card">
-            <div class="calc-wrapper">
-                <div id="calc-display">0</div>
-                <div class="calc-keys">
-                    <button class="calc-btn clear" onclick="clearCalc()">C</button>
-                    <button class="calc-btn op" onclick="appendCalcOp('/')">/</button>
-                    <button class="calc-btn op" onclick="appendCalcOp('*')">*</button>
-                    <button class="calc-btn op" onclick="appendCalcOp('-')">-</button>
-                    
-                    <button class="calc-btn" onclick="appendCalcNum('7')">7</button>
-                    <button class="calc-btn" onclick="appendCalcNum('8')">8</button>
-                    <button class="calc-btn" onclick="appendCalcNum('9')">9</button>
-                    <button class="calc-btn op" onclick="appendCalcOp('+')">+</button>
-                    
-                    <button class="calc-btn" onclick="appendCalcNum('4')">4</button>
-                    <button class="calc-btn" onclick="appendCalcNum('5')">5</button>
-                    <button class="calc-btn" onclick="appendCalcNum('6')">6</button>
-                    <button class="calc-btn compute" onclick="computeCalcResult()">=</button>
-                    
-                    <button class="calc-btn" onclick="appendCalcNum('1')">1</button>
-                    <button class="calc-btn" onclick="appendCalcNum('2')">2</button>
-                    <button class="calc-btn" onclick="appendCalcNum('3')">3</button>
-                    <button class="calc-btn" onclick="appendCalcNum('0')">0</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL 04: DRAWING CORE -->
-        <div id="sketch-panel" class="panel-card">
-            <div class="sketch-grid">
-                <div class="sketch-board-panel" id="sketch-container" onmouseenter="toggleCustomCursor(true)" onmouseleave="toggleCustomCursor(false)">
-                    <div id="sketch-custom-cursor"></div>
-                    <canvas id="sketch-canvas"></canvas>
-                </div>
-                <div class="telemetry-box">
-                    <label style="color: #ff00ff; margin-bottom: 12px;">1. Paint Tool Element</label>
-                    <div class="shape-grid">
-                        <button class="shape-btn active" id="shape-brush" onclick="setSketchShape('brush', this)">🖌️ FREE BRUSH</button>
-                        <button class="shape-btn" id="shape-line" onclick="setSketchShape('line', this)">📏 LINE</button>
-                        <button class="shape-btn" id="shape-rect" onclick="setSketchShape('rect', this)">⬜ RECTANGLE</button>
-                        <button class="shape-btn" id="shape-circle" onclick="setSketchShape('circle', this)">⭕ CIRCLE</button>
-                    </div>
-
-                    <label style="color: #ff9900; margin-bottom: 12px;">2. Pencil Density Calibrations</label>
-                    <div class="density-row">
-                        <button class="density-btn active" onclick="setSketchDensity(2.0, this)">MATADOR HB</button>
-                        <button class="density-btn" onclick="setSketchDensity(5.0, this)">VENUS 4B</button>
-                        <button class="density-btn" style="color:#ff00ff; border-color:rgba(255,0,255,0.3);" onclick="setSketchDensity(12.0, this)">NEON INK</button>
-                    </div>
-
-                    <div class="input-group">
-                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#728196; margin-bottom:6px;">
-                            <span>Custom Stroke Dimension</span><span id="lbl-brush-size">2.0px</span>
-                        </div>
-                        <input type="range" id="sketch-brush-slider" min="1" max="40" value="2.0" step="0.5" oninput="updateManualBrushSize(this.value)">
-                    </div>
-
-                    <label style="color: #00ffcc; margin-bottom: 8px;">3. Gel Ink Swatch Deck</label>
-                    <div class="palette-bar">
-                        <div class="color-dot active" style="background:#020206;" onclick="setSketchColor('#020206', this)"></div> 
-                        <div class="color-dot" style="background:#00ffcc;" onclick="setSketchColor('#00ffcc', this)"></div>
-                        <div class="color-dot" style="background:#ff00ff;" onclick="setSketchColor('#ff00ff', this)"></div>
-                        <div class="color-dot" style="background:#ffaa00;" onclick="setSketchColor('#ffaa00', this)"></div>
-                        <div class="color-dot" style="background:#ff3366;" onclick="setSketchColor('#ff3366', this)"></div>
-                        <div class="color-dot" style="background:#3399ff;" onclick="setSketchColor('#3399ff', this)"></div>
-                    </div>
-
-                    <button class="action-btn" style="width:100%; margin-top: 15px; border-color:#ff3366; color:#ff3366; background:rgba(255,51,102,0.02);" onclick="clearSketchCanvas()">PURGE WHITE SHEET</button>
-                </div>
-            </div>
-        </div>
+        </footer>
 
     </div>
 
-    <script>
-        function switchOmniTab(panelId, btnElement) {
-            document.querySelectorAll('.panel-card').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(panelId).classList.add('active');
-            btnElement.classList.add('active');
-            if (panelId !== 'bio-panel') stopBiometricCamera();
-            if (panelId === 'sketch-panel') setTimeout(resizeSketchCanvas, 50); 
-        }
-
-        // =========================================================================
-        // --- CHAT INTERFACE & CONTEXTUAL RESPONSES ---
-        // =========================================================================
-        function executeLocalNeuralInput() {
-            let inputField = document.getElementById('ai-chat-input');
-            let txt = inputField.value.trim(); if (!txt) return;
-
-            appendChatMessage(txt, 'user'); inputField.value = '';
-            setTimeout(() => {
-                let lower = txt.toLowerCase(); let reply = "";
-                const responsesGreetings = [
-                    "Mainframe connection synchronized. What modules are we testing today, Zaeem?",
-                    "Neural pipelines active. Terminal node is listening.",
-                    "Local registers operating at peak status. Input logged.",
-                    "Terminal sync confirmed. Drop your next instruction block."
-                ];
-                const responsesTech = [
-                    "Compiling node parameters... Proportional topology ratios are responding normally.",
-                    "Memory allocations clear. The drawing matrix and calculator registers are locked down.",
-                    "Processing matrix telemetry. Stream overlays and canvas states are running optimal script speeds."
-                ];
-                const responsesCasual = [
-                    "Haha, structural payload received. Tuning chat logs cleanly.",
-                    "Processing string text parameters... Terminal module is responsive.",
-                    "Understood. Running a clean logic loop across the lab workspace."
-                ];
-
-                let userWords = txt.split(' ').filter(w => w.length > 3);
-                let wordMirrorSnippet = userWords.length > 0 ? `Evaluating parameters for: "${userWords[Math.floor(Math.random() * userWords.length)]}". ` : "";
-
-                if (lower === 'hi' || lower === 'hello' || lower === 'hey' || lower === 'yo') { reply = responsesGreetings[Math.floor(Math.random() * responsesGreetings.length)]; } 
-                else if (lower.includes('bro') || lower.includes('buddy') || lower.includes('friend')) { reply = `Acknowledged, bro. ${responsesCasual[Math.floor(Math.random() * responsesCasual.length)]}`; } 
-                else if (lower.includes('status') || lower.includes('system') || lower.includes('work') || lower.includes('test')) { reply = responsesTech[Math.floor(Math.random() * responsesTech.length)]; } 
-                else { reply = wordMirrorSnippet + "Token string logged inside standalone browser memory cache layers. Systems stable."; }
-
-                appendChatMessage(reply, 'bot');
-            }, 380);
-        }
-
-        function generateAIImagePOLLINATION() {
-            let inputField = document.getElementById('ai-chat-input');
-            let promptText = inputField.value.trim();
-            if (!promptText) {
-                alert("Type your image prompt inside the terminal box first!");
-                return;
-            }
-
-            appendChatMessage(`Running structural image diffusion for: "${promptText}"...`, 'user');
-            inputField.value = '';
-
-            let container = document.getElementById('chat-scroller');
-            let botBubble = document.createElement('div');
-            botBubble.className = 'chat-msg bot';
-            botBubble.innerHTML = `<div style="margin-bottom: 4px;">Fetching diffusion matrices from Pollinations AI core...</div>`;
-            
-            let randomSeed = Math.floor(Math.random() * 999999);
-            let targetImageSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=512&height=512&seed=${randomSeed}`;
-
-            let resultImage = document.createElement('img');
-            resultImage.className = 'ai-image-output';
-            resultImage.src = targetImageSrc;
-            
-            botBubble.appendChild(resultImage);
-            container.appendChild(botBubble);
-            container.scrollTop = container.scrollHeight;
-
-            resultImage.onload = function() {
-                resultImage.style.animation = 'none';
-                container.scrollTop = container.scrollHeight;
-            };
-        }
-
-        function appendChatMessage(text, owner) {
-            let container = document.getElementById('chat-scroller');
-            let bubble = document.createElement('div'); bubble.className = `chat-msg ${owner}`; bubble.innerText = text;
-            container.appendChild(bubble); container.scrollTop = container.scrollHeight;
-        }
-
-        // =========================================================================
-        // --- MACHINE LEARNING PROPORTIONAL MESH ENGINE (FIXED INSTANCE SCOPE) ---
-        // =========================================================================
-        let camActive = false;
-        let faceMeshInstance = null;
-        let requestFrameLoopNode = null;
-
-        function initializeBiometricCamera() {
-            if (window.activeStreamTrack) {
-                window.activeStreamTrack.getTracks().forEach(t => t.stop());
-            }
-
-            document.getElementById('tele-status').innerText = "LOADING WASM ENGINE...";
-            document.getElementById('tele-status').style.color = "#ffaa00";
-
-            // CRITICAL FIX: Assigning direct entry path to global object variable name prevents null compiler errors
-            faceMeshInstance = new FaceMesh({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-            });
-
-            faceMeshInstance.setOptions({
-                maxNumFaces: 1, refineLandmarks: false, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5
-            });
-
-            faceMeshInstance.onResults(onNeuralFaceMeshResults);
-
-            let videoElement = document.getElementById('webcam-stream');
-
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-                .then(stream => {
-                    window.activeStreamTrack = stream; 
-                    camActive = true;
-                    videoElement.srcObject = stream;
-                    document.getElementById('camera-placeholder').style.display = 'none';
-
-                    function processMeshCycle() {
-                        if (!camActive) return;
-                        if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-                            // Fixed variable scope reference resolves loop block freeze
-                            faceMeshInstance.send({ image: videoElement });
-                        }
-                        requestFrameLoopNode = requestAnimationFrame(processMeshCycle);
-                    }
-                    requestFrameLoopNode = requestAnimationFrame(processMeshCycle);
-                })
-                .catch(err => {
-                    alert("ERROR: Video stream unallocated or blocked by background constraints.");
-                    document.getElementById('tele-status').innerText = "STANDBY";
-                });
-        }
-
-        function stopBiometricCamera() {
-            camActive = false;
-            cancelAnimationFrame(requestFrameLoopNode);
-            if (window.activeStreamTrack) { window.activeStreamTrack.getTracks().forEach(t => t.stop()); window.activeStreamTrack = null; }
-            document.getElementById('camera-placeholder').style.display = 'block';
-            document.getElementById('tele-status').innerText = "STANDBY"; document.getElementById('tele-status').style.color = "#ff3366";
-            scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
-        }
-
-        function onNeuralFaceMeshResults(results) {
-            if (!camActive) return;
-            if (scannerCanvas.width !== results.image.width) { scannerCanvas.width = results.image.width; scannerCanvas.height = results.image.height; }
-            
-            scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
-            scannerCtx.drawImage(results.image, 0, 0, scannerCanvas.width, scannerCanvas.height);
-
-            document.getElementById('tele-status').innerText = "MESH ONLINE";
-            document.getElementById('tele-status').style.color = "#00ffcc";
-
-            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
-                const facePoints = results.multiFaceLandmarks[0];
-                scannerCtx.save(); 
-                
-                // Covers 100% of surface area inch-by-inch
-                scannerCtx.lineWidth = 0.5; scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.35)";
-                for (let i = 0; i < facePoints.length; i += 3) {
-                    if(i + 1 < facePoints.length) {
-                        scannerCtx.beginPath();
-                        scannerCtx.moveTo(facePoints[i].x * scannerCanvas.width, facePoints[i].y * scannerCanvas.height);
-                        scannerCtx.lineTo(facePoints[i+1].x * scannerCanvas.width, facePoints[i+1].y * scannerCanvas.height);
-                        scannerCtx.stroke();
-                    }
-                }
-
-                scannerCtx.lineWidth = 2.0;
-                // Brows Curve
-                scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.beginPath();
-                const browIdx = [70, 63, 105, 66, 107, 336, 296, 334, 293, 300];
-                browIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.stroke();
-
-                // Left/Right Eye Orbits
-                scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.beginPath();
-                const leftEyeIdx = [33, 160, 158, 133, 153, 144];
-                leftEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.closePath(); scannerCtx.stroke();
-
-                scannerCtx.beginPath();
-                const rightEyeIdx = [362, 385, 387, 263, 373, 380];
-                rightEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.closePath(); scannerCtx.stroke();
-
-                // Lips Boundary
-                scannerCtx.strokeStyle = '#ffff00'; scannerCtx.beginPath();
-                const lipsIdx = [61, 37, 0, 267, 291, 314, 17, 84];
-                lipsIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.closePath(); scannerCtx.stroke();
-
-                // Nose Ridge
-                scannerCtx.strokeStyle = '#00ffff'; scannerCtx.beginPath();
-                const noseIdx = [168, 6, 197, 195, 5];
-                noseIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.stroke();
-
-                // --- 7 UNIVERSAL FIELD EXPRESSIONS MATRIX CONTROL ---
-                let faceWidth = Math.sqrt(Math.pow(facePoints[454].x - facePoints[234].x, 2) + Math.pow(facePoints[454].y - facePoints[234].y, 2));
-                let faceHeight = Math.sqrt(Math.pow(facePoints[152].x - facePoints[10].x, 2) + Math.pow(facePoints[152].y - facePoints[10].y, 2));
-
-                let mouthOpenDistance = Math.sqrt(Math.pow(facePoints[14].x - facePoints[13].x, 2) + Math.pow(facePoints[14].y - facePoints[13].y, 2));
-                let mouthOpenRatio = mouthOpenDistance / faceHeight;
-
-                let mouthWidthDistance = Math.sqrt(Math.pow(facePoints[291].x - facePoints[61].x, 2) + Math.pow(facePoints[291].y - facePoints[61].y, 2));
-                let smileRatio = mouthWidthDistance / faceWidth;
-
-                let leftEyeHeight = Math.abs(facePoints[159].y - facePoints[145].y);
-                let rightEyeHeight = Math.abs(facePoints[386].y - facePoints[374].y);
-                let avgEyeOpenRatio = ((leftEyeHeight + rightEyeHeight) / 2) / faceHeight;
-
-                let browDistance = Math.sqrt(Math.pow(facePoints[336].x - facePoints[107].x, 2) + Math.pow(facePoints[336].y - facePoints[107].y, 2)) / faceWidth;
-                let noseSqueezeDelta = Math.abs(facePoints[168].y - facePoints[1].y) / faceHeight;
-                let leftCornerDist = Math.abs(facePoints[61].y - facePoints[13].y);
-                let rightCornerDist = Math.abs(facePoints[291].y - facePoints[13].y);
-                let cornerAsymmetryDelta = Math.abs(leftCornerDist - rightCornerDist) / faceHeight;
-
-                let happinessScore = Math.min(100, Math.max(0, Math.round((smileRatio - 0.36) * 700)));
-                let surpriseScore = Math.min(100, Math.max(0, Math.round((mouthOpenRatio - 0.015) * 900)));
-                let angerScore = Math.min(100, Math.max(0, Math.round((0.21 - browDistance) * 1100)));
-                let fearScore = Math.min(100, Math.max(0, Math.round((avgEyeOpenRatio - 0.022) * 2000)));
-                let contemptScore = Math.min(100, Math.max(0, Math.round((cornerAsymmetryDelta - 0.008) * 3500)));
-                let disgustScore = Math.min(100, Math.max(0, Math.round((0.26 - noseSqueezeDelta) * 4000)));
-                let sadnessScore = Math.min(100, Math.max(0, Math.round((facePoints[61].y + facePoints[291].y)/2 - facePoints[14].y) * 1200));
-
-                if(happinessScore < 10) happinessScore = 0;
-                if(surpriseScore < 10) surpriseScore = 0;
-                if(angerScore < 10) angerScore = 0;
-                if(fearScore < 10) fearScore = 0;
-                if(contemptScore < 10) contemptScore = 0;
-                if(disgustScore < 10) disgustScore = 0;
-                if(sadnessScore < 10) sadnessScore = 0;
-
-                document.getElementById('flag-happiness').innerText = happinessScore + "%";
-                document.getElementById('flag-surprise').innerText = surpriseScore + "%";
-                document.getElementById('flag-sadness').innerText = sadnessScore + "%";
-                document.getElementById('flag-anger').innerText = angerScore + "%";
-                document.getElementById('flag-fear').innerText = fearScore + "%";
-                document.getElementById('flag-contempt').innerText = contemptScore + "%";
-                document.getElementById('flag-disgust').innerText = disgustScore + "%";
-
-                document.getElementById('tele-mouth-open').innerText = mouthOpenRatio.toFixed(3);
-
-                let activeMasterEmoji = "😐 NEUTRAL";
-                let emotionDisplay = document.getElementById('tele-emotion');
-                
-                if (surpriseScore > 45) { activeMasterEmoji = "😲 SURPRISED"; emotionDisplay.style.color = "#00ffff"; }
-                else if (happinessScore > 40) { activeMasterEmoji = "⚡ HYPED"; emotionDisplay.style.color = "#00ffcc"; }
-                else if (angerScore > 45) { activeMasterEmoji = "🤬 ANGRY"; emotionDisplay.style.color = "#ff3366"; }
-                else if (disgustScore > 40) { activeMasterEmoji = "🤮 DISGUSTED"; emotionDisplay.style.color = "#ffaa00"; }
-                else if (fearScore > 50) { activeMasterEmoji = "😨 FEAR"; emotionDisplay.style.color = "#b5ff14"; }
-                else if (sadnessScore > 35) { activeMasterEmoji = "😢 SADNESS"; emotionDisplay.style.color = "#3399ff"; }
-                else if (contemptScore > 45) { activeMasterEmoji = "😏 CONTEMPT"; emotionDisplay.style.color = "#ff00ff"; }
-                else { emotionDisplay.style.color = "#ffffff"; }
-
-                emotionDisplay.innerText = activeMasterEmoji;
-
-                document.getElementById('flag-focus').innerText = (angerScore > 15 || avgEyeOpenRatio < 0.024) ? "🎯 INTENSE FOCUS" : "👀 INTEREST / ENGAGED";
-                document.getElementById('flag-doubt').innerText = (contemptScore > 30) ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING DATA";
-                document.getElementById('flag-pain').innerText = (disgustScore > 35 && avgEyeOpenRatio < 0.018) ? "💥 WINCE MATRIX" : "🍵 CONTENTMENT";
-
-                let emojiAnchor = facePoints[263];
-                document.getElementById('tele-master-emoji').innerText = activeMasterEmoji.split(' ')[0];
-                scannerCtx.fillStyle = '#ffffff'; scannerCtx.font = '26px ui-sans-serif';
-                scannerCtx.fillText(activeMasterEmoji.split(' ')[0], emojiAnchor.x * scannerCanvas.width + 30, emojiAnchor.y * scannerCanvas.height);
-                scannerCtx.restore();
-            } else {
-                document.getElementById('tele-emotion').innerText = "AWAITING FEED"; document.getElementById('tele-emotion').style.color = "#728196";
-            }
-            document.getElementById('tele-signal').innerText = (29.4 + Math.random() * 1.2).toFixed(1) + " FPS";
-        }
-
-        // =========================================================================
-        // --- CALCULATOR ENGINE ---
-        // =========================================================================
-        let currentCalcState = "0"; let clearOnNextInput = false;
-        function updateCalcDisplay() { document.getElementById('calc-display').innerText = currentCalcState; }
-        function appendCalcNum(num) {
-            if (currentCalcState === "0" || clearOnNextInput) { currentCalcState = num; clearOnNextInput = false; }
-            else { currentCalcState += num; } updateCalcDisplay();
-        }
-        function appendCalcOp(op) {
-            clearOnNextInput = false; let lastChar = currentCalcState.slice(-1);
-            if (['+','-','*','/'].includes(lastChar)) { currentCalcState = currentCalcState.slice(0, -1) + op; }
-            else { currentCalcState += op; } updateCalcDisplay();
-        }
-        function clearCalc() { currentCalcState = "0"; clearOnNextInput = false; updateCalcDisplay(); }
-        function computeCalcResult() {
-            try { currentCalcState = String(Function(`"use strict"; return (${currentCalcState})`)()); clearOnNextInput = true; }
-            catch(e) { currentCalcState = "ERROR"; clearOnNextInput = true; } updateCalcDisplay();
-        }
-
-        // =========================================================================
-        // --- MS PAINT STYLE NEON DRAWING CORE SHEET ---
-        // =========================================================================
-        let sketchCanvas = document.getElementById('sketch-canvas');
-        let sketchCtx = sketchCanvas.getContext('2d');
-        let cursorCircleIndicator = document.getElementById('sketch-custom-cursor');
-        let sketchDrawingActive = false;
-        let brushStrokeThickness = 2.0; let brushStrokeColor = '#020206'; let activeShapeSelection = 'brush'; 
-        let dragAnchorX = 0; let dragAnchorY = 0; let imageHistorySnapshot = null;
-
-        function resizeSketchCanvas() {
-            let box = document.getElementById('sketch-container');
-            if (sketchCanvas.width !== box.clientWidth) {
-                let tempCanvas = document.createElement('canvas');
-                tempCanvas.width = sketchCanvas.width; tempCanvas.height = sketchCanvas.height;
-                tempCanvas.getContext('2d').drawImage(sketchCanvas, 0, 0);
-                sketchCanvas.width = box.clientWidth; sketchCanvas.height = 380;
-                sketchCtx.fillStyle = '#ffffff'; sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
-                sketchCtx.drawImage(tempCanvas, 0, 0); updateManualBrushSize(brushStrokeThickness);
-            }
-        }
-        function setSketchShape(shapeMode, btnElement) { activeShapeSelection = shapeMode; document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active')); btnElement.classList.add('active'); }
-        function setSketchDensity(weight, btnElement) { brushStrokeThickness = weight; document.getElementById('sketch-brush-slider').value = weight; document.getElementById('lbl-brush-size').innerText = weight + "px"; cursorCircleIndicator.style.width = weight + "px"; cursorCircleIndicator.style.height = weight + "px"; document.querySelectorAll('.density-btn').forEach(b => b.classList.remove('active')); if(btnElement) btnElement.classList.add('active'); }
-        function updateManualBrushSize(value) { brushStrokeThickness = parseFloat(value); document.getElementById('lbl-brush-size').innerText = value + "px"; cursorCircleIndicator.style.width = value + "px"; cursorCircleIndicator.style.height = value + "px"; document.querySelectorAll('.density-btn').forEach(b => b.classList.remove('active')); }
-        function setSketchColor(color, swatchElement) { brushStrokeColor = color; document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active')); swatchElement.classList.add('active'); cursorCircleIndicator.style.borderColor = (color === '#020206') ? '#000000' : color; }
-        function clearSketchCanvas() { sketchCtx.fillStyle = '#ffffff'; sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height); }
-        function toggleCustomCursor(visibleFlag) { cursorCircleIndicator.style.display = visibleFlag ? 'block' : 'none'; }
-        function getSketchCoordinates(e) {
-            let rect = sketchCanvas.getBoundingClientRect();
-            let clientX = e.touches ? e.touches[0].clientX : e.clientX; let clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: (clientX - rect.left) * (sketchCanvas.width / rect.width), y: (clientY - rect.top) * (sketchCanvas.height / rect.height), rawX: clientX - rect.left, rawY: clientY - rect.top };
-        }
-        function startDrawingStroke(e) {
-            sketchDrawingActive = true; let coord = getSketchCoordinates(e); dragAnchorX = coord.x; dragAnchorY = coord.y;
-            imageHistorySnapshot = sketchCtx.getImageData(0, 0, sketchCanvas.width, sketchCanvas.height);
-            sketchCtx.beginPath(); sketchCtx.strokeStyle = brushStrokeColor; sketchCtx.lineWidth = brushStrokeThickness; sketchCtx.lineCap = 'round'; sketchCtx.lineJoin = 'round';
-            if (activeShapeSelection === 'brush') { sketchCtx.moveTo(dragAnchorX, dragAnchorY); }
-        }
-        function drawStrokeMove(e) {
-            let coord = getSketchCoordinates(e); cursorCircleIndicator.style.left = coord.rawX + "px"; cursorCircleIndicator.style.top = coord.rawY + "px";
-            if (!sketchDrawingActive) return;
-            if (activeShapeSelection === 'brush') { sketchCtx.lineTo(coord.x, coord.y); sketchCtx.stroke(); } 
-            else {
-                sketchCtx.putImageData(imageHistorySnapshot, 0, 0); sketchCtx.beginPath(); sketchCtx.strokeStyle = brushStrokeColor; sketchCtx.lineWidth = brushStrokeThickness; sketchCtx.lineCap = 'round'; sketchCtx.lineJoin = 'round';
-                if (activeShapeSelection === 'line') { sketchCtx.moveTo(dragAnchorX, dragAnchorY); sketchCtx.lineTo(coord.x, coord.y); } 
-                else if (activeShapeSelection === 'rect') { sketchCtx.strokeRect(dragAnchorX, dragAnchorY, coord.x - dragAnchorX, coord.y - dragAnchorY); } 
-                else if (activeShapeSelection === 'circle') { let r = Math.sqrt(Math.pow(coord.x - dragAnchorX, 2) + Math.pow(coord.y - dragAnchorY, 2)); sketchCtx.arc(dragAnchorX, dragAnchorY, r, 0, Math.PI * 2); }
-                sketchCtx.stroke();
-            }
-        }
-        function stopDrawingStroke() { sketchDrawingActive = false; imageHistorySnapshot = null; }
-        sketchCanvas.addEventListener('mousedown', startDrawingStroke); window.addEventListener('mousemove', drawStrokeMove); window.addEventListener('mouseup', stopDrawingStroke);
-        sketchCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawingStroke(e); }, { passive: false }); window.addEventListener('touchmove', (e) => { e.preventDefault(); drawStrokeMove(e); }, { passive: false }); window.addEventListener('touchend', stopDrawingStroke);
-    </script>
 </body>
 </html>
